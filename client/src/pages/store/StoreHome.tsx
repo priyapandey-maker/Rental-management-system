@@ -86,14 +86,14 @@ export const StoreHome = () => {
 
         <div>
           <h3 className="text-sm font-semibold text-gray-300 tracking-wider uppercase mb-4">Duration</h3>
-          <div className="space-y-3 text-sm text-gray-400">
-            <label className="flex items-center cursor-pointer hover:text-white"><input type="radio" name="duration" className="mr-3 border-gray-600 bg-gray-800 text-blue-600 focus:ring-blue-500 focus:ring-offset-gray-900" defaultChecked /> All Duration</label>
-            <label className="flex items-center cursor-pointer hover:text-white"><input type="radio" name="duration" className="mr-3 border-gray-600 bg-gray-800 text-blue-600 focus:ring-blue-500 focus:ring-offset-gray-900" /> 1 Month</label>
-            <label className="flex items-center cursor-pointer hover:text-white"><input type="radio" name="duration" className="mr-3 border-gray-600 bg-gray-800 text-blue-600 focus:ring-blue-500 focus:ring-offset-gray-900" /> 6 Month</label>
-            <label className="flex items-center cursor-pointer hover:text-white"><input type="radio" name="duration" className="mr-3 border-gray-600 bg-gray-800 text-blue-600 focus:ring-blue-500 focus:ring-offset-gray-900" /> 1 Year</label>
-            <label className="flex items-center cursor-pointer hover:text-white"><input type="radio" name="duration" className="mr-3 border-gray-600 bg-gray-800 text-blue-600 focus:ring-blue-500 focus:ring-offset-gray-900" /> 2 Years</label>
-            <label className="flex items-center cursor-pointer hover:text-white"><input type="radio" name="duration" className="mr-3 border-gray-600 bg-gray-800 text-blue-600 focus:ring-blue-500 focus:ring-offset-gray-900" /> 3 Years</label>
-          </div>
+          <select className="w-full bg-gray-900 border border-gray-700 text-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <option>All Duration</option>
+            <option>1 Month</option>
+            <option>6 Month</option>
+            <option>1 Year</option>
+            <option>2 Years</option>
+            <option>3 Years</option>
+          </select>
         </div>
 
         <div>
