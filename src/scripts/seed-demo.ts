@@ -133,7 +133,7 @@ async function seedDemoData() {
   );
   console.log('✓ Organization created');
 
-  // User
+  // Demo Admin User (Legacy)
   const demoHash = await bcrypt.hash('DemoPassword123!', 10);
   await pool.query(
     `INSERT INTO users (id, organization_id, email, password_hash, first_name, last_name, status, user_type, created_at, updated_at)
@@ -141,7 +141,26 @@ async function seedDemoData() {
      ON DUPLICATE KEY UPDATE password_hash = VALUES(password_hash), user_type = VALUES(user_type)`,
     [demoData.userId, demoData.orgId, 'admin3@demorental.co', demoHash, 'Admin', 'User']
   );
-  console.log('✓ User created');
+
+  // Demo Customer User
+  const customerHash = await bcrypt.hash('Customer@2024!', 10);
+  await pool.query(
+    `INSERT INTO users (id, organization_id, email, password_hash, first_name, last_name, status, user_type, created_at, updated_at)
+     VALUES (UUID(), ?, ?, ?, ?, ?, 'active', 'customer', NOW(), NOW())
+     ON DUPLICATE KEY UPDATE password_hash = VALUES(password_hash), user_type = VALUES(user_type), status = 'active'`,
+    [demoData.orgId, 'customer@rentalms.local', customerHash, 'Demo', 'Customer']
+  );
+
+  // Demo Vendor User
+  const vendorHash = await bcrypt.hash('Vendor@2024!', 10);
+  await pool.query(
+    `INSERT INTO users (id, organization_id, email, password_hash, first_name, last_name, status, user_type, created_at, updated_at)
+     VALUES (UUID(), ?, ?, ?, ?, ?, 'active', 'vendor', NOW(), NOW())
+     ON DUPLICATE KEY UPDATE password_hash = VALUES(password_hash), user_type = VALUES(user_type), status = 'active'`,
+    [demoData.orgId, 'vendor@rentalms.local', vendorHash, 'Demo', 'Vendor']
+  );
+
+  console.log('✓ Users created');
 
   // Customer
   await pool.query(

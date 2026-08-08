@@ -133,10 +133,10 @@ export const ProductDetail = () => {
         
         let pData: any = null;
         try {
-           pData = await apiClient.get(`/products/${id}`);
+           pData = await apiClient.get(`/storefront/products/${id}`);
         } catch {
            try {
-              const pList = await apiClient.get('/products');
+              const pList = await apiClient.get('/storefront/products');
               pData = (pList as unknown as any[]).find(p => p.id === id);
            } catch {
               pData = MOCK_PRODUCTS.find(p => p.id === id);
@@ -149,7 +149,7 @@ export const ProductDetail = () => {
         setProduct({ ...pData, in_stock: !isOutOfStock });
 
         try {
-          const vData = await apiClient.get(`/products/${id}/variants`);
+          const vData = await apiClient.get(`/storefront/products/${id}/variants`);
           setVariants(vData as any);
         } catch {
           // If variants fail, load mock variants

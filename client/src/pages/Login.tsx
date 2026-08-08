@@ -5,28 +5,34 @@ import { apiClient } from '../api/client';
 
 type RoleTab = 'customer' | 'vendor' | 'admin';
 
-const ROLE_LABELS: Record<RoleTab, { label: string; description: string; color: string }> = {
+const ROLE_LABELS: Record<RoleTab, { label: string; description: string; color: string; defaultEmail?: string; defaultPassword?: string }> = {
   customer: {
     label: 'Customer',
     description: 'Browse & rent products',
     color: 'blue',
+    defaultEmail: 'customer@rentalms.local',
+    defaultPassword: 'Customer@2024!',
   },
   vendor: {
     label: 'Vendor',
     description: 'Manage your rental business',
     color: 'indigo',
+    defaultEmail: 'vendor@rentalms.local',
+    defaultPassword: 'Vendor@2024!',
   },
   admin: {
     label: 'Admin',
     description: 'Platform administration',
     color: 'gray',
+    defaultEmail: 'admin@rentalms.local',
+    defaultPassword: 'Admin@2024!',
   },
 };
 
 export const Login = () => {
   const [activeTab, setActiveTab] = useState<RoleTab>('customer');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState(ROLE_LABELS.customer.defaultEmail || '');
+  const [password, setPassword] = useState(ROLE_LABELS.customer.defaultPassword || '');
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { login } = useAuth();
@@ -129,7 +135,12 @@ export const Login = () => {
             <button
               key={tab}
               type="button"
-              onClick={() => { setActiveTab(tab); setError(null); }}
+              onClick={() => { 
+                setActiveTab(tab); 
+                setError(null);
+                setEmail(ROLE_LABELS[tab].defaultEmail || '');
+                setPassword(ROLE_LABELS[tab].defaultPassword || '');
+              }}
               className={`flex-1 py-2.5 text-sm font-semibold transition-colors border-b-2 -mb-px ${
                 activeTab === tab
                   ? `border-${tab === 'customer' ? 'blue' : tab === 'vendor' ? 'indigo' : 'gray'}-500 text-${tab === 'customer' ? 'blue' : tab === 'vendor' ? 'indigo' : 'gray'}-400`
@@ -230,7 +241,13 @@ export const Login = () => {
               {activeTab === 'customer' ? 'Are you a vendor? ' : 'Are you a customer? '}
             </span>
             <button
-              onClick={() => setActiveTab(activeTab === 'customer' ? 'vendor' : 'customer')}
+              onClick={() => {
+                const nextTab = activeTab === 'customer' ? 'vendor' : 'customer';
+                setActiveTab(nextTab);
+                setEmail(ROLE_LABELS[nextTab].defaultEmail || '');
+                setPassword(ROLE_LABELS[nextTab].defaultPassword || '');
+                setError(null);
+              }}
               className="text-xs font-bold text-gray-400 hover:text-white transition-colors"
             >
               {activeTab === 'customer' ? 'Switch to Vendor Login' : 'Switch to Customer Login'}

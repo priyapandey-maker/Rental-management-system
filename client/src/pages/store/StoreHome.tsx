@@ -123,8 +123,8 @@ export const StoreHome = () => {
       setError(null);
       
       const [productsRes, categoriesRes] = await Promise.all([
-        apiClient.get('/products'),
-        apiClient.get('/categories')
+        apiClient.get('/storefront/products'),
+        apiClient.get('/storefront/categories')
       ]);
 
       const productsData = productsRes as unknown as Product[];
