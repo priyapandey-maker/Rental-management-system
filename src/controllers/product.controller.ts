@@ -11,6 +11,7 @@ export const createProduct = async (req: Request, res: Response, next: NextFunct
     const name = validateString(req.body.name, 'name', 1, 255);
     const sku = validateString(req.body.sku, 'sku', 1, 100);
     const description = validateOptionalString(req.body.description, 'description', 65535);
+    const image_url = validateOptionalString(req.body.image_url, 'image_url', 1024);
     const rental_type = validateOptionalEnum(req.body.rental_type, 'rental_type', ['rentable', 'consumable', 'service']);
     const status = validateOptionalEnum(req.body.status, 'status', ['active', 'archived', 'draft']);
 
@@ -19,6 +20,7 @@ export const createProduct = async (req: Request, res: Response, next: NextFunct
       name,
       sku,
       description,
+      image_url,
       rental_type: rental_type ?? undefined,
       status: status ?? undefined
     });
@@ -46,6 +48,7 @@ export const updateProduct = async (req: Request, res: Response, next: NextFunct
     const category_id = validateOptionalString(req.body.category_id, 'category_id', 36) ?? undefined;
     const name = validateOptionalString(req.body.name, 'name', 255) ?? undefined;
     const description = validateOptionalString(req.body.description, 'description', 65535);
+    const image_url = validateOptionalString(req.body.image_url, 'image_url', 1024);
     const rental_type = validateOptionalEnum(req.body.rental_type, 'rental_type', ['rentable', 'consumable', 'service']) ?? undefined;
     const status = validateOptionalEnum(req.body.status, 'status', ['active', 'archived', 'draft']) ?? undefined;
 
@@ -53,6 +56,7 @@ export const updateProduct = async (req: Request, res: Response, next: NextFunct
       category_id,
       name,
       description,
+      image_url,
       rental_type,
       status
     });

@@ -3,6 +3,8 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { apiClient } from '../../api/client';
 import { VariantConfigureModal } from '../../components/store/VariantConfigureModal';
 import { ProductImage, ProductCardImage } from '../../components/store/ProductImage';
+import { HeartIcon } from '@heroicons/react/24/outline';
+import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
 
 interface Product {
   id: string;
@@ -117,6 +119,7 @@ export const ProductDetail = () => {
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [cartStatus, setCartStatus] = useState<'idle' | 'adding' | 'success'>('idle');
+  const [isWishlisted, setIsWishlisted] = useState(false);
   
   // Selection States
   const [quantity, setQuantity] = useState(1);
@@ -156,6 +159,14 @@ export const ProductDetail = () => {
           setVariants(MOCK_VARIANTS[id || ''] || []);
         }
 
+        try {
+          const wData = await apiClient.get('/storefront/wishlist');
+          const wIds = (wData as any).data?.data || [];
+          setIsWishlisted(wIds.includes(id));
+        } catch {
+          // ignore wishlist errors
+        }
+
       } catch (err: any) {
         setError(err.message || 'Failed to load product details');
       } finally {
@@ -185,6 +196,20 @@ export const ProductDetail = () => {
     
     setValidationError('');
     return true;
+  };
+
+  const toggleWishlist = async () => {
+    try {
+      if (isWishlisted) {
+        await apiClient.delete(`/storefront/wishlist/${id}`);
+        setIsWishlisted(false);
+      } else {
+        await apiClient.post('/storefront/wishlist', { product_id: id });
+        setIsWishlisted(true);
+      }
+    } catch (err) {
+      console.error('Error toggling wishlist', err);
+    }
   };
 
   const handleAddToCart = () => {
@@ -279,6 +304,19 @@ export const ProductDetail = () => {
           <div className="w-80 h-80 flex items-center justify-center">
             <ProductCardImage imageUrl={product.image_url} sku={product.sku || ''} alt={product.name} />
           </div>
+          <div className="absolute top-6 right-6 z-10">
+            <button
+              onClick={toggleWishlist}
+              className="p-3 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:scale-110 transition-transform"
+              title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+            >
+              {isWishlisted ? (
+                <HeartIconSolid className="w-6 h-6 text-red-500" />
+              ) : (
+                <HeartIcon className="w-6 h-6 text-gray-500 hover:text-red-500" />
+              )}
+            </button>
+          </div>
           <div className="absolute bottom-6 flex gap-3">
              <div className="w-16 h-16 rounded-lg bg-white border-2 border-brand-500 cursor-pointer overflow-hidden flex items-center justify-center">
                <ProductImage sku={product.sku || ''} className="w-10 h-10 object-contain" />
@@ -295,7 +333,7 @@ export const ProductDetail = () => {
             <span className="font-mono text-sm">{product.sku || 'SKU-BASE-001'}</span>
           </p>
           
-          <div className="mb-10 bg-gray-100/50 p-6 rounded-xl border border-gray-300/50">
+          <div className="mb-10 bg-gray-100 p-6 rounded-xl border border-gray-300">
             <p className="text-sm text-gray-500 uppercase tracking-wider mb-1 font-semibold">Rental Rate</p>
             <p className="text-5xl font-bold text-brand-400">
               $150.00<span className="text-xl font-medium text-gray-500"> / day</span>

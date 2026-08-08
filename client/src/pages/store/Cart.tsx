@@ -129,27 +129,27 @@ export const Cart = () => {
 
                     <div className="mt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                       {/* Quantity Controls */}
-                      <div className="flex items-center border border-gray-300 w-28 rounded-lg overflow-hidden bg-gray-50 h-10">
+                      <div className="flex items-center border border-gray-300 w-32 rounded-lg overflow-hidden bg-gray-50 h-10">
                         <button 
                           type="button"
                           onClick={() => updateQuantity(idx, item.quantity - 1)} 
                           disabled={item.quantity <= 1}
-                          className="w-8 h-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-extrabold transition-colors disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center border-r border-gray-200"
+                          className="w-10 h-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-extrabold transition-colors disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center border-r border-gray-200"
                         >
-                          -
+                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" /></svg>
                         </button>
                         <input 
                           type="text" 
                           value={item.quantity} 
                           readOnly 
-                          className="flex-1 text-center bg-white border-gray-300 p-0 focus:ring-0 text-sm font-bold text-gray-900 select-none pointer-events-none" 
+                          className="flex-1 w-full text-center bg-white border-none p-0 focus:ring-0 text-sm font-bold text-gray-900 select-none pointer-events-none" 
                         />
                         <button 
                           type="button"
                           onClick={() => updateQuantity(idx, item.quantity + 1)} 
-                          className="w-8 h-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-extrabold transition-colors flex items-center justify-center border-l border-gray-200"
+                          className="w-10 h-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-extrabold transition-colors flex items-center justify-center border-l border-gray-200"
                         >
-                          +
+                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
                         </button>
                       </div>
 

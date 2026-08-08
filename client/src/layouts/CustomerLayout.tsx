@@ -113,7 +113,7 @@ export const CustomerLayout = () => {
                 <MagnifyingGlassIcon className="h-6 w-6" />
               </button>
               
-              <Link to="/store" className="text-gray-500 hover:text-pink-500 transition-colors">
+              <Link to="/store/wishlist" className="text-gray-500 hover:text-pink-500 transition-colors">
                 <HeartIcon className="h-6 w-6" />
               </Link>
               

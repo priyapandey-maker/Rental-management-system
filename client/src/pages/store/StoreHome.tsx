@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { apiClient } from '../../api/client';
 import { ProductImage, ProductCardImage } from '../../components/store/ProductImage';
+import { HeartIcon } from '@heroicons/react/24/outline';
+import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
 
 interface Product {
   id: string;
@@ -110,6 +112,7 @@ export const StoreHome = () => {
   const [searchParams] = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [wishlistIds, setWishlistIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -123,9 +126,10 @@ export const StoreHome = () => {
       setLoading(true);
       setError(null);
       
-      const [productsRes, categoriesRes] = await Promise.all([
+      const [productsRes, categoriesRes, wishlistRes] = await Promise.all([
         apiClient.get('/storefront/products'),
-        apiClient.get('/storefront/categories')
+        apiClient.get('/storefront/categories'),
+        apiClient.get('/storefront/wishlist').catch(() => ({ data: { data: [] } }))
       ]);
 
       const productsData = productsRes as unknown as Product[];
@@ -136,6 +140,9 @@ export const StoreHome = () => {
       );
       setProducts(activeProducts.length > 0 ? activeProducts : MOCK_PRODUCTS);
       setCategories(categoriesData.length > 0 ? categoriesData : MOCK_CATEGORIES);
+      
+      const wishlistData = (wishlistRes as any).data?.data || [];
+      setWishlistIds(new Set(wishlistData));
     } catch (err: any) {
       console.warn("Backend API offline. Falling back to storefront simulation data.");
       setProducts(MOCK_PRODUCTS);
@@ -153,6 +160,29 @@ export const StoreHome = () => {
     setSearchQuery('');
     setSelectedCategoryId('all');
     setSortBy('recommended');
+  };
+
+  const toggleWishlist = async (e: React.MouseEvent, productId: string) => {
+    e.preventDefault();
+    try {
+      if (wishlistIds.has(productId)) {
+        await apiClient.delete(`/storefront/wishlist/${productId}`);
+        setWishlistIds(prev => {
+          const next = new Set(prev);
+          next.delete(productId);
+          return next;
+        });
+      } else {
+        await apiClient.post('/storefront/wishlist', { product_id: productId });
+        setWishlistIds(prev => {
+          const next = new Set(prev);
+          next.add(productId);
+          return next;
+        });
+      }
+    } catch (err) {
+      console.error('Error toggling wishlist', err);
+    }
   };
 
   // Filter and sort computation
@@ -323,6 +353,17 @@ export const StoreHome = () => {
                   {/* Stable Aspect-Ratio Image Container */}
                   <div className="aspect-video bg-gray-50 flex items-center justify-center border-b border-gray-200/50 overflow-hidden relative">
                     <ProductCardImage imageUrl={product.image_url} sku={product.sku} alt={product.name} />
+                    <button
+                      onClick={(e) => toggleWishlist(e, product.id)}
+                      className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-sm hover:scale-110 transition-transform z-10"
+                      title={wishlistIds.has(product.id) ? "Remove from wishlist" : "Add to wishlist"}
+                    >
+                      {wishlistIds.has(product.id) ? (
+                        <HeartIconSolid className="w-5 h-5 text-red-500" />
+                      ) : (
+                        <HeartIcon className="w-5 h-5 text-gray-500 hover:text-red-500" />
+                      )}
+                    </button>
                   </div>
 
                   <div className="p-5 flex-1 flex flex-col space-y-4">

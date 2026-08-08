@@ -8,6 +8,7 @@ export interface ProductInsert {
   name: string;
   sku: string;
   description: string | null;
+  image_url?: string | null;
   rental_type: 'rentable' | 'consumable' | 'service';
   status: 'active' | 'archived' | 'draft';
 }
@@ -23,8 +24,8 @@ export class ProductRepository extends BaseRepository {
     connection?: QueryConnection
   ): Promise<void> {
     const sql = `
-      INSERT INTO products (id, organization_id, category_id, name, sku, description, rental_type, status)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO products (id, organization_id, category_id, name, sku, description, image_url, rental_type, status)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     await this.query<ResultSetHeader>(
       sql,
@@ -35,6 +36,7 @@ export class ProductRepository extends BaseRepository {
         product.name,
         product.sku,
         product.description,
+        product.image_url || null,
         product.rental_type,
         product.status
       ],
@@ -55,7 +57,7 @@ export class ProductRepository extends BaseRepository {
   async update(
     id: string,
     organizationId: string,
-    updates: Partial<Pick<ProductRow, 'name' | 'category_id' | 'description' | 'rental_type' | 'status'>>,
+    updates: Partial<Pick<ProductRow, 'name' | 'category_id' | 'description' | 'image_url' | 'rental_type' | 'status'>>,
     connection?: QueryConnection
   ): Promise<void> {
     const fields: string[] = [];

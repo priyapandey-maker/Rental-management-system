@@ -44,6 +44,7 @@ import * as fulfillmentController from '../controllers/fulfillment.controller';
 import * as returnController from '../controllers/return.controller';
 import * as inspectionController from '../controllers/inspection.controller';
 import * as adjustmentController from '../controllers/adjustment.controller';
+import * as wishlistController from '../controllers/wishlist.controller';
 
 // ============================================================
 // CUSTOMER STOREFRONT ROUTES
@@ -63,6 +64,11 @@ customerRouter.get('/rental-periods', pricingController.listRentalPeriods);
 customerRouter.get('/pricelists', pricingController.listPricelists);
 customerRouter.get('/pricelists/:id', pricingController.getPricelist);
 customerRouter.get('/pricelists/:id/items', pricingController.listPricelistItems);
+
+// Wishlist
+customerRouter.get('/wishlist', wishlistController.getWishlist);
+customerRouter.post('/wishlist', wishlistController.addWishlist);
+customerRouter.delete('/wishlist/:productId', wishlistController.removeWishlist);
 
 appRouter.use('/storefront', customerRouter);
 

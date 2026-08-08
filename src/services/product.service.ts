@@ -16,6 +16,7 @@ export class ProductService {
       name: string;
       sku: string;
       description?: string | null;
+      image_url?: string | null;
       rental_type?: 'rentable' | 'consumable' | 'service';
       status?: 'active' | 'archived' | 'draft';
     }
@@ -38,6 +39,7 @@ export class ProductService {
       name: data.name,
       sku: data.sku,
       description: data.description ?? null,
+      image_url: data.image_url ?? null,
       rental_type: data.rental_type ?? 'rentable',
       status: data.status ?? 'active'
     };
@@ -65,6 +67,7 @@ export class ProductService {
       category_id?: string;
       name?: string;
       description?: string | null;
+      image_url?: string | null;
       rental_type?: 'rentable' | 'consumable' | 'service';
       status?: 'active' | 'archived' | 'draft';
     }

@@ -35,6 +35,7 @@ import { Cart } from './pages/store/Cart';
 import { CheckoutAddress } from './pages/store/CheckoutAddress';
 import { Payment } from './pages/store/Payment';
 import { OrderSuccess } from './pages/store/OrderSuccess';
+import { Wishlist } from './pages/store/Wishlist';
 
 // Vendor Pages
 import { VendorDashboard } from './pages/vendor/VendorDashboard';
@@ -86,6 +87,7 @@ function App() {
             <Route path="delivery" element={<CheckoutAddress />} />
             <Route path="payment" element={<Payment />} />
             <Route path="success" element={<OrderSuccess />} />
+            <Route path="wishlist" element={<Wishlist />} />
           </Route>
 
           {/* ──────────────────────────────────────────────────────
