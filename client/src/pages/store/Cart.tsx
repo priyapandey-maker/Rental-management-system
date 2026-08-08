@@ -129,10 +129,28 @@ export const Cart = () => {
 
                     <div className="mt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                       {/* Quantity Controls */}
-                      <div className="flex items-center border border-gray-700 w-32 rounded-lg overflow-hidden bg-gray-950 h-10">
-                        <button onClick={() => updateQuantity(idx, item.quantity - 1)} className="w-10 bg-gray-800 hover:bg-gray-700 text-gray-300 font-bold transition-colors">-</button>
-                        <input type="number" value={item.quantity} readOnly className="flex-1 text-center bg-transparent border-none p-0 focus:ring-0 text-sm font-bold text-white" />
-                        <button onClick={() => updateQuantity(idx, item.quantity + 1)} className="w-10 bg-gray-800 hover:bg-gray-700 text-gray-300 font-bold transition-colors">+</button>
+                      <div className="flex items-center border border-gray-700 w-28 rounded-lg overflow-hidden bg-gray-950 h-10">
+                        <button 
+                          type="button"
+                          onClick={() => updateQuantity(idx, item.quantity - 1)} 
+                          disabled={item.quantity <= 1}
+                          className="w-8 h-full bg-gray-800 hover:bg-gray-700 text-gray-300 font-extrabold transition-colors disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center border-r border-gray-800"
+                        >
+                          -
+                        </button>
+                        <input 
+                          type="text" 
+                          value={item.quantity} 
+                          readOnly 
+                          className="flex-1 text-center bg-transparent border-none p-0 focus:ring-0 text-sm font-bold text-white select-none pointer-events-none" 
+                        />
+                        <button 
+                          type="button"
+                          onClick={() => updateQuantity(idx, item.quantity + 1)} 
+                          className="w-8 h-full bg-gray-800 hover:bg-gray-700 text-gray-300 font-extrabold transition-colors flex items-center justify-center border-l border-gray-800"
+                        >
+                          +
+                        </button>
                       </div>
 
                       <div className="flex space-x-4">
