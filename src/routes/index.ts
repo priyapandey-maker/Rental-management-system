@@ -86,6 +86,12 @@ tenantRouter.post('/late-fee-rules', rentalConfigController.createLateFeeRule);
 tenantRouter.get('/late-fee-rules/:id', rentalConfigController.getLateFeeRule);
 tenantRouter.get('/late-fee-rules', rentalConfigController.listLateFeeRules);
 
+import * as allocationController from '../controllers/allocation.controller';
+import * as fulfillmentController from '../controllers/fulfillment.controller';
+import * as returnController from '../controllers/return.controller';
+import * as inspectionController from '../controllers/inspection.controller';
+import * as adjustmentController from '../controllers/adjustment.controller';
+
 // Transactions
 tenantRouter.post('/transactions', transactionController.createTransaction);
 tenantRouter.get('/transactions', transactionController.listTransactions);
@@ -93,6 +99,32 @@ tenantRouter.get('/transactions/:id', transactionController.getTransaction);
 tenantRouter.post('/transactions/:id/lines', transactionController.addTransactionLine);
 tenantRouter.post('/transactions/:id/confirm', transactionController.confirmTransaction);
 tenantRouter.post('/transactions/:id/cancel', transactionController.cancelTransaction);
+
+// Allocations
+tenantRouter.post('/allocations', allocationController.createAllocation);
+tenantRouter.get('/allocations/:id', allocationController.getAllocation);
+tenantRouter.get('/allocations/transaction-lines/:lineId', allocationController.listAllocations);
+
+// Fulfillments
+tenantRouter.post('/fulfillments', fulfillmentController.createFulfillment);
+tenantRouter.get('/fulfillments/:id', fulfillmentController.getFulfillment);
+tenantRouter.get('/fulfillments/transactions/:txId', fulfillmentController.getFulfillmentByTx);
+
+// Returns
+tenantRouter.post('/returns', returnController.createReturn);
+tenantRouter.get('/returns/:id', returnController.getReturn);
+tenantRouter.get('/returns/transactions/:txId', returnController.getReturnByTx);
+
+// Inspections
+tenantRouter.post('/inspections', inspectionController.createInspection);
+tenantRouter.get('/inspections/:id', inspectionController.getInspection);
+tenantRouter.get('/inspections/returns/:returnId', inspectionController.listInspections);
+
+// Adjustments
+tenantRouter.post('/adjustments', adjustmentController.createAdjustment);
+tenantRouter.get('/adjustments/:id', adjustmentController.getAdjustment);
+tenantRouter.get('/adjustments/transactions/:txId', adjustmentController.listAdjustments);
+tenantRouter.put('/adjustments/:id/status', adjustmentController.updateStatus);
 
 appRouter.use(tenantRouter);
 

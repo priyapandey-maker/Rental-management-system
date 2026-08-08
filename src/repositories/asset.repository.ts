@@ -72,4 +72,14 @@ export class AssetRepository extends BaseRepository {
     const sql = `SELECT * FROM assets WHERE organization_id = ? ORDER BY asset_tag ASC`;
     return this.query<AssetRow[]>(sql, [organizationId], connection);
   }
+
+  async updateLifecycleStatus(id: string, orgId: string, status: string, connection?: QueryConnection): Promise<void> {
+    const sql = `UPDATE assets SET lifecycle_status = ? WHERE id = ? AND organization_id = ?`;
+    await this.query<ResultSetHeader>(sql, [status, id, orgId], connection);
+  }
+
+  async updateConditionStatus(id: string, orgId: string, status: string, connection?: QueryConnection): Promise<void> {
+    const sql = `UPDATE assets SET condition_status = ? WHERE id = ? AND organization_id = ?`;
+    await this.query<ResultSetHeader>(sql, [status, id, orgId], connection);
+  }
 }
