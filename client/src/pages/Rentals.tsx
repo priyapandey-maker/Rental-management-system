@@ -170,7 +170,7 @@ export const Rentals = () => {
         </div>
         <button
           onClick={fetchData}
-          className="p-2 text-gray-400 hover:text-indigo-600 rounded-lg border border-gray-200 bg-white shadow-sm"
+          className="p-2 text-gray-400 hover:text-brand-600 rounded-lg border border-gray-200 bg-white shadow-sm"
           title="Refresh operations"
         >
           <ArrowPathIcon className="h-5 w-5" />
@@ -202,7 +202,7 @@ export const Rentals = () => {
               <select
                 value={selectedCustomerId}
                 onChange={(e) => setSelectedCustomerId(e.target.value)}
-                className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2.5 px-3 focus:ring-indigo-500 focus:border-indigo-500 text-sm shadow-inner"
+                className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2.5 px-3 focus:ring-brand-500 focus:border-brand-500 text-sm shadow-inner"
                 disabled={creating}
               >
                 <option value="">-- Choose Customer --</option>
@@ -216,7 +216,7 @@ export const Rentals = () => {
 
             <button
               type="submit"
-              className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-sm font-bold rounded-lg transition-colors flex justify-center items-center shadow"
+              className="w-full py-2.5 bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white text-sm font-bold rounded-lg transition-colors flex justify-center items-center shadow"
               disabled={creating}
             >
               {creating ? 'Starting...' : 'Create Draft Contract'}
@@ -235,13 +235,13 @@ export const Rentals = () => {
                 placeholder="Search by customer or contract ID..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="bg-white border border-gray-300 text-gray-900 rounded-lg py-1.5 px-3 text-xs w-full sm:w-64 focus:ring-indigo-500 focus:border-indigo-500"
+                className="bg-white border border-gray-300 text-gray-900 rounded-lg py-1.5 px-3 text-xs w-full sm:w-64 focus:ring-brand-500 focus:border-brand-500"
               />
             </div>
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="bg-white border border-gray-300 text-gray-900 rounded-lg py-1.5 px-3 text-xs w-full sm:w-40 focus:ring-indigo-500 focus:border-indigo-500"
+              className="bg-white border border-gray-300 text-gray-900 rounded-lg py-1.5 px-3 text-xs w-full sm:w-40 focus:ring-brand-500 focus:border-brand-500"
             >
               <option value="">All Statuses</option>
               <option value="DRAFT">Draft</option>
@@ -254,7 +254,7 @@ export const Rentals = () => {
 
           {loading ? (
             <div className="p-12 text-center text-gray-500">
-              <svg className="animate-spin h-8 w-8 mx-auto mb-4 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+              <svg className="animate-spin h-8 w-8 mx-auto mb-4 text-brand-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
               <span>Loading rentals operational queue...</span>
             </div>
           ) : error ? (
@@ -262,7 +262,7 @@ export const Rentals = () => {
               <p className="text-red-600 font-medium mb-4">Error: {error}</p>
               <button 
                 onClick={fetchData}
-                className="px-5 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-500 transition-colors"
+                className="px-5 py-2 bg-brand-600 text-white text-sm font-semibold rounded-lg hover:bg-brand-500 transition-colors"
               >
                 Retry Request
               </button>
@@ -308,7 +308,7 @@ export const Rentals = () => {
                           {prodName ? (
                             <>
                               <div className="text-sm font-semibold text-gray-900">{prodName}</div>
-                              <div className="text-xs text-indigo-600 font-medium">
+                              <div className="text-xs text-brand-600 font-medium">
                                 {varName} {tx.lines && tx.lines.length > 1 ? `(+${tx.lines.length - 1} other)` : ''}
                               </div>
                             </>
@@ -321,7 +321,7 @@ export const Rentals = () => {
                             tx.status === 'ACTIVE' 
                               ? 'bg-purple-50 text-purple-700 border-purple-200' 
                               : tx.status === 'CONFIRMED' 
-                                ? 'bg-blue-50 text-blue-700 border-blue-200' 
+                                ? 'bg-brand-50 text-brand-700 border-brand-200' 
                                 : tx.status === 'COMPLETED' 
                                   ? 'bg-green-50 text-green-700 border-green-200' 
                                   : tx.status === 'CANCELLED'
@@ -334,7 +334,7 @@ export const Rentals = () => {
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-semibold">
                           <Link 
                             to={detailsLink} 
-                            className="inline-flex items-center text-indigo-600 hover:text-indigo-900 transition-colors"
+                            className="inline-flex items-center text-brand-600 hover:text-brand-900 transition-colors"
                           >
                             Manage &rarr;
                           </Link>

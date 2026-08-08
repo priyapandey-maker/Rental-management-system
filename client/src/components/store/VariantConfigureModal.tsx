@@ -63,7 +63,7 @@ export const VariantConfigureModal: React.FC<VariantConfigureModalProps> = ({ is
                     !isAvailable 
                       ? 'border-gray-200 bg-white/50 opacity-60 cursor-not-allowed' 
                       : isSelected 
-                        ? 'border-blue-500 bg-blue-900/20 shadow-[0_0_15px_rgba(59,130,246,0.1)] cursor-pointer' 
+                        ? 'border-brand-500 bg-brand-900/20 shadow-[0_0_15px_rgba(59,130,246,0.1)] cursor-pointer' 
                         : 'border-gray-200 bg-gray-100/50 hover:bg-gray-100 hover:border-gray-300 cursor-pointer'
                   }`}
                 >
@@ -75,7 +75,7 @@ export const VariantConfigureModal: React.FC<VariantConfigureModalProps> = ({ is
                       checked={isSelected}
                       disabled={!isAvailable}
                       onChange={() => setSelectedVariant(variant.id)}
-                      className="focus:ring-blue-500 h-4 w-4 text-blue-600 bg-white border-gray-300 cursor-pointer disabled:cursor-not-allowed"
+                      className="focus:ring-brand-500 h-4 w-4 text-brand-600 bg-white border-gray-300 cursor-pointer disabled:cursor-not-allowed"
                     />
                   </div>
                   <div className="ml-4 flex-1 flex items-center">
@@ -116,7 +116,7 @@ export const VariantConfigureModal: React.FC<VariantConfigureModalProps> = ({ is
             disabled={!isValidSelection}
             className={`px-6 py-2.5 rounded-lg shadow text-sm font-bold transition-all ${
               isValidSelection 
-                ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-900/20' 
+                ? 'bg-brand-600 hover:bg-brand-500 text-white shadow-brand-900/20' 
                 : 'bg-gray-100 text-gray-500 cursor-not-allowed border border-gray-300'
             }`}
           >

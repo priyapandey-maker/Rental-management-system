@@ -213,7 +213,7 @@ export const Products = () => {
         </div>
         <button
           onClick={openCreateModal}
-          className="inline-flex items-center px-4 py-2.5 border border-transparent shadow-sm text-sm font-semibold rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+          className="inline-flex items-center px-4 py-2.5 border border-transparent shadow-sm text-sm font-semibold rounded-lg text-white bg-brand-600 hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition-colors"
         >
           <PlusIcon className="-ml-1 mr-2 h-5 w-5" />
           Add Product
@@ -230,7 +230,7 @@ export const Products = () => {
 
           {loading ? (
             <div className="p-12 text-center text-gray-500">
-              <svg className="animate-spin h-8 w-8 mx-auto mb-4 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+              <svg className="animate-spin h-8 w-8 mx-auto mb-4 text-brand-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
               <span>Loading products catalog...</span>
             </div>
           ) : error ? (
@@ -238,7 +238,7 @@ export const Products = () => {
               <p className="text-red-600 font-medium mb-4">Error: {error}</p>
               <button 
                 onClick={fetchProducts}
-                className="px-5 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-500 transition-colors"
+                className="px-5 py-2 bg-brand-600 text-white text-sm font-semibold rounded-lg hover:bg-brand-500 transition-colors"
               >
                 Retry Loading
               </button>
@@ -267,7 +267,7 @@ export const Products = () => {
                     return (
                       <tr 
                         key={p.id} 
-                        className={`hover:bg-gray-50 transition-colors cursor-pointer ${isSelected ? 'bg-indigo-50/50' : ''}`}
+                        className={`hover:bg-gray-50 transition-colors cursor-pointer ${isSelected ? 'bg-brand-50/50' : ''}`}
                         onClick={() => handleSelectProduct(p.id)}
                       >
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -283,7 +283,7 @@ export const Products = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm font-mono text-gray-700">{p.sku}</div>
-                          <div className="text-xs text-indigo-600 font-medium">{catName}</div>
+                          <div className="text-xs text-brand-600 font-medium">{catName}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide border ${
@@ -304,7 +304,7 @@ export const Products = () => {
                               e.stopPropagation();
                               openEditModal(p);
                             }}
-                            className="text-indigo-600 hover:text-indigo-900"
+                            className="text-brand-600 hover:text-brand-900"
                             title="Edit Product"
                           >
                             <PencilIcon className="h-4 w-4 inline" />
@@ -344,7 +344,7 @@ export const Products = () => {
             </div>
           ) : variantsLoading ? (
             <div className="text-center py-12 text-gray-400">
-              <svg className="animate-spin h-6 w-6 mx-auto mb-2 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+              <svg className="animate-spin h-6 w-6 mx-auto mb-2 text-brand-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
               <p className="text-xs">Loading physical variants...</p>
             </div>
           ) : variants.length === 0 ? (
@@ -398,7 +398,7 @@ export const Products = () => {
                   value={name} 
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. Professional Cinema Rig" 
-                  className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 text-sm shadow-inner"
+                  className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-brand-500 focus:border-brand-500 text-sm shadow-inner"
                   required
                 />
               </div>
@@ -411,7 +411,7 @@ export const Products = () => {
                     value={sku} 
                     onChange={(e) => setSku(e.target.value)}
                     placeholder="PROD-CAM-09" 
-                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 text-sm shadow-inner"
+                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-brand-500 focus:border-brand-500 text-sm shadow-inner"
                     required
                   />
                 </div>
@@ -420,7 +420,7 @@ export const Products = () => {
                   <select 
                     value={categoryId} 
                     onChange={(e) => setCategoryId(e.target.value)}
-                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-brand-500 focus:border-brand-500 text-sm"
                     required
                   >
                     {categories.map(c => (
@@ -437,7 +437,7 @@ export const Products = () => {
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Provide detail description about this rental package..." 
                   rows={3}
-                  className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 text-sm shadow-inner"
+                  className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-brand-500 focus:border-brand-500 text-sm shadow-inner"
                 />
               </div>
 
@@ -447,7 +447,7 @@ export const Products = () => {
                   <select 
                     value={rentalType} 
                     onChange={(e) => setRentalType(e.target.value as any)}
-                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-brand-500 focus:border-brand-500 text-sm"
                   >
                     <option value="rentable">Rentable</option>
                     <option value="consumable">Consumable</option>
@@ -459,7 +459,7 @@ export const Products = () => {
                   <select 
                     value={status} 
                     onChange={(e) => setStatus(e.target.value as any)}
-                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-brand-500 focus:border-brand-500 text-sm"
                   >
                     <option value="active">Active</option>
                     <option value="draft">Draft</option>
@@ -480,7 +480,7 @@ export const Products = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-indigo-600 text-white rounded-lg text-sm font-bold hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center shadow"
+                  className="px-5 py-2 bg-brand-600 text-white rounded-lg text-sm font-bold hover:bg-brand-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center shadow"
                   disabled={formSaving}
                 >
                   {formSaving ? (

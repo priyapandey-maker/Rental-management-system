@@ -90,12 +90,12 @@ export const CheckoutAddress = () => {
           {/* Delivery Method */}
           <section className="bg-gray-900 border border-gray-800 rounded-2xl p-8 shadow-xl">
             <h2 className="text-xl font-bold text-white mb-6 flex items-center">
-              <span className="w-8 h-8 rounded-full bg-blue-900/50 text-blue-400 flex items-center justify-center mr-3 text-sm border border-blue-800/50">1</span>
+              <span className="w-8 h-8 rounded-full bg-brand-900/50 text-brand-400 flex items-center justify-center mr-3 text-sm border border-brand-800/50">1</span>
               Delivery Method
             </h2>
             
             <div className="space-y-4">
-              <label className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-all ${deliveryMethod === 'standard' ? 'border-blue-500 bg-blue-900/20' : 'border-gray-700 bg-gray-800 hover:bg-gray-700'}`}>
+              <label className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-all ${deliveryMethod === 'standard' ? 'border-brand-500 bg-brand-900/20' : 'border-gray-700 bg-gray-800 hover:bg-gray-700'}`}>
                 <div className="flex items-center">
                   <input 
                     type="radio" 
@@ -103,14 +103,14 @@ export const CheckoutAddress = () => {
                     value="standard" 
                     checked={deliveryMethod === 'standard'}
                     onChange={() => setDeliveryMethod('standard')}
-                    className="focus:ring-blue-500 h-5 w-5 text-blue-600 bg-gray-900 border-gray-600"
+                    className="focus:ring-brand-500 h-5 w-5 text-brand-600 bg-gray-900 border-gray-600"
                   />
                   <span className="ml-4 font-medium text-gray-100">Standard Delivery</span>
                 </div>
                 <span className="text-gray-400 font-medium">+$15.00</span>
               </label>
 
-              <label className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-all ${deliveryMethod === 'pickup' ? 'border-blue-500 bg-blue-900/20' : 'border-gray-700 bg-gray-800 hover:bg-gray-700'}`}>
+              <label className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-all ${deliveryMethod === 'pickup' ? 'border-brand-500 bg-brand-900/20' : 'border-gray-700 bg-gray-800 hover:bg-gray-700'}`}>
                 <div className="flex items-center">
                   <input 
                     type="radio" 
@@ -118,11 +118,11 @@ export const CheckoutAddress = () => {
                     value="pickup" 
                     checked={deliveryMethod === 'pickup'}
                     onChange={() => setDeliveryMethod('pickup')}
-                    className="focus:ring-blue-500 h-5 w-5 text-blue-600 bg-gray-900 border-gray-600"
+                    className="focus:ring-brand-500 h-5 w-5 text-brand-600 bg-gray-900 border-gray-600"
                   />
                   <span className="ml-4 font-medium text-gray-100">Pick up from Store</span>
                 </div>
-                <span className="text-blue-400 font-bold uppercase text-xs tracking-wider">Free</span>
+                <span className="text-brand-400 font-bold uppercase text-xs tracking-wider">Free</span>
               </label>
             </div>
             {errors.deliveryMethod && <p className="mt-4 text-sm text-red-400 flex items-center"><svg className="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" /></svg>{errors.deliveryMethod}</p>}
@@ -132,13 +132,13 @@ export const CheckoutAddress = () => {
           <section className="bg-gray-900 border border-gray-800 rounded-2xl p-8 shadow-xl">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-bold text-white flex items-center">
-                <span className="w-8 h-8 rounded-full bg-blue-900/50 text-blue-400 flex items-center justify-center mr-3 text-sm border border-blue-800/50">2</span>
+                <span className="w-8 h-8 rounded-full bg-brand-900/50 text-brand-400 flex items-center justify-center mr-3 text-sm border border-brand-800/50">2</span>
                 Delivery Address
               </h2>
               {!isEditingDelivery && (
                 <button 
                   onClick={() => setIsEditingDelivery(true)}
-                  className="text-sm font-medium text-blue-400 hover:text-blue-300 transition-colors"
+                  className="text-sm font-medium text-brand-400 hover:text-brand-300 transition-colors"
                 >
                   Edit Address
                 </button>
@@ -149,24 +149,24 @@ export const CheckoutAddress = () => {
               <div className="space-y-4">
                 <div>
                   <label className="block text-xs font-medium text-gray-500 mb-1.5 uppercase tracking-wide">Full Name</label>
-                  <input type="text" value={deliveryName} onChange={e => setDeliveryName(e.target.value)} className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" />
+                  <input type="text" value={deliveryName} onChange={e => setDeliveryName(e.target.value)} className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm" />
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-500 mb-1.5 uppercase tracking-wide">Street Address</label>
-                  <input type="text" value={deliveryStreet} onChange={e => setDeliveryStreet(e.target.value)} className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" />
+                  <input type="text" value={deliveryStreet} onChange={e => setDeliveryStreet(e.target.value)} className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-medium text-gray-500 mb-1.5 uppercase tracking-wide">City</label>
-                    <input type="text" value={deliveryCity} onChange={e => setDeliveryCity(e.target.value)} className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" />
+                    <input type="text" value={deliveryCity} onChange={e => setDeliveryCity(e.target.value)} className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm" />
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-500 mb-1.5 uppercase tracking-wide">Postal / ZIP</label>
-                    <input type="text" value={deliveryZip} onChange={e => setDeliveryZip(e.target.value)} className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" />
+                    <input type="text" value={deliveryZip} onChange={e => setDeliveryZip(e.target.value)} className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm" />
                   </div>
                 </div>
                 <div className="flex justify-end pt-4">
-                  <button onClick={() => setIsEditingDelivery(false)} className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold rounded-lg transition-colors">
+                  <button onClick={() => setIsEditingDelivery(false)} className="px-5 py-2.5 bg-brand-600 hover:bg-brand-500 text-white text-sm font-bold rounded-lg transition-colors">
                     Save Address
                   </button>
                 </div>
@@ -184,7 +184,7 @@ export const CheckoutAddress = () => {
           {/* Billing Address */}
           <section className="bg-gray-900 border border-gray-800 rounded-2xl p-8 shadow-xl">
             <h2 className="text-xl font-bold text-white mb-6 flex items-center">
-              <span className="w-8 h-8 rounded-full bg-blue-900/50 text-blue-400 flex items-center justify-center mr-3 text-sm border border-blue-800/50">3</span>
+              <span className="w-8 h-8 rounded-full bg-brand-900/50 text-brand-400 flex items-center justify-center mr-3 text-sm border border-brand-800/50">3</span>
               Billing Address
             </h2>
             
@@ -193,7 +193,7 @@ export const CheckoutAddress = () => {
                 type="checkbox" 
                 checked={useSameBilling}
                 onChange={() => setUseSameBilling(!useSameBilling)}
-                className="rounded border-gray-600 bg-gray-900 text-blue-600 focus:ring-blue-500 h-5 w-5 transition-colors"
+                className="rounded border-gray-600 bg-gray-900 text-brand-600 focus:ring-brand-500 h-5 w-5 transition-colors"
               />
               <span className="ml-3 font-medium text-gray-300 group-hover:text-white transition-colors">Use same as Delivery Address</span>
             </label>
@@ -202,20 +202,20 @@ export const CheckoutAddress = () => {
               <div className="space-y-4 pt-4 border-t border-gray-800">
                 <div>
                   <label className="block text-xs font-medium text-gray-500 mb-1.5 uppercase tracking-wide">Full Name</label>
-                  <input type="text" value={billingName} onChange={e => setBillingName(e.target.value)} className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" />
+                  <input type="text" value={billingName} onChange={e => setBillingName(e.target.value)} className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm" />
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-500 mb-1.5 uppercase tracking-wide">Street Address</label>
-                  <input type="text" value={billingStreet} onChange={e => setBillingStreet(e.target.value)} className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" />
+                  <input type="text" value={billingStreet} onChange={e => setBillingStreet(e.target.value)} className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-medium text-gray-500 mb-1.5 uppercase tracking-wide">City</label>
-                    <input type="text" value={billingCity} onChange={e => setBillingCity(e.target.value)} className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" />
+                    <input type="text" value={billingCity} onChange={e => setBillingCity(e.target.value)} className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm" />
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-500 mb-1.5 uppercase tracking-wide">Postal / ZIP</label>
-                    <input type="text" value={billingZip} onChange={e => setBillingZip(e.target.value)} className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" />
+                    <input type="text" value={billingZip} onChange={e => setBillingZip(e.target.value)} className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm" />
                   </div>
                 </div>
               </div>
@@ -230,7 +230,7 @@ export const CheckoutAddress = () => {
             </Link>
             <button 
               onClick={handleContinue}
-              className="px-8 py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg transition-colors flex items-center"
+              className="px-8 py-3.5 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-xl shadow-lg transition-colors flex items-center"
             >
               Continue to Payment
               <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
@@ -267,7 +267,7 @@ export const CheckoutAddress = () => {
               </div>
               <div className="border-t border-gray-800 pt-4 flex justify-between items-center">
                 <span className="text-base font-bold text-gray-300">Total</span>
-                <span className="text-2xl font-bold text-blue-400">${total.toFixed(2)}</span>
+                <span className="text-2xl font-bold text-brand-400">${total.toFixed(2)}</span>
               </div>
             </div>
           </div>

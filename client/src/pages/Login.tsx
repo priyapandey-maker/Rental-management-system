@@ -120,8 +120,8 @@ export const Login = () => {
   };
 
   const tabColor = {
-    customer: 'border-blue-500 text-blue-400',
-    vendor: 'border-indigo-500 text-indigo-400',
+    customer: 'border-brand-500 text-brand-400',
+    vendor: 'border-brand-500 text-brand-400',
     admin: 'border-gray-400 text-gray-700',
   }[activeTab];
 
@@ -179,7 +179,7 @@ export const Login = () => {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="block w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-gray-900 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:text-sm transition-colors"
+              className="block w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-gray-900 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent sm:text-sm transition-colors"
               placeholder="Enter your email"
             />
           </div>
@@ -189,7 +189,7 @@ export const Login = () => {
               <label htmlFor="password" className="block text-xs font-bold text-gray-500 uppercase tracking-wide">
                 Password
               </label>
-              <Link to="/forgot-password" className="text-xs font-bold text-blue-500 hover:text-blue-400 transition-colors">
+              <Link to="/forgot-password" className="text-xs font-bold text-brand-500 hover:text-brand-400 transition-colors">
                 Forgot Password?
               </Link>
             </div>
@@ -199,7 +199,7 @@ export const Login = () => {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="block w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-gray-900 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:text-sm transition-colors"
+              className="block w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-gray-900 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent sm:text-sm transition-colors"
               placeholder="Enter your password"
             />
           </div>
@@ -208,7 +208,7 @@ export const Login = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-sm font-bold text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-sm font-bold text-white bg-brand-600 hover:bg-brand-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {isSubmitting ? 'Signing In...' : `Sign In as ${ROLE_LABELS[activeTab].label}`}
             </button>
@@ -220,7 +220,7 @@ export const Login = () => {
           {activeTab === 'customer' && (
             <div>
               <span className="text-gray-500">Don't have an account? </span>
-              <Link to="/signup" className="font-bold text-blue-500 hover:text-blue-400 transition-colors">
+              <Link to="/signup" className="font-bold text-brand-500 hover:text-brand-400 transition-colors">
                 Register as Customer
               </Link>
             </div>
@@ -228,7 +228,7 @@ export const Login = () => {
           {activeTab === 'vendor' && (
             <div>
               <span className="text-gray-500">New vendor? </span>
-              <Link to="/vendor-signup" className="font-bold text-indigo-400 hover:text-indigo-300 transition-colors">
+              <Link to="/vendor-signup" className="font-bold text-brand-400 hover:text-brand-300 transition-colors">
                 Register as Vendor
               </Link>
             </div>

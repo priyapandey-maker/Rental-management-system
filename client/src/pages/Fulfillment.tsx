@@ -69,7 +69,7 @@ export const Fulfillment = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <Link to={`/rentals/${tx.id}`} className="text-blue-600 hover:text-blue-900 flex justify-end items-center">
+                    <Link to={`/rentals/${tx.id}`} className="text-brand-600 hover:text-brand-900 flex justify-end items-center">
                       Manage Handoff <span aria-hidden="true" className="ml-1">&rarr;</span>
                     </Link>
                   </td>

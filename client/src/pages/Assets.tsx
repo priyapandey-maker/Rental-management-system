@@ -227,7 +227,7 @@ export const Assets = () => {
         </div>
         <button
           onClick={openCreateModal}
-          className="inline-flex items-center px-4 py-2.5 border border-transparent shadow-sm text-sm font-semibold rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors animate-in fade-in"
+          className="inline-flex items-center px-4 py-2.5 border border-transparent shadow-sm text-sm font-semibold rounded-lg text-white bg-brand-600 hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition-colors animate-in fade-in"
         >
           <PlusIcon className="-ml-1 mr-2 h-5 w-5" />
           Add Asset Item
@@ -243,7 +243,7 @@ export const Assets = () => {
 
         {loading ? (
           <div className="p-12 text-center text-gray-500">
-            <svg className="animate-spin h-8 w-8 mx-auto mb-4 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+            <svg className="animate-spin h-8 w-8 mx-auto mb-4 text-brand-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
             <span>Loading asset items...</span>
           </div>
         ) : error ? (
@@ -251,7 +251,7 @@ export const Assets = () => {
             <p className="text-red-600 font-medium mb-4">Error: {error}</p>
             <button 
               onClick={fetchAssetsAndRelations}
-              className="px-5 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-500 transition-colors"
+              className="px-5 py-2 bg-brand-600 text-white text-sm font-semibold rounded-lg hover:bg-brand-500 transition-colors"
             >
               Retry Loading
             </button>
@@ -286,7 +286,7 @@ export const Assets = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-semibold text-gray-900">{rel.productName}</div>
-                        <div className="text-xs text-indigo-600 font-medium">{rel.variantName}</div>
+                        <div className="text-xs text-brand-600 font-medium">{rel.variantName}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2 py-0.5 inline-flex text-[10px] leading-5 font-bold rounded uppercase border ${
@@ -319,7 +319,7 @@ export const Assets = () => {
                         <button
                           type="button"
                           onClick={() => openEditModal(a)}
-                          className="text-indigo-600 hover:text-indigo-900"
+                          className="text-brand-600 hover:text-brand-900"
                         >
                           <PencilIcon className="h-4 w-4 inline" />
                         </button>
@@ -371,7 +371,7 @@ export const Assets = () => {
                 <select 
                   value={productVariantId} 
                   onChange={(e) => setProductVariantId(e.target.value)}
-                  className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 text-sm shadow-inner"
+                  className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-brand-500 focus:border-brand-500 text-sm shadow-inner"
                   required
                   disabled={formType === 'edit'}
                 >
@@ -393,7 +393,7 @@ export const Assets = () => {
                     value={assetTag} 
                     onChange={(e) => setAssetTag(e.target.value)}
                     placeholder="e.g. CAM-RIG-001" 
-                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 text-sm shadow-inner"
+                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-brand-500 focus:border-brand-500 text-sm shadow-inner"
                     required
                   />
                 </div>
@@ -404,7 +404,7 @@ export const Assets = () => {
                     value={serialNumber} 
                     onChange={(e) => setSerialNumber(e.target.value)}
                     placeholder="e.g. SN-871629831" 
-                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 text-sm shadow-inner"
+                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-brand-500 focus:border-brand-500 text-sm shadow-inner"
                   />
                 </div>
               </div>
@@ -417,7 +417,7 @@ export const Assets = () => {
                     value={qrCode} 
                     onChange={(e) => setQrCode(e.target.value)}
                     placeholder="e.g. QR-CAM-RIG-01" 
-                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 text-sm shadow-inner"
+                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-brand-500 focus:border-brand-500 text-sm shadow-inner"
                   />
                 </div>
                 <div>
@@ -427,7 +427,7 @@ export const Assets = () => {
                     value={locationField} 
                     onChange={(e) => setLocationField(e.target.value)}
                     placeholder="e.g. Warehouse 1, Shelf B2" 
-                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 text-sm shadow-inner"
+                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-brand-500 focus:border-brand-500 text-sm shadow-inner"
                   />
                 </div>
               </div>
@@ -439,7 +439,7 @@ export const Assets = () => {
                     type="date" 
                     value={acquisitionDate} 
                     onChange={(e) => setAcquisitionDate(e.target.value)}
-                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-brand-500 focus:border-brand-500 text-sm"
                   />
                 </div>
                 <div>
@@ -451,7 +451,7 @@ export const Assets = () => {
                     placeholder="0.00"
                     min="0"
                     step="0.01"
-                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 text-sm shadow-inner"
+                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-brand-500 focus:border-brand-500 text-sm shadow-inner"
                   />
                 </div>
               </div>
@@ -462,7 +462,7 @@ export const Assets = () => {
                   <select 
                     value={conditionStatus} 
                     onChange={(e) => setConditionStatus(e.target.value as any)}
-                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-brand-500 focus:border-brand-500 text-sm"
                   >
                     <option value="NEW">New</option>
                     <option value="GOOD">Good</option>
@@ -476,7 +476,7 @@ export const Assets = () => {
                   <select 
                     value={lifecycleStatus} 
                     onChange={(e) => setLifecycleStatus(e.target.value as any)}
-                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-brand-500 focus:border-brand-500 text-sm"
                   >
                     <option value="AVAILABLE">Available</option>
                     <option value="RESERVED">Reserved</option>
@@ -502,7 +502,7 @@ export const Assets = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-indigo-600 text-white rounded-lg text-sm font-bold hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center shadow"
+                  className="px-5 py-2 bg-brand-600 text-white rounded-lg text-sm font-bold hover:bg-brand-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center shadow"
                   disabled={formSaving}
                 >
                   {formSaving ? (

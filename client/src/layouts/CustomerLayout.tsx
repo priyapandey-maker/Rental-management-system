@@ -42,7 +42,7 @@ export const CustomerLayout = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+        <div className="w-10 h-10 border-4 border-brand-600 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -79,17 +79,17 @@ export const CustomerLayout = () => {
             {/* Left: Logo & Nav */}
             <div className="flex items-center space-x-8">
               <Link to="/store" className="flex-shrink-0 flex items-center">
-                <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center mr-2">
+                <div className="w-8 h-8 bg-brand-600 rounded flex items-center justify-center mr-2">
                   <span className="text-gray-900 font-bold text-lg">R</span>
                 </div>
                 <span className="text-xl font-bold text-gray-900 tracking-tight hidden sm:block">RentalStore</span>
               </Link>
 
               <nav className="hidden md:flex space-x-6">
-                <Link to="/store" className="text-gray-700 hover:text-blue-400 font-medium text-sm transition-colors">Products</Link>
-                <Link to="/store" className="text-gray-700 hover:text-blue-400 font-medium text-sm transition-colors">Terms & Condition</Link>
-                <Link to="/store" className="text-gray-700 hover:text-blue-400 font-medium text-sm transition-colors">About Us</Link>
-                <Link to="/store" className="text-gray-700 hover:text-blue-400 font-medium text-sm transition-colors">Contact Us</Link>
+                <Link to="/store" className="text-gray-700 hover:text-brand-400 font-medium text-sm transition-colors">Products</Link>
+                <Link to="/store" className="text-gray-700 hover:text-brand-400 font-medium text-sm transition-colors">Terms & Condition</Link>
+                <Link to="/store" className="text-gray-700 hover:text-brand-400 font-medium text-sm transition-colors">About Us</Link>
+                <Link to="/store" className="text-gray-700 hover:text-brand-400 font-medium text-sm transition-colors">Contact Us</Link>
               </nav>
             </div>
 
@@ -100,7 +100,7 @@ export const CustomerLayout = () => {
                 placeholder="Search products..." 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-gray-100 text-gray-900 border border-gray-300 rounded-full py-1.5 pl-4 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm placeholder-gray-400"
+                className="w-full bg-gray-100 text-gray-900 border border-gray-300 rounded-full py-1.5 pl-4 pr-10 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm placeholder-gray-400"
               />
               <button className="absolute right-3 top-1.5 text-gray-500 hover:text-gray-900 transition-colors">
                 <MagnifyingGlassIcon className="h-5 w-5" />
@@ -117,10 +117,10 @@ export const CustomerLayout = () => {
                 <HeartIcon className="h-6 w-6" />
               </Link>
               
-              <Link to="/store/cart" className="text-gray-500 hover:text-blue-400 transition-colors relative">
+              <Link to="/store/cart" className="text-gray-500 hover:text-brand-400 transition-colors relative">
                 <ShoppingCartIcon className="h-6 w-6" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-1.5 -right-2 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-gray-900 bg-blue-600 rounded-full shadow">
+                  <span className="absolute -top-1.5 -right-2 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-gray-900 bg-brand-600 rounded-full shadow">
                     {cartCount}
                   </span>
                 )}
@@ -182,7 +182,7 @@ export const CustomerLayout = () => {
                 placeholder="Search products..." 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-gray-100 text-gray-900 border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm placeholder-gray-400"
+                className="w-full bg-gray-100 text-gray-900 border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm placeholder-gray-400"
               />
             </div>
           </div>

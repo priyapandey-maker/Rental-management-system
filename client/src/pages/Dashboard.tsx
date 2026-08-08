@@ -60,7 +60,7 @@ export const Dashboard = () => {
           <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 flex flex-col">
             <div className="flex items-center justify-between mb-4">
               <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Active Rentals</p>
-              <div className="p-2 bg-blue-50 text-blue-600 rounded-md"><BriefcaseIcon className="h-5 w-5"/></div>
+              <div className="p-2 bg-brand-50 text-brand-600 rounded-md"><BriefcaseIcon className="h-5 w-5"/></div>
             </div>
             <p className="text-3xl font-bold text-gray-900">{stats.activeRentals}</p>
           </div>
@@ -99,7 +99,7 @@ export const Dashboard = () => {
       <div className="bg-white shadow-sm border border-gray-200 rounded-lg">
         <div className="px-6 py-5 border-b border-gray-200 flex justify-between items-center">
           <h3 className="text-lg leading-6 font-semibold text-gray-900">Recent Transactions</h3>
-          <Link to="/rentals" className="text-sm font-medium text-blue-600 hover:text-blue-500">View all</Link>
+          <Link to="/rentals" className="text-sm font-medium text-brand-600 hover:text-brand-500">View all</Link>
         </div>
         <div className="divide-y divide-gray-200">
           {transactions.length === 0 ? (
@@ -122,7 +122,7 @@ export const Dashboard = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                         tx.status === 'ACTIVE' ? 'bg-green-100 text-green-800' :
-                        tx.status === 'CONFIRMED' ? 'bg-blue-100 text-blue-800' :
+                        tx.status === 'CONFIRMED' ? 'bg-brand-100 text-brand-800' :
                         tx.status === 'COMPLETED' ? 'bg-gray-100 text-gray-800' :
                         'bg-yellow-100 text-yellow-800'
                       }`}>
@@ -130,7 +130,7 @@ export const Dashboard = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <Link to={`/rentals/${tx.id}`} className="text-blue-600 hover:text-blue-900">Manage</Link>
+                      <Link to={`/rentals/${tx.id}`} className="text-brand-600 hover:text-brand-900">Manage</Link>
                     </td>
                   </tr>
                 ))}

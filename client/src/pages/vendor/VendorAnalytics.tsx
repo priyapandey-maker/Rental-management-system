@@ -371,7 +371,7 @@ export const VendorAnalytics = () => {
         <button
           onClick={fetchAnalyticsData}
           disabled={loading}
-          className="p-2 text-gray-400 hover:text-indigo-600 rounded-lg border border-gray-200 bg-white shadow-sm flex items-center"
+          className="p-2 text-gray-400 hover:text-brand-600 rounded-lg border border-gray-200 bg-white shadow-sm flex items-center"
         >
           <ArrowPathIcon className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
         </button>
@@ -380,7 +380,7 @@ export const VendorAnalytics = () => {
       {/* Filters Bar */}
       <div className="bg-white p-5 border border-gray-200 rounded-xl shadow-sm space-y-4">
         <h3 className="text-sm font-bold text-gray-700 flex items-center">
-          <FunnelIcon className="h-4.5 w-4.5 mr-2 text-indigo-500" />
+          <FunnelIcon className="h-4.5 w-4.5 mr-2 text-brand-500" />
           Filter Report Metrics
         </h3>
         
@@ -434,11 +434,11 @@ export const VendorAnalytics = () => {
             <button
               onClick={handleExportCSV}
               disabled={filtered.length === 0 || exporting}
-              className="w-full py-2 bg-indigo-650 text-indigo-600 border border-indigo-250 rounded-lg font-bold hover:bg-indigo-50 hover:text-indigo-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-center shadow-xs flex items-center justify-center"
+              className="w-full py-2 bg-brand-650 text-brand-600 border border-brand-250 rounded-lg font-bold hover:bg-brand-50 hover:text-brand-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-center shadow-xs flex items-center justify-center"
             >
               {exporting ? (
                 <>
-                  <svg className="animate-spin h-4 w-4 mr-2 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                  <svg className="animate-spin h-4 w-4 mr-2 text-brand-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                   Preparing...
                 </>
               ) : filtered.length === 0 ? (
@@ -476,7 +476,7 @@ export const VendorAnalytics = () => {
 
       {loading ? (
         <div className="p-16 text-center text-gray-500 bg-white border border-gray-200 rounded-xl shadow-sm">
-          <svg className="animate-spin h-8 w-8 mx-auto mb-4 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+          <svg className="animate-spin h-8 w-8 mx-auto mb-4 text-brand-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
           <span className="font-semibold">Compiling real analytics reports...</span>
         </div>
       ) : error ? (
@@ -485,7 +485,7 @@ export const VendorAnalytics = () => {
           <p className="text-red-650 font-bold mb-4">Error loading reports: {error}</p>
           <button 
             onClick={fetchAnalyticsData}
-            className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg transition-colors shadow"
+            className="px-5 py-2 bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold rounded-lg transition-colors shadow"
           >
             Retry Request
           </button>
@@ -496,13 +496,13 @@ export const VendorAnalytics = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
               <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Filtered Contracts</p>
-              <p className="text-3xl font-extrabold text-indigo-600 mt-2">{totalContracts}</p>
+              <p className="text-3xl font-extrabold text-brand-600 mt-2">{totalContracts}</p>
               <p className="text-[10px] text-gray-400 mt-1">Total in filtered range</p>
             </div>
             
             <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
               <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Active Rentals</p>
-              <p className="text-3xl font-extrabold text-blue-600 mt-2">{activeContracts}</p>
+              <p className="text-3xl font-extrabold text-brand-600 mt-2">{activeContracts}</p>
               <p className="text-[10px] text-gray-400 mt-1">Fulfilled and active</p>
             </div>
 
@@ -525,7 +525,7 @@ export const VendorAnalytics = () => {
             <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
               <div>
                 <h3 className="text-base font-bold text-gray-900 flex items-center">
-                  <CurrencyDollarIcon className="h-5 w-5 text-indigo-500 mr-2" />
+                  <CurrencyDollarIcon className="h-5 w-5 text-brand-500 mr-2" />
                   Monthly Calculated Revenue
                 </h3>
                 <p className="text-[10px] text-gray-450 mt-0.5">Calculated billing rates across active/completed rentals.</p>
@@ -543,7 +543,7 @@ export const VendorAnalytics = () => {
                     return (
                       <div key={key} className="flex flex-col items-center flex-1 group">
                         <span className="text-[10px] font-bold text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity mb-1.5">${val.toFixed(0)}</span>
-                        <div className="w-8 bg-indigo-500 group-hover:bg-indigo-600 rounded-t-sm transition-all duration-300" style={{ height: `${heightPercent}px` }} />
+                        <div className="w-8 bg-brand-500 group-hover:bg-brand-600 rounded-t-sm transition-all duration-300" style={{ height: `${heightPercent}px` }} />
                         <span className="text-[9px] font-mono text-gray-400 mt-2">{key}</span>
                       </div>
                     );
@@ -556,7 +556,7 @@ export const VendorAnalytics = () => {
             <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
               <div>
                 <h3 className="text-base font-bold text-gray-900 flex items-center">
-                  <ChartBarIcon className="h-5 w-5 text-indigo-500 mr-2" />
+                  <ChartBarIcon className="h-5 w-5 text-brand-500 mr-2" />
                   Rental Lifecycle Status Distribution
                 </h3>
                 <p className="text-[10px] text-gray-450 mt-0.5">Distribution breakdown of contracts in the filtered range.</p>
@@ -583,7 +583,7 @@ export const VendorAnalytics = () => {
                             <div 
                               className={`h-full transition-all duration-500 ${
                                 st === 'ACTIVE' ? 'bg-purple-500' :
-                                st === 'CONFIRMED' ? 'bg-blue-500' :
+                                st === 'CONFIRMED' ? 'bg-brand-500' :
                                 st === 'COMPLETED' ? 'bg-green-500' :
                                 st === 'CANCELLED' ? 'bg-red-500' :
                                 'bg-yellow-500'
@@ -645,7 +645,7 @@ export const VendorAnalytics = () => {
                       return (
                         <tr key={tx.id} className="hover:bg-gray-50 transition-colors">
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <Link to={detailLink} className="text-sm font-bold text-indigo-600 hover:text-indigo-900">
+                            <Link to={detailLink} className="text-sm font-bold text-brand-600 hover:text-brand-900">
                               {tx.id.substring(0,8)}...
                             </Link>
                           </td>
@@ -661,7 +661,7 @@ export const VendorAnalytics = () => {
                               tx.status === 'ACTIVE' 
                                 ? 'bg-purple-50 text-purple-700 border-purple-200' 
                                 : tx.status === 'CONFIRMED' 
-                                  ? 'bg-blue-50 text-blue-700 border-blue-200' 
+                                  ? 'bg-brand-50 text-brand-700 border-brand-200' 
                                   : tx.status === 'COMPLETED' 
                                     ? 'bg-green-50 text-green-700 border-green-200' 
                                     : tx.status === 'CANCELLED'

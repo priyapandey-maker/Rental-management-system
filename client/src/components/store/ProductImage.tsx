@@ -7,7 +7,7 @@ export const ProductImage: React.FC<{ sku?: string; className?: string }> = ({ s
   // 1. Cameras
   if (normSku.includes('CAM')) {
     return (
-      <svg className={`${className} text-blue-400`} viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg className={`${className} text-brand-400`} viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
         <rect x="20" y="38" width="46" height="32" rx="4" fill="#1e293b" />
         <rect x="30" y="30" width="16" height="8" rx="1.5" fill="#334155" />
         <circle cx="70" cy="54" r="14" fill="#0f172a" stroke="#38bdf8" strokeWidth="3" />
@@ -132,7 +132,7 @@ export const ProductImage: React.FC<{ sku?: string; className?: string }> = ({ s
   // 8. Projectors
   if (normSku.includes('PRJ')) {
     return (
-      <svg className={`${className} text-indigo-400`} viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg className={`${className} text-brand-400`} viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
         <rect x="18" y="38" width="64" height="36" rx="4" fill="#1e293b" />
         <circle cx="34" cy="56" r="10" fill="#0f172a" />
         <circle cx="34" cy="56" r="6" fill="#6366f1" />

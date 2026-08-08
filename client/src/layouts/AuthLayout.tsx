@@ -7,7 +7,7 @@ export const AuthLayout = () => {
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
           {/* Logo Placeholder */}
-          <div className="h-12 w-12 rounded-full bg-blue-600 flex items-center justify-center">
+          <div className="h-12 w-12 rounded-full bg-brand-600 flex items-center justify-center">
             <span className="text-gray-900 font-bold text-xl">RMS</span>
           </div>
         </div>

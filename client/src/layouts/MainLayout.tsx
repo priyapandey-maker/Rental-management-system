@@ -23,7 +23,7 @@ export const MainLayout = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-brand-600 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -53,13 +53,13 @@ export const MainLayout = () => {
         to={to}
         className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
           isActive
-            ? 'bg-blue-50 text-blue-700'
-            : 'text-gray-700 hover:bg-gray-50 hover:text-blue-600'
+            ? 'bg-brand-50 text-brand-700'
+            : 'text-gray-700 hover:bg-gray-50 hover:text-brand-600'
         }`}
       >
         <Icon
           className={`flex-shrink-0 -ml-1 mr-3 h-5 w-5 ${
-            isActive ? 'text-blue-700' : 'text-gray-400 group-hover:text-blue-600'
+            isActive ? 'text-brand-700' : 'text-gray-400 group-hover:text-brand-600'
           }`}
         />
         <span className="truncate">{label}</span>
@@ -72,7 +72,7 @@ export const MainLayout = () => {
       {/* Sidebar */}
       <div className="w-full md:w-64 bg-white border-r border-gray-200 flex-shrink-0 flex flex-col">
         <div className="h-16 flex items-center px-6 border-b border-gray-200">
-          <div className="text-xl font-bold text-blue-700 leading-tight">
+          <div className="text-xl font-bold text-brand-700 leading-tight">
             Rental Management<br />
             <span className="text-sm font-semibold text-gray-500">Admin Console</span>
           </div>

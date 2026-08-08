@@ -33,8 +33,8 @@ const NavItem = ({
       onClick={onClick}
       className={`group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
         isActive
-          ? 'bg-indigo-700 text-white'
-          : 'text-indigo-100 hover:bg-indigo-700/60 hover:text-white'
+          ? 'bg-brand-700 text-white'
+          : 'text-brand-100 hover:bg-brand-700/60 hover:text-white'
       }`}
     >
       <Icon className="flex-shrink-0 mr-3 h-5 w-5 opacity-80" />
@@ -53,15 +53,15 @@ const VendorSidebar = ({ onClose }: { onClose?: () => void }) => {
   };
 
   return (
-    <div className="h-full flex flex-col bg-indigo-900">
+    <div className="h-full flex flex-col bg-brand-900">
       {/* Header */}
-      <div className="h-16 flex items-center justify-between px-5 border-b border-indigo-800">
+      <div className="h-16 flex items-center justify-between px-5 border-b border-brand-800">
         <div>
           <div className="text-lg font-bold text-white leading-tight">RentalStore</div>
-          <div className="text-xs text-indigo-300 font-medium">Vendor Portal</div>
+          <div className="text-xs text-brand-300 font-medium">Vendor Portal</div>
         </div>
         {onClose && (
-          <button onClick={onClose} className="text-indigo-300 hover:text-white md:hidden">
+          <button onClick={onClose} className="text-brand-300 hover:text-white md:hidden">
             <XMarkIcon className="h-6 w-6" />
           </button>
         )}
@@ -70,7 +70,7 @@ const VendorSidebar = ({ onClose }: { onClose?: () => void }) => {
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-6">
         <div>
-          <h3 className="px-3 text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-2">
+          <h3 className="px-3 text-xs font-semibold text-brand-400 uppercase tracking-wider mb-2">
             Overview
           </h3>
           <div className="space-y-1">
@@ -79,7 +79,7 @@ const VendorSidebar = ({ onClose }: { onClose?: () => void }) => {
         </div>
 
         <div>
-          <h3 className="px-3 text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-2">
+          <h3 className="px-3 text-xs font-semibold text-brand-400 uppercase tracking-wider mb-2">
             Catalog
           </h3>
           <div className="space-y-1">
@@ -89,7 +89,7 @@ const VendorSidebar = ({ onClose }: { onClose?: () => void }) => {
         </div>
 
         <div>
-          <h3 className="px-3 text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-2">
+          <h3 className="px-3 text-xs font-semibold text-brand-400 uppercase tracking-wider mb-2">
             Operations
           </h3>
           <div className="space-y-1">
@@ -99,7 +99,7 @@ const VendorSidebar = ({ onClose }: { onClose?: () => void }) => {
         </div>
 
         <div>
-          <h3 className="px-3 text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-2">
+          <h3 className="px-3 text-xs font-semibold text-brand-400 uppercase tracking-wider mb-2">
             Reports
           </h3>
           <div className="space-y-1">
@@ -109,17 +109,17 @@ const VendorSidebar = ({ onClose }: { onClose?: () => void }) => {
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-indigo-800">
+      <div className="p-4 border-t border-brand-800">
         <div className="flex items-center justify-between">
           <div className="flex flex-col min-w-0">
             <span className="text-sm font-medium text-white truncate">Vendor Account</span>
-            <span className="text-xs text-indigo-400 truncate font-mono" title={orgId || ''}>
+            <span className="text-xs text-brand-400 truncate font-mono" title={orgId || ''}>
               {orgId?.substring(0, 12)}...
             </span>
           </div>
           <button
             onClick={handleLogout}
-            className="p-2 text-indigo-300 hover:text-red-300 rounded-lg hover:bg-indigo-800 transition-colors"
+            className="p-2 text-brand-300 hover:text-red-300 rounded-lg hover:bg-brand-800 transition-colors"
             title="Logout"
           >
             <ArrowLeftOnRectangleIcon className="h-5 w-5" />
@@ -148,7 +148,7 @@ export const VendorLayout = () => {
               className="fixed inset-0 bg-black/50"
               onClick={() => setMobileOpen(false)}
             />
-            <div className="relative flex w-60 flex-col bg-indigo-900 z-50">
+            <div className="relative flex w-60 flex-col bg-brand-900 z-50">
               <VendorSidebar onClose={() => setMobileOpen(false)} />
             </div>
           </div>

@@ -11,8 +11,8 @@ import {
 import { Link } from 'react-router-dom';
 
 const colorMaps: Record<string, { text: string; bg: string }> = {
-  indigo: { text: 'text-indigo-600', bg: 'bg-indigo-50' },
-  blue: { text: 'text-blue-600', bg: 'bg-blue-50' },
+  indigo: { text: 'text-brand-600', bg: 'bg-brand-50' },
+  blue: { text: 'text-brand-600', bg: 'bg-brand-50' },
   green: { text: 'text-green-600', bg: 'bg-green-50' },
   amber: { text: 'text-amber-600', bg: 'bg-amber-50' }
 };
@@ -101,7 +101,7 @@ export const VendorDashboard = () => {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-32 text-gray-400">
-        <svg className="animate-spin h-10 w-10 mb-4 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+        <svg className="animate-spin h-10 w-10 mb-4 text-brand-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
         <p className="text-lg font-medium tracking-wide">Loading dashboard data...</p>
       </div>
     );
@@ -117,7 +117,7 @@ export const VendorDashboard = () => {
         <p className="text-sm text-gray-500 mb-6">{error}</p>
         <button 
           onClick={fetchMetrics}
-          className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold rounded-lg transition-colors"
+          className="px-6 py-2.5 bg-brand-600 hover:bg-brand-500 text-white text-sm font-bold rounded-lg transition-colors"
         >
           Retry Request
         </button>
@@ -149,10 +149,10 @@ export const VendorDashboard = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <Link
             to="/vendor/products"
-            className="group flex items-center p-4 bg-white border border-gray-200 rounded-xl hover:border-indigo-300 hover:shadow-md transition-all"
+            className="group flex items-center p-4 bg-white border border-gray-200 rounded-xl hover:border-brand-300 hover:shadow-md transition-all"
           >
-            <div className="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center mr-4 group-hover:bg-indigo-100 transition-colors">
-              <ArchiveBoxIcon className="h-5 w-5 text-indigo-600" />
+            <div className="w-10 h-10 rounded-lg bg-brand-50 flex items-center justify-center mr-4 group-hover:bg-brand-100 transition-colors">
+              <ArchiveBoxIcon className="h-5 w-5 text-brand-600" />
             </div>
             <div>
               <p className="text-sm font-semibold text-gray-800">Manage Products</p>
@@ -162,10 +162,10 @@ export const VendorDashboard = () => {
 
           <Link
             to="/vendor/assets"
-            className="group flex items-center p-4 bg-white border border-gray-200 rounded-xl hover:border-blue-300 hover:shadow-md transition-all"
+            className="group flex items-center p-4 bg-white border border-gray-200 rounded-xl hover:border-brand-300 hover:shadow-md transition-all"
           >
-            <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center mr-4 group-hover:bg-blue-100 transition-colors">
-              <ArrowTrendingUpIcon className="h-5 w-5 text-blue-600" />
+            <div className="w-10 h-10 rounded-lg bg-brand-50 flex items-center justify-center mr-4 group-hover:bg-brand-100 transition-colors">
+              <ArrowTrendingUpIcon className="h-5 w-5 text-brand-600" />
             </div>
             <div>
               <p className="text-sm font-semibold text-gray-800">View Inventory</p>
@@ -189,10 +189,10 @@ export const VendorDashboard = () => {
       </div>
 
       {/* Organization Info */}
-      <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-5">
-        <h3 className="text-sm font-semibold text-indigo-800 mb-2">Your Organization</h3>
-        <p className="text-xs font-mono text-indigo-600">{orgId}</p>
-        <p className="text-xs text-indigo-500 mt-1">
+      <div className="bg-brand-50 border border-brand-100 rounded-xl p-5">
+        <h3 className="text-sm font-semibold text-brand-800 mb-2">Your Organization</h3>
+        <p className="text-xs font-mono text-brand-600">{orgId}</p>
+        <p className="text-xs text-brand-500 mt-1">
           All your products, assets and rentals are scoped to this organization. Contact admin if you need to change organization details.
         </p>
       </div>

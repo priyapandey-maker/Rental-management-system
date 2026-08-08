@@ -235,7 +235,7 @@ export const ProductDetail = () => {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-32 text-gray-500">
-        <svg className="animate-spin h-10 w-10 mb-4 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+        <svg className="animate-spin h-10 w-10 mb-4 text-brand-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
         <p className="text-lg font-medium tracking-wide">Loading product details...</p>
       </div>
     );
@@ -250,7 +250,7 @@ export const ProductDetail = () => {
           </svg>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Product Not Found</h2>
           <p className="text-gray-500 mb-8">{error || 'The requested equipment could not be found in our catalog.'}</p>
-          <Link to="/store" className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold rounded-lg transition-colors">
+          <Link to="/store" className="inline-flex items-center px-6 py-3 bg-brand-600 hover:bg-brand-500 text-white text-sm font-bold rounded-lg transition-colors">
             Return to Catalog
           </Link>
         </div>
@@ -280,7 +280,7 @@ export const ProductDetail = () => {
             <ProductCardImage imageUrl={product.image_url} sku={product.sku || ''} alt={product.name} />
           </div>
           <div className="absolute bottom-6 flex gap-3">
-             <div className="w-16 h-16 rounded-lg bg-white border-2 border-blue-500 cursor-pointer overflow-hidden flex items-center justify-center">
+             <div className="w-16 h-16 rounded-lg bg-white border-2 border-brand-500 cursor-pointer overflow-hidden flex items-center justify-center">
                <ProductImage sku={product.sku || ''} className="w-10 h-10 object-contain" />
              </div>
           </div>
@@ -297,7 +297,7 @@ export const ProductDetail = () => {
           
           <div className="mb-10 bg-gray-100/50 p-6 rounded-xl border border-gray-300/50">
             <p className="text-sm text-gray-500 uppercase tracking-wider mb-1 font-semibold">Rental Rate</p>
-            <p className="text-5xl font-bold text-blue-400">
+            <p className="text-5xl font-bold text-brand-400">
               $150.00<span className="text-xl font-medium text-gray-500"> / day</span>
             </p>
           </div>
@@ -316,7 +316,7 @@ export const ProductDetail = () => {
                       setStartDate(e.target.value);
                       if (validationError) validateDates();
                     }}
-                    className="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg shadow-inner py-2.5 px-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                    className="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg shadow-inner py-2.5 px-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm"
                   />
                 </div>
                 <div>
@@ -328,7 +328,7 @@ export const ProductDetail = () => {
                       setEndDate(e.target.value);
                       if (validationError) validateDates();
                     }}
-                    className="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg shadow-inner py-2.5 px-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                    className="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg shadow-inner py-2.5 px-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm"
                   />
                 </div>
               </div>
@@ -368,8 +368,8 @@ export const ProductDetail = () => {
             </div>
             
             {variants.length > 0 && !selectedVariantId && (
-              <div className="p-4 bg-blue-900/20 border border-blue-800/50 rounded-xl text-blue-300 text-sm flex items-start">
-                <svg className="w-5 h-5 mr-3 flex-shrink-0 mt-0.5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+              <div className="p-4 bg-brand-900/20 border border-brand-800/50 rounded-xl text-brand-300 text-sm flex items-start">
+                <svg className="w-5 h-5 mr-3 flex-shrink-0 mt-0.5 text-brand-400" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                 </svg>
                 <span className="leading-relaxed">This product requires configuration. You will select your specific variant in the next step before adding to cart.</span>
@@ -377,11 +377,11 @@ export const ProductDetail = () => {
             )}
 
             {selectedVariantId && (
-              <div className="p-4 bg-blue-900/20 border border-blue-800/50 rounded-xl text-blue-300 text-sm flex justify-between items-center">
+              <div className="p-4 bg-brand-900/20 border border-brand-800/50 rounded-xl text-brand-300 text-sm flex justify-between items-center">
                 <span>Selected Configuration: <strong className="text-gray-900">{variants.find(v => v.id === selectedVariantId)?.name}</strong></span>
                 <button 
                   onClick={() => setIsModalOpen(true)}
-                  className="text-xs text-blue-400 hover:text-blue-300 font-bold underline"
+                  className="text-xs text-brand-400 hover:text-brand-300 font-bold underline"
                 >
                   Change Option
                 </button>
@@ -398,7 +398,7 @@ export const ProductDetail = () => {
                   ? 'bg-gray-100 text-gray-500 cursor-not-allowed border border-gray-300'
                   : cartStatus === 'success'
                     ? 'bg-emerald-600 text-white shadow-emerald-950/20'
-                    : 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-900/20'
+                    : 'bg-brand-600 hover:bg-brand-500 text-white shadow-brand-900/20'
               }`}
             >
               {cartStatus === 'adding' ? (
@@ -432,7 +432,7 @@ export const ProductDetail = () => {
                   <Link to="/store" className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-900 text-xs font-bold rounded-lg transition-colors border border-gray-300">
                     Continue Shopping
                   </Link>
-                  <Link to="/cart" className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-lg transition-colors shadow">
+                  <Link to="/cart" className="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold rounded-lg transition-colors shadow">
                     View Cart
                   </Link>
                 </div>

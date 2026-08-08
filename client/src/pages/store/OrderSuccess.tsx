@@ -58,19 +58,19 @@ export const OrderSuccess = () => {
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-6 mt-6">
             <div className="bg-gray-100 print:bg-gray-100 px-6 py-3 rounded-xl border border-gray-300 print:border-gray-300 flex flex-col items-center">
               <span className="text-xs text-gray-500 print:text-gray-600 uppercase font-bold tracking-wider mb-1">Order Number</span>
-              <span className="text-xl font-bold text-blue-400 print:text-blue-600">{orderId}</span>
+              <span className="text-xl font-bold text-brand-400 print:text-brand-600">{orderId}</span>
             </div>
           </div>
         </div>
 
         {/* Payment Confirmation */}
-        <div className="bg-blue-900/20 border border-blue-800/50 rounded-xl p-6 mb-10 flex items-start print:hidden">
-          <svg className="w-6 h-6 text-blue-400 mr-4 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="bg-brand-900/20 border border-brand-800/50 rounded-xl p-6 mb-10 flex items-start print:hidden">
+          <svg className="w-6 h-6 text-brand-400 mr-4 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           <div>
             <h3 className="font-bold text-gray-900 text-lg mb-1">Your Payment has been processed</h3>
-            <p className="text-sm text-blue-300/80">Demo payment simulation complete. No real funds were transferred.</p>
+            <p className="text-sm text-brand-300/80">Demo payment simulation complete. No real funds were transferred.</p>
           </div>
         </div>
 
@@ -110,7 +110,7 @@ export const OrderSuccess = () => {
                     <div key={idx} className="flex justify-between items-start text-sm">
                       <div className="pr-4">
                         <p className="font-bold text-gray-900 print:text-black mb-1">{item.productName}</p>
-                        {item.variantName && <p className="text-xs text-blue-400 mb-1">{item.variantName}</p>}
+                        {item.variantName && <p className="text-xs text-brand-400 mb-1">{item.variantName}</p>}
                         <p className="text-xs text-gray-500 font-mono mb-1">{new Date(item.startDate).toLocaleDateString()} - {new Date(item.endDate).toLocaleDateString()}</p>
                         <p className="text-gray-500 print:text-gray-600 text-xs">Qty: {item.quantity} x ${item.unitPrice}</p>
                       </div>
@@ -130,7 +130,7 @@ export const OrderSuccess = () => {
                   </div>
                   <div className="border-t border-gray-200 print:border-gray-300 pt-3 flex justify-between items-center">
                     <span className="text-base font-bold text-gray-700 print:text-black">Total Paid</span>
-                    <span className="text-2xl font-bold text-blue-400 print:text-black">${total.toFixed(2)}</span>
+                    <span className="text-2xl font-bold text-brand-400 print:text-black">${total.toFixed(2)}</span>
                   </div>
                 </div>
               </div>

@@ -56,7 +56,7 @@ const ExpressCheckoutModal: React.FC<ExpressCheckoutModalProps> = ({ isOpen, onC
               placeholder="XXXX XXXX XXXX XXXX" 
               value={card}
               onChange={(e) => setCard(e.target.value)}
-              className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm font-mono tracking-widest placeholder-gray-600"
+              className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm font-mono tracking-widest placeholder-gray-600"
             />
             {errors.card && <p className="mt-1 text-xs text-red-400">{errors.card}</p>}
           </div>
@@ -64,36 +64,36 @@ const ExpressCheckoutModal: React.FC<ExpressCheckoutModalProps> = ({ isOpen, onC
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-medium text-gray-500 mb-1.5 uppercase tracking-wide">Full Name</label>
-              <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 text-sm" />
+              <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 text-sm" />
               {errors.name && <p className="mt-1 text-xs text-red-400">{errors.name}</p>}
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-500 mb-1.5 uppercase tracking-wide">Email</label>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 text-sm" />
+              <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 text-sm" />
               {errors.email && <p className="mt-1 text-xs text-red-400">{errors.email}</p>}
             </div>
           </div>
 
           <div>
             <label className="block text-xs font-medium text-gray-500 mb-1.5 uppercase tracking-wide">Address</label>
-            <input type="text" value={address} onChange={e => setAddress(e.target.value)} className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 text-sm" />
+            <input type="text" value={address} onChange={e => setAddress(e.target.value)} className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 text-sm" />
             {errors.address && <p className="mt-1 text-xs text-red-400">{errors.address}</p>}
           </div>
 
           <div className="grid grid-cols-3 gap-4">
             <div>
               <label className="block text-xs font-medium text-gray-500 mb-1.5 uppercase tracking-wide">City</label>
-              <input type="text" value={city} onChange={e => setCity(e.target.value)} className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 text-sm" />
+              <input type="text" value={city} onChange={e => setCity(e.target.value)} className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 text-sm" />
               {errors.city && <p className="mt-1 text-xs text-red-400">{errors.city}</p>}
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-500 mb-1.5 uppercase tracking-wide">Zip</label>
-              <input type="text" value={zip} onChange={e => setZip(e.target.value)} className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 text-sm" />
+              <input type="text" value={zip} onChange={e => setZip(e.target.value)} className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 text-sm" />
               {errors.zip && <p className="mt-1 text-xs text-red-400">{errors.zip}</p>}
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-500 mb-1.5 uppercase tracking-wide">Country</label>
-              <input type="text" value={country} onChange={e => setCountry(e.target.value)} className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 text-sm" />
+              <input type="text" value={country} onChange={e => setCountry(e.target.value)} className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 text-sm" />
               {errors.country && <p className="mt-1 text-xs text-red-400">{errors.country}</p>}
             </div>
           </div>
@@ -102,7 +102,7 @@ const ExpressCheckoutModal: React.FC<ExpressCheckoutModalProps> = ({ isOpen, onC
         <div className="px-6 py-5 border-t border-gray-800 bg-gray-900/80">
           <button 
             onClick={handlePay}
-            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl shadow-lg transition-colors flex justify-center items-center"
+            className="w-full bg-brand-600 hover:bg-brand-500 text-white font-bold py-3.5 rounded-xl shadow-lg transition-colors flex justify-center items-center"
           >
             Pay Now (Express)
           </button>
@@ -185,7 +185,7 @@ export const Payment = () => {
         <span className="text-white font-bold px-3 py-1 bg-gray-800 rounded-lg">Payment</span>
         
         <div className="ml-auto">
-           <button onClick={() => setIsExpressModalOpen(true)} className="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold uppercase tracking-wider rounded-md shadow transition-colors">
+           <button onClick={() => setIsExpressModalOpen(true)} className="px-4 py-1.5 bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold uppercase tracking-wider rounded-md shadow transition-colors">
               Express Checkout
            </button>
         </div>
@@ -199,7 +199,7 @@ export const Payment = () => {
           <section className="bg-gray-900 border border-gray-800 rounded-2xl p-8 shadow-xl">
             <div className="flex justify-between items-center mb-6 border-b border-gray-800 pb-4">
               <h2 className="text-lg font-bold text-white">Delivery & Billing</h2>
-              <Link to="/store/checkout" className="text-sm font-medium text-blue-400 hover:text-blue-300">Edit</Link>
+              <Link to="/store/checkout" className="text-sm font-medium text-brand-400 hover:text-brand-300">Edit</Link>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -223,10 +223,10 @@ export const Payment = () => {
 
             <h2 className="text-xl font-bold text-white mb-6">Payment Method</h2>
             
-            <div className="border border-blue-500 bg-blue-900/10 rounded-xl p-6 mb-6 relative">
+            <div className="border border-brand-500 bg-brand-900/10 rounded-xl p-6 mb-6 relative">
               <div className="flex justify-between items-center mb-6">
                  <div className="flex items-center">
-                    <input type="radio" checked readOnly className="focus:ring-blue-500 h-5 w-5 text-blue-600 bg-gray-900 border-gray-600" />
+                    <input type="radio" checked readOnly className="focus:ring-brand-500 h-5 w-5 text-brand-600 bg-gray-900 border-gray-600" />
                     <span className="ml-4 font-bold text-white">Credit / Debit Card</span>
                  </div>
                  <div className="flex gap-2 opacity-70">
@@ -245,7 +245,7 @@ export const Payment = () => {
                     placeholder="XXXX XXXX XXXX XXXX" 
                     value={cardNumber}
                     onChange={e => setCardNumber(e.target.value)}
-                    className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base font-mono tracking-widest placeholder-gray-600" 
+                    className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent text-base font-mono tracking-widest placeholder-gray-600" 
                   />
                   {errors.card && <p className="mt-1.5 text-sm text-red-400">{errors.card}</p>}
                 </div>
@@ -253,12 +253,12 @@ export const Payment = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-medium text-gray-500 mb-1.5 uppercase tracking-wide">Expiry Date</label>
-                    <input type="text" placeholder="MM/YY" value={cardExpiry} onChange={e => setCardExpiry(e.target.value)} className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base font-mono placeholder-gray-600" />
+                    <input type="text" placeholder="MM/YY" value={cardExpiry} onChange={e => setCardExpiry(e.target.value)} className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent text-base font-mono placeholder-gray-600" />
                     {errors.expiry && <p className="mt-1.5 text-sm text-red-400">{errors.expiry}</p>}
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-500 mb-1.5 uppercase tracking-wide">CVC</label>
-                    <input type="text" placeholder="123" value={cardCvc} onChange={e => setCardCvc(e.target.value)} className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base font-mono placeholder-gray-600" />
+                    <input type="text" placeholder="123" value={cardCvc} onChange={e => setCardCvc(e.target.value)} className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent text-base font-mono placeholder-gray-600" />
                     {errors.cvc && <p className="mt-1.5 text-sm text-red-400">{errors.cvc}</p>}
                   </div>
                 </div>
@@ -270,7 +270,7 @@ export const Payment = () => {
                 type="checkbox" 
                 checked={saveDetails}
                 onChange={() => setSaveDetails(!saveDetails)}
-                className="rounded border-gray-600 bg-gray-900 text-blue-600 focus:ring-blue-500 h-5 w-5 transition-colors"
+                className="rounded border-gray-600 bg-gray-900 text-brand-600 focus:ring-brand-500 h-5 w-5 transition-colors"
               />
               <span className="ml-3 font-medium text-gray-400 group-hover:text-white transition-colors">Save my payment details for future rentals</span>
             </label>
@@ -313,13 +313,13 @@ export const Payment = () => {
               </div>
               <div className="border-t border-gray-800 pt-4 flex justify-between items-center">
                 <span className="text-base font-bold text-gray-300">Total</span>
-                <span className="text-3xl font-extrabold text-blue-400">${total.toFixed(2)}</span>
+                <span className="text-3xl font-extrabold text-brand-400">${total.toFixed(2)}</span>
               </div>
             </div>
 
             <button 
               onClick={handlePayNow}
-              className="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold py-4 rounded-xl shadow-lg shadow-blue-900/20 transition-all flex justify-center items-center text-lg"
+              className="w-full bg-brand-600 hover:bg-brand-500 text-white font-extrabold py-4 rounded-xl shadow-lg shadow-brand-900/20 transition-all flex justify-center items-center text-lg"
             >
               Pay Now
               <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>

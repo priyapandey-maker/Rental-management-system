@@ -1,10 +1,49 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #3b82f6;
-  --color-secondary: #10b981;
+  /* Core Brand Colors (Derived from Vendor Portal Indigo) */
+  --color-brand-50: var(--color-indigo-50);
+  --color-brand-100: var(--color-indigo-100);
+  --color-brand-200: var(--color-indigo-200);
+  --color-brand-300: var(--color-indigo-300);
+  --color-brand-400: var(--color-indigo-400);
+  --color-brand-500: var(--color-indigo-500);
+  --color-brand-600: var(--color-indigo-600);
+  --color-brand-700: var(--color-indigo-700);
+  --color-brand-800: var(--color-indigo-800);
+  --color-brand-900: var(--color-indigo-900);
+  --color-brand-950: var(--color-indigo-950);
+
+  /* Semantic Colors */
+  --color-success-50: var(--color-green-50);
+  --color-success-500: var(--color-green-500);
+  --color-success-600: var(--color-green-600);
+  
+  --color-error-50: var(--color-red-50);
+  --color-error-500: var(--color-red-500);
+  --color-error-600: var(--color-red-600);
+  
+  --color-warning-50: var(--color-amber-50);
+  --color-warning-500: var(--color-amber-500);
+  --color-warning-600: var(--color-amber-600);
 }
 
 body {
   @apply bg-gray-50 text-gray-900 antialiased;
+}
+
+/* Custom scrollbar to match sleek theme */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--color-gray-300);
+  border-radius: 10px;
+}
+.custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  background-color: var(--color-gray-400);
 }

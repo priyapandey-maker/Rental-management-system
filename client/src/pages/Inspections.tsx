@@ -115,7 +115,7 @@ export const Inspections = () => {
             <select
               value={selectedTxId}
               onChange={(e) => handleFetchReturn(e.target.value)}
-              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md border"
+              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-brand-500 focus:border-brand-500 sm:text-sm rounded-md border"
             >
               <option value="">-- Choose Transaction --</option>
               {transactions.map((tx) => (
@@ -143,7 +143,7 @@ export const Inspections = () => {
                   key={line.id}
                   onClick={() => setSelectedLineId(line.id)}
                   className={`w-full text-left p-2 border rounded-md text-xs font-semibold ${
-                    selectedLineId === line.id ? 'bg-blue-50 border-blue-500 text-blue-800' : 'bg-white border-gray-200'
+                    selectedLineId === line.id ? 'bg-brand-50 border-brand-500 text-brand-800' : 'bg-white border-gray-200'
                   }`}
                 >
                   Return Line ID: {line.id.substring(0,8)}...
@@ -177,7 +177,7 @@ export const Inspections = () => {
                 <select
                   value={condition}
                   onChange={(e) => setCondition(e.target.value)}
-                  className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md border"
+                  className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-brand-500 focus:border-brand-500 sm:text-sm rounded-md border"
                 >
                   <option value="NEW">New</option>
                   <option value="GOOD">Good</option>
@@ -194,7 +194,7 @@ export const Inspections = () => {
                   value={classification}
                   onChange={(e) => setClassification(e.target.value)}
                   placeholder="e.g. Scratched screen, cracked frame"
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-brand-500 focus:border-brand-500 sm:text-sm"
                 />
               </div>
 
@@ -205,13 +205,13 @@ export const Inspections = () => {
                   onChange={(e) => setNotes(e.target.value)}
                   rows={4}
                   placeholder="Describe the asset condition in detail..."
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-brand-500 focus:border-brand-500 sm:text-sm"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-brand-600 hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500"
               >
                 Submit Inspection Report
               </button>

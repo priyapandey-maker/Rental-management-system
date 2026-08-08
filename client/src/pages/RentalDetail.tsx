@@ -416,7 +416,7 @@ export const RentalDetail = () => {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-32 text-gray-400">
-        <svg className="animate-spin h-10 w-10 mb-4 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+        <svg className="animate-spin h-10 w-10 mb-4 text-brand-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
         <p className="text-base font-semibold">Loading rental details...</p>
       </div>
     );
@@ -428,7 +428,7 @@ export const RentalDetail = () => {
         <ExclamationTriangleIcon className="mx-auto h-12 w-12 text-red-500 mb-4" />
         <h3 className="text-lg font-bold text-gray-800 mb-2">Failed to load details</h3>
         <p className="text-sm text-gray-500 mb-6">{error || 'Rental contract not found'}</p>
-        <Link to={isVendor ? '/vendor/rentals' : '/rentals'} className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg text-sm transition-colors shadow">
+        <Link to={isVendor ? '/vendor/rentals' : '/rentals'} className="px-5 py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-lg text-sm transition-colors shadow">
           Back to list
         </Link>
       </div>
@@ -440,7 +440,7 @@ export const RentalDetail = () => {
   return (
     <div className="space-y-8">
       {/* Back to list navigation */}
-      <Link to={listLink} className="inline-flex items-center text-xs font-bold text-gray-500 hover:text-indigo-600 transition-colors uppercase tracking-wider">
+      <Link to={listLink} className="inline-flex items-center text-xs font-bold text-gray-500 hover:text-brand-600 transition-colors uppercase tracking-wider">
         <ArrowLeftIcon className="h-4.5 w-4.5 mr-2" />
         Back to operations list
       </Link>
@@ -454,7 +454,7 @@ export const RentalDetail = () => {
               transaction.status === 'ACTIVE' 
                 ? 'bg-purple-50 text-purple-700 border-purple-200' 
                 : transaction.status === 'CONFIRMED' 
-                  ? 'bg-blue-50 text-blue-700 border-blue-200' 
+                  ? 'bg-brand-50 text-brand-700 border-brand-200' 
                   : transaction.status === 'COMPLETED' 
                     ? 'bg-green-50 text-green-700 border-green-200' 
                     : transaction.status === 'CANCELLED'
@@ -471,7 +471,7 @@ export const RentalDetail = () => {
         <div className="flex flex-wrap gap-2.5">
           {actionLoading && (
             <div className="flex items-center text-xs text-gray-400 font-semibold mr-2">
-              <svg className="animate-spin h-4 w-4 mr-1 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+              <svg className="animate-spin h-4 w-4 mr-1 text-brand-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
               Updating...
             </div>
           )}
@@ -480,7 +480,7 @@ export const RentalDetail = () => {
             <button 
               onClick={handleConfirm}
               disabled={actionLoading || transaction.lines.length === 0}
-              className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors"
+              className="bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors"
             >
               Confirm Rental
             </button>
@@ -491,7 +491,7 @@ export const RentalDetail = () => {
               <button 
                 onClick={handleAllocate}
                 disabled={actionLoading}
-                className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors"
+                className="bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors"
               >
                 Auto-Allocate Assets
               </button>
@@ -534,7 +534,7 @@ export const RentalDetail = () => {
           {customer && (
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
               <h3 className="text-lg font-bold text-gray-900 flex items-center">
-                <UserIcon className="h-5 w-5 text-indigo-500 mr-2" />
+                <UserIcon className="h-5 w-5 text-brand-500 mr-2" />
                 Customer Account
               </h3>
               <div className="grid grid-cols-2 gap-4 text-sm">
@@ -561,7 +561,7 @@ export const RentalDetail = () => {
                     required
                     value={selectedProductId}
                     onChange={(e) => setSelectedProductId(e.target.value)}
-                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 text-sm shadow-inner"
+                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-brand-500 focus:border-brand-500 text-sm shadow-inner"
                     disabled={actionLoading}
                   >
                     <option value="">-- Select Product --</option>
@@ -574,7 +574,7 @@ export const RentalDetail = () => {
                   <select
                     value={selectedVariantId}
                     onChange={(e) => setSelectedVariantId(e.target.value)}
-                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 text-sm shadow-inner"
+                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-brand-500 focus:border-brand-500 text-sm shadow-inner"
                     disabled={actionLoading}
                   >
                     <option value="">-- Base Variant --</option>
@@ -590,7 +590,7 @@ export const RentalDetail = () => {
                     required
                     value={quantity}
                     onChange={(e) => setQuantity(Number(e.target.value))}
-                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 text-sm shadow-inner"
+                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-brand-500 focus:border-brand-500 text-sm shadow-inner"
                     disabled={actionLoading}
                   />
                 </div>
@@ -604,7 +604,7 @@ export const RentalDetail = () => {
                     required
                     value={unitPrice}
                     onChange={(e) => setUnitPrice(Number(e.target.value))}
-                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 text-sm shadow-inner"
+                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-brand-500 focus:border-brand-500 text-sm shadow-inner"
                     disabled={actionLoading}
                   />
                 </div>
@@ -618,7 +618,7 @@ export const RentalDetail = () => {
                     required
                     value={deposit}
                     onChange={(e) => setDeposit(Number(e.target.value))}
-                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 text-sm shadow-inner"
+                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-brand-500 focus:border-brand-500 text-sm shadow-inner"
                     disabled={actionLoading}
                   />
                 </div>
@@ -632,7 +632,7 @@ export const RentalDetail = () => {
                     required
                     value={lateFee}
                     onChange={(e) => setLateFee(Number(e.target.value))}
-                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 text-sm shadow-inner"
+                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-brand-500 focus:border-brand-500 text-sm shadow-inner"
                     disabled={actionLoading}
                   />
                 </div>
@@ -644,7 +644,7 @@ export const RentalDetail = () => {
                     required
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 text-sm shadow-inner"
+                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-brand-500 focus:border-brand-500 text-sm shadow-inner"
                     disabled={actionLoading}
                   />
                 </div>
@@ -656,7 +656,7 @@ export const RentalDetail = () => {
                     required
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
-                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 text-sm shadow-inner"
+                    className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:ring-brand-500 focus:border-brand-500 text-sm shadow-inner"
                     disabled={actionLoading}
                   />
                 </div>
@@ -664,7 +664,7 @@ export const RentalDetail = () => {
                 <div className="md:col-span-2 pt-2">
                   <button
                     type="submit"
-                    className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-lg font-bold text-sm shadow transition-colors"
+                    className="w-full bg-brand-600 hover:bg-brand-700 text-white py-2.5 rounded-lg font-bold text-sm shadow transition-colors"
                     disabled={actionLoading}
                   >
                     Add Contract Item Line
@@ -707,7 +707,7 @@ export const RentalDetail = () => {
                           <select
                             value={manualAllocations[line.id] || ''}
                             onChange={(e) => setManualAllocations({ ...manualAllocations, [line.id]: e.target.value })}
-                            className="bg-white border border-gray-300 text-gray-900 rounded-lg py-1 px-2.5 text-xs focus:ring-indigo-500 focus:border-indigo-500"
+                            className="bg-white border border-gray-300 text-gray-900 rounded-lg py-1 px-2.5 text-xs focus:ring-brand-500 focus:border-brand-500"
                             disabled={actionLoading}
                           >
                             <option value="">-- Select Physical Asset --</option>
@@ -719,7 +719,7 @@ export const RentalDetail = () => {
                             type="button"
                             onClick={() => handleManualAllocate(line.id)}
                             disabled={actionLoading || eligibleAssets.length === 0}
-                            className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-2.5 py-1.5 rounded-lg transition-colors shadow-xs"
+                            className="bg-brand-600 hover:bg-brand-700 text-white font-semibold text-xs px-2.5 py-1.5 rounded-lg transition-colors shadow-xs"
                           >
                             Assign Serial
                           </button>
@@ -747,7 +747,7 @@ export const RentalDetail = () => {
           {transaction.status !== 'DRAFT' && (
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
               <h3 className="text-lg font-bold text-gray-900 flex items-center">
-                <TagIcon className="h-5 w-5 text-indigo-500 mr-2" />
+                <TagIcon className="h-5 w-5 text-brand-500 mr-2" />
                 Allocated Assets
               </h3>
               {allocations.length === 0 ? (
@@ -762,7 +762,7 @@ export const RentalDetail = () => {
                           <p className="font-bold text-gray-700">Tag: {mappedAsset?.asset_tag || a.asset_id.substring(0,8)}</p>
                           <p className="text-gray-400 text-[10px] mt-0.5">ID: {a.asset_id.substring(0,8)}...</p>
                         </div>
-                        <span className="px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 text-[9px] font-bold uppercase border border-indigo-150">
+                        <span className="px-2 py-0.5 rounded bg-brand-50 text-brand-700 text-[9px] font-bold uppercase border border-brand-150">
                           {a.status}
                         </span>
                       </div>
@@ -777,14 +777,14 @@ export const RentalDetail = () => {
           {transaction.status !== 'DRAFT' && (
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
               <h3 className="text-lg font-bold text-gray-900 flex items-center">
-                <CreditCardIcon className="h-5 w-5 text-indigo-500 mr-2" />
+                <CreditCardIcon className="h-5 w-5 text-brand-500 mr-2" />
                 Billing & Invoice
               </h3>
               {!invoice ? (
                 <button
                   onClick={handleCreateInvoice}
                   disabled={actionLoading}
-                  className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white py-2.5 rounded-lg text-sm font-bold shadow transition-colors"
+                  className="w-full bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white py-2.5 rounded-lg text-sm font-bold shadow transition-colors"
                 >
                   Generate Invoice
                 </button>
@@ -793,7 +793,7 @@ export const RentalDetail = () => {
                   <div className="text-xs space-y-1">
                     <p className="font-bold text-gray-800">Invoice: <span className="font-mono">{invoice.invoice_number}</span></p>
                     <p className="text-gray-600">Total Charged: <strong className="text-gray-900">${invoice.total_amount}</strong></p>
-                    <p className="text-gray-500">Status: <span className="font-bold text-indigo-600">{invoice.status}</span></p>
+                    <p className="text-gray-500">Status: <span className="font-bold text-brand-600">{invoice.status}</span></p>
                   </div>
 
                   {invoice.status === 'DRAFT' && (
@@ -833,7 +833,7 @@ export const RentalDetail = () => {
                       <button
                         type="submit"
                         disabled={actionLoading}
-                        className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg text-xs font-bold transition-colors shadow-xs"
+                        className="w-full bg-brand-600 hover:bg-brand-700 text-white py-2 rounded-lg text-xs font-bold transition-colors shadow-xs"
                       >
                         Record Payment
                       </button>

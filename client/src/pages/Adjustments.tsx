@@ -96,7 +96,7 @@ export const Adjustments = () => {
             <select
               value={selectedTxId}
               onChange={(e) => handleFetchAdjustments(e.target.value)}
-              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md border"
+              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-brand-500 focus:border-brand-500 sm:text-sm rounded-md border"
             >
               <option value="">-- Choose Transaction --</option>
               {transactions.map((tx) => (
@@ -142,7 +142,7 @@ export const Adjustments = () => {
 
               <button
                 type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded text-xs font-medium"
+                className="w-full bg-brand-600 hover:bg-brand-700 text-white py-2 rounded text-xs font-medium"
               >
                 Apply Penalty
               </button>
