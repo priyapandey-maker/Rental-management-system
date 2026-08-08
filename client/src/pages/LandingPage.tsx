@@ -1,7 +1,29 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { apiClient } from '../api/client';
-import { ProductImage } from '../components/store/ProductImage';
+
+// Realistic product image map (served from /public/images/)
+const CATEGORY_IMAGES: Record<string, string> = {
+  CAM: '/images/cat-camera.jpg',
+  AUD: '/images/cat-audio.jpg',
+  LGT: '/images/cat-lighting.jpg',
+  LNS: '/images/cat-lenses.jpg',
+  TRP: '/images/cat-tripod.jpg',
+  VID: '/images/cat-video.jpg',
+  DRN: '/images/cat-drone.jpg',
+  PRJ: '/images/cat-projector.jpg',
+};
+
+const PRODUCT_IMAGES: Record<string, string> = {
+  CAM: '/images/cat-camera.jpg',
+  AUD: '/images/cat-audio.jpg',
+  LGT: '/images/cat-lighting.jpg',
+  LNS: '/images/cat-lenses.jpg',
+  TRP: '/images/cat-tripod.jpg',
+  VID: '/images/cat-video.jpg',
+  DRN: '/images/cat-drone.jpg',
+  PRJ: '/images/cat-projector.jpg',
+};
 import {
   MagnifyingGlassIcon,
   CheckCircleIcon,
@@ -343,18 +365,29 @@ export const LandingPage = () => {
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
-            {categories.map((cat, idx) => {
+            {categories.map((cat) => {
               const colors = CATEGORY_COLORS[cat.code] || { bg: 'bg-gray-50', accent: 'text-gray-600', iconBg: 'bg-gray-100' };
+              const imgSrc = CATEGORY_IMAGES[cat.code];
               return (
                 <Link
                   key={cat.id}
                   to={`/store?category=${cat.id}`}
-                  className={`group relative ${colors.bg} border border-gray-100 rounded-2xl p-5 flex flex-col items-center text-center gap-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 overflow-hidden`}
+                  className={`group relative bg-white border border-gray-100 rounded-2xl overflow-hidden flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-200`}
                 >
-                  <div className={`w-14 h-14 ${colors.iconBg} rounded-xl flex items-center justify-center overflow-hidden shadow-sm`}>
-                    <ProductImage sku={`PROD-${cat.code}-01`} className="w-10 h-10" />
+                  <div className="aspect-[4/3] overflow-hidden bg-gray-50">
+                    {imgSrc ? (
+                      <img
+                        src={imgSrc}
+                        alt={cat.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    ) : (
+                      <div className={`w-full h-full ${colors.iconBg} flex items-center justify-center`}>
+                        <span className="text-2xl font-black text-gray-300">{cat.code}</span>
+                      </div>
+                    )}
                   </div>
-                  <div>
+                  <div className="p-4">
                     <div className={`text-sm font-extrabold ${colors.accent} mb-0.5`}>{cat.name}</div>
                     <div className="text-xs text-gray-400 font-medium">Browse &rarr;</div>
                   </div>
@@ -406,16 +439,25 @@ export const LandingPage = () => {
               {featuredProducts.slice(0, 6).map(product => {
                 const code = getSkuCode(product.sku);
                 const colors = PROD_COLORS[code] || { bg: 'bg-gray-50', badge: 'bg-gray-100 text-gray-700' };
+                const imgSrc = PRODUCT_IMAGES[code];
                 return (
                   <Link
                     key={product.id}
                     to={`/store/product/${product.id}`}
                     className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-200 flex flex-col"
                   >
-                    <div className={`aspect-square ${colors.bg} flex items-center justify-center relative overflow-hidden`}>
-                      <div className="w-3/5 h-3/5 group-hover:scale-110 transition-transform duration-500">
-                        <ProductImage sku={product.sku} className="w-full h-full" />
-                      </div>
+                    <div className="aspect-square relative overflow-hidden bg-gray-50">
+                      {imgSrc ? (
+                        <img
+                          src={imgSrc}
+                          alt={product.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      ) : (
+                        <div className={`w-full h-full ${colors.bg} flex items-center justify-center`}>
+                          <span className="text-2xl font-black text-gray-200">{code}</span>
+                        </div>
+                      )}
                       <div className="absolute top-3 right-3">
                         <span className="text-[10px] font-bold bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Available</span>
                       </div>
