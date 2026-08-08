@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { apiClient } from '../../api/client';
 import { VariantConfigureModal } from '../../components/store/VariantConfigureModal';
-import { ProductImage, ProductCardImage } from './StoreHome';
+import { ProductImage, ProductCardImage } from '../../components/store/ProductImage';
 
 interface Product {
   id: string;

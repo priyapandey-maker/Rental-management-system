@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ProductImage } from '../../pages/store/StoreHome';
+import { ProductImage } from './ProductImage';
 
 interface Variant {
   id: string;
