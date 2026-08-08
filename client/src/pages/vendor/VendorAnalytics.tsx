@@ -33,6 +33,7 @@ interface Transaction {
   status: 'DRAFT' | 'CONFIRMED' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED';
   transaction_date: string;
   lines: TransactionLine[];
+  allocations?: any[];
 }
 
 interface Customer {
@@ -47,6 +48,12 @@ interface Product {
   name: string;
 }
 
+interface Asset {
+  id: string;
+  asset_tag: string;
+  product_variant_id: string;
+}
+
 export const VendorAnalytics = () => {
   const { orgId } = useAuth();
 
@@ -54,8 +61,14 @@ export const VendorAnalytics = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+  const [allAssets, setAllAssets] = useState<Asset[]>([]);
+  const [invoicesMap, setInvoicesMap] = useState<Record<string, string>>({});
+  const [variantsMap, setVariantsMap] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Export Progress State
+  const [exporting, setExporting] = useState(false);
 
   // Filters
   const [dateFilter, setDateFilter] = useState<'all' | 'today' | 'week' | 'month' | 'custom'>('all');
@@ -69,25 +82,66 @@ export const VendorAnalytics = () => {
       setLoading(true);
       setError(null);
 
-      // Fetch lists
-      const [txs, custs, prods] = await Promise.all([
+      // Fetch lists in parallel
+      const [txs, custs, prods, assetsData, invoicesData] = await Promise.all([
         apiClient.get('/transactions'),
         apiClient.get('/customers'),
-        apiClient.get('/products')
+        apiClient.get('/products'),
+        apiClient.get('/assets'),
+        apiClient.get('/reads/invoices')
       ]);
 
       const txList = Array.isArray(txs) ? txs : [];
       setCustomers(Array.isArray(custs) ? custs : []);
       setProducts(Array.isArray(prods) ? prods : []);
+      setAllAssets(Array.isArray(assetsData) ? assetsData : []);
 
-      // Hydrate transaction lines for all transactions to calculate true pricing/dates
+      // Map Invoice status by transaction ID
+      const invList = invoicesData && Array.isArray((invoicesData as any).data) ? (invoicesData as any).data : [];
+      const invMap: Record<string, string> = {};
+      invList.forEach((inv: any) => {
+        if (inv.transaction_id) {
+          invMap[inv.transaction_id] = inv.status;
+        }
+      });
+      setInvoicesMap(invMap);
+
+      // Load all product variants to resolve SKU names
+      const activeProducts = Array.isArray(prods) ? prods : [];
+      const vMap: Record<string, string> = {};
+      await Promise.all(
+        activeProducts.map(async (p: any) => {
+          try {
+            const productVariants = await apiClient.get(`/products/${p.id}/variants`);
+            if (Array.isArray(productVariants)) {
+              productVariants.forEach((v: any) => {
+                vMap[v.id] = v.name;
+              });
+            }
+          } catch (vErr) {
+            console.error(vErr);
+          }
+        })
+      );
+      setVariantsMap(vMap);
+
+      // Hydrate transaction lines and allocations for details list
       const hydratedTxs = await Promise.all(
         txList.map(async (tx: any) => {
           try {
-            const detail = await apiClient.get(`/transactions/${tx.id}`);
-            return detail as any as Transaction;
+            const detail = (await apiClient.get(`/transactions/${tx.id}`)) as Transaction;
+            let lineAllocations: any[] = [];
+            if (detail.status !== 'DRAFT' && detail.lines && detail.lines.length > 0) {
+              try {
+                const allocs = await apiClient.get(`/allocations/transaction-lines/${detail.lines[0].id}`);
+                lineAllocations = Array.isArray(allocs) ? allocs : [];
+              } catch {
+                // Ignore allocations load error
+              }
+            }
+            return { ...detail, allocations: lineAllocations } as any as Transaction;
           } catch {
-            return { ...tx, lines: [] } as any as Transaction;
+            return { ...tx, lines: [], allocations: [] } as any as Transaction;
           }
         })
       );
@@ -148,7 +202,6 @@ export const VendorAnalytics = () => {
 
   // Metrics Calculations (calculated strictly from filtered dataset)
   const totalContracts = filtered.length;
-  
   const activeContracts = filtered.filter(t => t.status === 'ACTIVE').length;
   const completedContracts = filtered.filter(t => t.status === 'COMPLETED').length;
   const cancelledContracts = filtered.filter(t => t.status === 'CANCELLED').length;
@@ -202,6 +255,108 @@ export const VendorAnalytics = () => {
 
   const monthKeys = Object.keys(monthlyRevenue).sort();
   const maxMonthValue = Math.max(...Object.values(monthlyRevenue), 1);
+
+  // Client-side CSV generation & Download
+  const handleExportCSV = async () => {
+    if (filtered.length === 0) return;
+    try {
+      setExporting(true);
+
+      const headers = [
+        "Date",
+        "Rental/Order ID",
+        "Customer",
+        "Product",
+        "Variant",
+        "Asset Tag",
+        "Rental Status",
+        "Start Date",
+        "End Date",
+        "Amount",
+        "Payment Status"
+      ];
+
+      const rows = filtered.map(tx => {
+        const cust = customers.find(c => c.id === tx.customer_id);
+        const customerName = cust ? `${cust.first_name} ${cust.last_name}` : "Unknown Customer";
+
+        const firstLine = tx.lines?.[0];
+        const prodName = firstLine ? products.find(p => p.id === firstLine.product_id)?.name || "Unknown Product" : "";
+        const varName = firstLine?.variant_id ? variantsMap[firstLine.variant_id] || "" : "";
+
+        // Resolve allocated asset tag
+        let assetTag = "";
+        if (tx.allocations && tx.allocations.length > 0) {
+          const matchedAsset = allAssets.find(a => a.id === tx.allocations?.[0].asset_id);
+          assetTag = matchedAsset ? matchedAsset.asset_tag : "";
+        }
+
+        // Calculate amount
+        let txPrice = 0;
+        tx.lines?.forEach(line => {
+          if (line.snapshot) {
+            const price = Number(line.snapshot.unit_price) || 0;
+            const qty = line.quantity || 1;
+            const start = new Date(line.rental_start_date);
+            const end = new Date(line.rental_end_date);
+            const diffTime = Math.max(1, Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)));
+            txPrice += price * qty * diffTime;
+          }
+        });
+
+        // Resolve payment status
+        const payStatus = invoicesMap[tx.id] || (tx.status === 'DRAFT' ? "—" : "UNPAID");
+
+        return [
+          new Date(tx.transaction_date).toLocaleDateString(),
+          tx.id,
+          customerName,
+          prodName,
+          varName,
+          assetTag,
+          tx.status,
+          firstLine ? new Date(firstLine.rental_start_date).toLocaleDateString() : "",
+          firstLine ? new Date(firstLine.rental_end_date).toLocaleDateString() : "",
+          `$${txPrice.toFixed(2)}`,
+          payStatus
+        ];
+      });
+
+      // Escape CSV text helpers
+      const escapeCSV = (val: string) => {
+        if (val === null || val === undefined) return "";
+        let str = String(val);
+        if (str.includes(",") || str.includes("\"") || str.includes("\n") || str.includes("\r")) {
+          str = str.replace(/"/g, '""');
+          return `"${str}"`;
+        }
+        return str;
+      };
+
+      const csvContent = [
+        headers.map(escapeCSV).join(","),
+        ...rows.map(row => row.map(escapeCSV).join(","))
+      ].join("\n");
+
+      // Trigger download
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      const today = new Date().toISOString().split("T")[0];
+
+      link.setAttribute("href", url);
+      link.setAttribute("download", `vendor-rental-report-${today}.csv`);
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to prepare CSV download.");
+    } finally {
+      setExporting(false);
+    }
+  };
 
   return (
     <div className="space-y-8">
@@ -277,12 +432,20 @@ export const VendorAnalytics = () => {
 
           <div className="flex items-end justify-end">
             <button
-              onClick={() => {
-                alert("CSV export is not supported by the database engine.");
-              }}
-              className="w-full py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-500 font-bold hover:bg-gray-150 transition-colors text-center"
+              onClick={handleExportCSV}
+              disabled={filtered.length === 0 || exporting}
+              className="w-full py-2 bg-indigo-650 text-indigo-600 border border-indigo-250 rounded-lg font-bold hover:bg-indigo-50 hover:text-indigo-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-center shadow-xs flex items-center justify-center"
             >
-              Export CSV (Not Available)
+              {exporting ? (
+                <>
+                  <svg className="animate-spin h-4 w-4 mr-2 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                  Preparing...
+                </>
+              ) : filtered.length === 0 ? (
+                'No Data to Export'
+              ) : (
+                'Export CSV'
+              )}
             </button>
           </div>
         </div>

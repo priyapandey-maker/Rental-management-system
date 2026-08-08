@@ -17,6 +17,7 @@ export interface ReadInvoiceRow extends RowDataPacket {
   issued_at: Date | null;
   customer_first_name: string;
   customer_last_name: string;
+  transaction_id: string;
 }
 
 export class ReadRepository extends BaseRepository {
@@ -51,7 +52,7 @@ export class ReadRepository extends BaseRepository {
   ): Promise<ReadInvoiceRow[]> {
     const sql = `
       SELECT 
-        i.id, i.invoice_number, i.status, i.total_amount, i.issued_at,
+        i.id, i.invoice_number, i.status, i.total_amount, i.issued_at, i.transaction_id,
         c.first_name as customer_first_name, c.last_name as customer_last_name
       FROM rental_invoices i
       JOIN customers c ON i.customer_id = c.id
