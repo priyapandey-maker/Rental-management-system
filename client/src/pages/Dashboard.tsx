@@ -1,10 +1,127 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { apiClient } from '../api/client';
+
+interface DashboardStats {
+  revenue: { total: string; pending: string };
+  activeRentals: number;
+  assetAvailability: { available: number; total: number; rented: number };
+  outstandingPayments: number;
+}
+
+interface Transaction {
+  id: string;
+  status: string;
+  transaction_date: string;
+  customer_id: string;
+}
 
 export const Dashboard = () => {
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [statsData, txsData] = await Promise.all([
+          apiClient.get('/dashboard'),
+          apiClient.get('/transactions')
+        ]);
+        setStats(statsData as any);
+        setTransactions((txsData as any).slice(0, 5)); // show recent 5
+      } catch (err: any) {
+        setError(err.message || 'Failed to fetch dashboard data');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  if (loading) return <div className="p-8 text-center text-gray-600">Loading dashboard...</div>;
+  if (error) return <div className="p-8 text-red-600 text-center font-semibold">Error: {error}</div>;
+
   return (
-    <div>
-      <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
-      <p className="mt-4 text-gray-600">Pending implementation by Priya.</p>
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-3xl font-extrabold text-gray-900">Dashboard</h1>
+        <p className="text-gray-500 mt-1">Real-time overview of your rental operations.</p>
+      </div>
+
+      {stats && (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+            <p className="text-sm font-medium text-gray-500 uppercase">Active Rentals</p>
+            <p className="mt-2 text-3xl font-bold text-gray-900">{stats.activeRentals}</p>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+            <p className="text-sm font-medium text-gray-500 uppercase">Asset Availability</p>
+            <p className="mt-2 text-3xl font-bold text-gray-900">
+              {stats.assetAvailability.available} / {stats.assetAvailability.total}
+            </p>
+            <p className="text-xs text-gray-400 mt-1">{stats.assetAvailability.rented} currently rented</p>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+            <p className="text-sm font-medium text-gray-500 uppercase">Total Revenue</p>
+            <p className="mt-2 text-3xl font-bold text-gray-900">${stats.revenue.total}</p>
+            <p className="text-xs text-orange-500 mt-1">${stats.revenue.pending} pending collection</p>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+            <p className="text-sm font-medium text-gray-500 uppercase">Outstanding Invoices</p>
+            <p className="mt-2 text-3xl font-bold text-gray-900">{stats.outstandingPayments}</p>
+          </div>
+        </div>
+      )}
+
+      <div className="bg-white shadow-sm border border-gray-200 rounded-lg">
+        <div className="px-6 py-5 border-b border-gray-200 flex justify-between items-center">
+          <h3 className="text-lg leading-6 font-semibold text-gray-900">Recent Transactions</h3>
+          <Link to="/rentals" className="text-sm font-medium text-blue-600 hover:text-blue-500">View all</Link>
+        </div>
+        <div className="divide-y divide-gray-200">
+          {transactions.length === 0 ? (
+            <div className="p-6 text-center text-gray-500">No transactions recorded.</div>
+          ) : (
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Transaction ID</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {transactions.map((tx) => (
+                  <tr key={tx.id}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{tx.id.substring(0,8)}...</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(tx.transaction_date).toLocaleDateString()}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        tx.status === 'ACTIVE' ? 'bg-green-100 text-green-800' :
+                        tx.status === 'CONFIRMED' ? 'bg-blue-100 text-blue-800' :
+                        tx.status === 'COMPLETED' ? 'bg-gray-100 text-gray-800' :
+                        'bg-yellow-100 text-yellow-800'
+                      }`}>
+                        {tx.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <Link to={`/rentals/${tx.id}`} className="text-blue-600 hover:text-blue-900">Manage</Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
