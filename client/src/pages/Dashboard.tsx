@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { 
+  BriefcaseIcon, CurrencyDollarIcon,
+  CubeIcon, DocumentTextIcon
+} from '@heroicons/react/24/outline';
 import { apiClient } from '../api/client';
 
 interface DashboardStats {
@@ -53,28 +57,41 @@ export const Dashboard = () => {
 
       {stats && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-            <p className="text-sm font-medium text-gray-500 uppercase">Active Rentals</p>
-            <p className="mt-2 text-3xl font-bold text-gray-900">{stats.activeRentals}</p>
+          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 flex flex-col">
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Active Rentals</p>
+              <div className="p-2 bg-blue-50 text-blue-600 rounded-md"><BriefcaseIcon className="h-5 w-5"/></div>
+            </div>
+            <p className="text-3xl font-bold text-gray-900">{stats.activeRentals}</p>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-            <p className="text-sm font-medium text-gray-500 uppercase">Asset Availability</p>
-            <p className="mt-2 text-3xl font-bold text-gray-900">
-              {stats.assetAvailability.available} / {stats.assetAvailability.total}
-            </p>
-            <p className="text-xs text-gray-400 mt-1">{stats.assetAvailability.rented} currently rented</p>
+          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 flex flex-col">
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Asset Availability</p>
+              <div className="p-2 bg-green-50 text-green-600 rounded-md"><CubeIcon className="h-5 w-5"/></div>
+            </div>
+            <div className="flex items-baseline space-x-2">
+              <p className="text-3xl font-bold text-gray-900">{stats.assetAvailability.available}</p>
+              <p className="text-sm font-medium text-gray-500">/ {stats.assetAvailability.total}</p>
+            </div>
+            <p className="text-xs text-gray-500 mt-2 font-medium">{stats.assetAvailability.rented} currently rented</p>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-            <p className="text-sm font-medium text-gray-500 uppercase">Total Revenue</p>
-            <p className="mt-2 text-3xl font-bold text-gray-900">${stats.revenue.total}</p>
-            <p className="text-xs text-orange-500 mt-1">${stats.revenue.pending} pending collection</p>
+          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 flex flex-col">
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Total Revenue</p>
+              <div className="p-2 bg-purple-50 text-purple-600 rounded-md"><CurrencyDollarIcon className="h-5 w-5"/></div>
+            </div>
+            <p className="text-3xl font-bold text-gray-900">${stats.revenue.total}</p>
+            <p className="text-xs text-orange-600 mt-2 font-medium">${stats.revenue.pending} pending collection</p>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-            <p className="text-sm font-medium text-gray-500 uppercase">Outstanding Invoices</p>
-            <p className="mt-2 text-3xl font-bold text-gray-900">{stats.outstandingPayments}</p>
+          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 flex flex-col">
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Outstanding Invoices</p>
+              <div className="p-2 bg-orange-50 text-orange-600 rounded-md"><DocumentTextIcon className="h-5 w-5"/></div>
+            </div>
+            <p className="text-3xl font-bold text-gray-900">{stats.outstandingPayments}</p>
           </div>
         </div>
       )}

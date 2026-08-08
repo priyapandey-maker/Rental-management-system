@@ -11,7 +11,7 @@ appRouter.get('/health', (req, res) => {
 });
 
 import { requireTenantContext } from '../middleware/tenantContext';
-import * as authController from '../controllers/auth.controller';
+import { registerUser, registerVendor, login, forgotPassword, resetPassword } from '../controllers/auth.controller';
 import * as customerController from '../controllers/customer.controller';
 import * as addressController from '../controllers/address.controller';
 import * as categoryController from '../controllers/category.controller';
@@ -30,9 +30,11 @@ import * as readController from '../controllers/read.controller';
 
 // Public Auth Routes
 const authRouter = Router();
-authRouter.post('/register', authController.registerUser);
-authRouter.post('/vendor-register', authController.registerVendor);
-authRouter.post('/login', authController.login);
+authRouter.post('/register', registerUser);
+authRouter.post('/vendor-register', registerVendor);
+authRouter.post('/login', login);
+authRouter.post('/forgot-password', forgotPassword);
+authRouter.post('/reset-password', resetPassword);
 appRouter.use('/auth', authRouter);
 
 // Apply requireTenantContext to all domain routes

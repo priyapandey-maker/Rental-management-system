@@ -34,8 +34,8 @@ export const VendorSignup = () => {
     }
 
     try {
-      await apiClient.post('/auth/vendor-register', { email, password, firstName, lastName, companyName });
-      setSuccess('Registration successful! Please log in to continue. Note: GST No and Product Category were not saved (unsupported by backend).');
+      await apiClient.post('/auth/vendor-register', { email, password, firstName, lastName, companyName, gstNo, productCategory });
+      setSuccess('Registration successful! Please log in to continue.');
       setTimeout(() => navigate('/login'), 4000);
     } catch (err: any) {
       setError(err.response?.data?.error || 'Registration failed');

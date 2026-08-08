@@ -62,10 +62,10 @@ export const Assets = () => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {assets.map((a) => (
-                <tr key={a.id}>
+                <tr key={a.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{a.asset_tag}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{a.serial_number || 'N/A'}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">{a.product_variant_id.substring(0,8)}...</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{a.serial_number || <span className="text-gray-300 italic">No Serial</span>}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400 font-mono">{a.product_variant_id.substring(0,8)}...</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                       a.condition_status === 'NEW' || a.condition_status === 'GOOD' ? 'bg-green-100 text-green-800' :
@@ -77,9 +77,10 @@ export const Assets = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      a.lifecycle_status === 'AVAILABLE' ? 'bg-green-100 text-green-800' :
+                      a.lifecycle_status === 'AVAILABLE' ? 'bg-emerald-100 text-emerald-800' :
                       a.lifecycle_status === 'ALLOCATED' ? 'bg-blue-100 text-blue-800' :
-                      a.lifecycle_status === 'RENTED' ? 'bg-indigo-100 text-indigo-800' :
+                      a.lifecycle_status === 'RENTED' ? 'bg-purple-100 text-purple-800' :
+                      a.lifecycle_status === 'MAINTENANCE' ? 'bg-orange-100 text-orange-800' :
                       'bg-red-100 text-red-800'
                     }`}>
                       {a.lifecycle_status}

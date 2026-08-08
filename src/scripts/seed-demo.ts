@@ -1,19 +1,20 @@
-import crypto from 'crypto';
 import { getPool } from '../db/pool';
+import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 
 const pool = getPool();
 
 export const demoData = {
-  orgId: 'demo-org-uuid',
-  userId: 'demo-user-uuid',
-  customerId: crypto.randomUUID(),
-  categoryId: crypto.randomUUID(),
-  productId: crypto.randomUUID(),
-  variantId: crypto.randomUUID(),
-  assetId: crypto.randomUUID(),
-  pricelistId: crypto.randomUUID(),
-  rentalPeriodId: crypto.randomUUID(),
-  pricelistItemId: crypto.randomUUID()
+  orgId: '6f3875f5-49a2-4bee-9dc1-927b5907020a',
+  userId: 'ad8c7dc5-21b9-4282-9410-b0653d35a989',
+  customerId: 'd3a6d95c-12fe-4c98-a755-677737be0f26',
+  categoryId: '555f0cd2-f6ac-4361-94c2-5beb20f6191b',
+  productId: '03b79be2-40e9-468b-95eb-6ce2ac5d1853',
+  variantId: 'd07556d6-a3ac-4e60-bfff-31065689ce7f',
+  assetId: 'f5c976a3-f98a-4a74-b9f4-b816c6afeb84',
+  pricelistId: '7f680b5b-d4cf-4854-8097-d06dff0f1ad0',
+  rentalPeriodId: '390c3f43-4906-4d23-b235-e71754b218fe',
+  pricelistItemId: '1579d0ca-dedb-476a-902a-8c52687b95c9'
 };
 
 async function seedDemoData() {
@@ -21,18 +22,19 @@ async function seedDemoData() {
   
   // Organization
   await pool.query(
-    `INSERT INTO organizations (id, name, code, created_at, updated_at) VALUES (?, ?, 'DEMO01', NOW(), NOW())
+    `INSERT INTO organizations (id, name, code, created_at, updated_at) VALUES (?, ?, 'DEMO05', NOW(), NOW())
      ON DUPLICATE KEY UPDATE name = VALUES(name)`,
     [demoData.orgId, 'Demo Rental Co.']
   );
   console.log('✓ Organization created');
 
   // User
+  const demoHash = await bcrypt.hash('DemoPassword123!', 10);
   await pool.query(
     `INSERT INTO users (id, organization_id, email, password_hash, first_name, last_name, status, created_at, updated_at)
      VALUES (?, ?, ?, ?, ?, ?, 'ACTIVE', NOW(), NOW())
-     ON DUPLICATE KEY UPDATE email = VALUES(email)`,
-    [demoData.userId, demoData.orgId, 'admin@demorental.co', 'dummy_hash', 'Admin', 'User']
+     ON DUPLICATE KEY UPDATE password_hash = VALUES(password_hash)`,
+    [demoData.userId, demoData.orgId, 'admin3@demorental.co', demoHash, 'Admin', 'User']
   );
   console.log('✓ User created');
 
@@ -66,7 +68,7 @@ async function seedDemoData() {
   // Variant
   await pool.query(
     `INSERT INTO variants (id, organization_id, product_id, sku, name, created_at, updated_at)
-     VALUES (?, ?, ?, 'VAR-CAM-STD', 'Camera Kit — Standard', NOW(), NOW())
+     VALUES (?, ?, ?, 'VAR-CAM-STD-2', 'Camera Kit — Standard', NOW(), NOW())
      ON DUPLICATE KEY UPDATE sku = VALUES(sku)`,
     [demoData.variantId, demoData.orgId, demoData.productId]
   );
@@ -75,7 +77,7 @@ async function seedDemoData() {
   // Asset
   await pool.query(
     `INSERT INTO assets (id, organization_id, product_variant_id, asset_tag, serial_number, lifecycle_status, condition_status, created_at, updated_at)
-     VALUES (?, ?, ?, 'CAM-001', 'SN-CAM-12345', 'AVAILABLE', 'GOOD', NOW(), NOW())
+     VALUES (?, ?, ?, 'CAM-004', 'SN-CAM-12345', 'AVAILABLE', 'GOOD', NOW(), NOW())
      ON DUPLICATE KEY UPDATE asset_tag = VALUES(asset_tag)`,
     [demoData.assetId, demoData.orgId, demoData.variantId]
   );
@@ -91,7 +93,7 @@ async function seedDemoData() {
   
   await pool.query(
     `INSERT INTO pricelists (id, organization_id, name, code, is_default, created_at, updated_at)
-     VALUES (?, ?, 'Standard Rental Prices', 'DEF', 1, NOW(), NOW())
+     VALUES (?, ?, 'Standard Rental Prices', 'DEF-V3', 1, NOW(), NOW())
      ON DUPLICATE KEY UPDATE name = VALUES(name)`,
     [demoData.pricelistId, demoData.orgId]
   );

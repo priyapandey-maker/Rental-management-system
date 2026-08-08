@@ -1,8 +1,8 @@
 import crypto from 'crypto';
 
 const baseUrl = 'http://localhost:3000/api/v1';
-const orgA = 'demo-org-uuid';
-const userA = 'demo-user-uuid';
+const orgA = '6f3875f5-49a2-4bee-9dc1-927b5907020a';
+const userA = 'ad8c7dc5-21b9-4282-9410-b0653d35a989';
 const orgB = crypto.randomUUID();
 const userB = crypto.randomUUID();
 

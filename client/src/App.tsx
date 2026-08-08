@@ -7,6 +7,7 @@ import { Login } from './pages/Login';
 import { Signup } from './pages/Signup';
 import { VendorSignup } from './pages/VendorSignup';
 import { ForgotPassword } from './pages/ForgotPassword';
+import { ResetPassword } from './pages/ResetPassword';
 import { Dashboard } from './pages/Dashboard';
 import { Customers } from './pages/Customers';
 import { Products } from './pages/Products';
@@ -18,6 +19,15 @@ import { Returns } from './pages/Returns';
 import { Inspections } from './pages/Inspections';
 import { Adjustments } from './pages/Adjustments';
 
+// Storefront Imports
+import { CustomerLayout } from './layouts/CustomerLayout';
+import { StoreHome } from './pages/store/StoreHome';
+import { ProductDetail } from './pages/store/ProductDetail';
+import { Cart } from './pages/store/Cart';
+import { CheckoutAddress } from './pages/store/CheckoutAddress';
+import { Payment } from './pages/store/Payment';
+import { OrderSuccess } from './pages/store/OrderSuccess';
+
 function App() {
   return (
     <AuthProvider>
@@ -28,10 +38,23 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/vendor-signup" element={<VendorSignup />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
           </Route>
           
+          <Route path="/" element={<Navigate to="/store" replace />} />
+
+          {/* Customer Storefront Routes */}
+          <Route path="/store" element={<CustomerLayout />}>
+            <Route index element={<StoreHome />} />
+            <Route path="product/:id" element={<ProductDetail />} />
+            <Route path="cart" element={<Cart />} />
+            <Route path="checkout" element={<CheckoutAddress />} />
+            <Route path="payment" element={<Payment />} />
+            <Route path="success" element={<OrderSuccess />} />
+          </Route>
+
+          {/* Admin / Operations Routes */}
           <Route path="/" element={<MainLayout />}>
-            <Route index element={<Navigate to="/dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="customers" element={<Customers />} />
             <Route path="products" element={<Products />} />

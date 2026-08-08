@@ -6,6 +6,7 @@ interface Customer {
   first_name: string;
   last_name: string;
   email: string;
+  phone: string | null;
   phone_number: string | null;
   status: string;
 }
@@ -59,9 +60,14 @@ export const Customers = () => {
       setPhone('');
       fetchCustomers(); // Refresh list
     } catch (err: any) {
+      // Map raw backend validation errors to friendlier UI messages
       let errorMsg = err.message || 'Failed to create customer';
       if (errorMsg.includes("Field 'customer_number' is required")) {
-        errorMsg = "Customer number could not be generated. Please try again.";
+        errorMsg = "System failed to generate a customer number automatically.";
+      } else if (errorMsg.toLowerCase().includes('duplicate') || errorMsg.includes('ER_DUP_ENTRY')) {
+        errorMsg = "A customer with this email already exists.";
+      } else if (errorMsg.toLowerCase().includes('validation')) {
+        errorMsg = "Please ensure all required fields are filled out correctly.";
       }
       setFormError(errorMsg);
     }
@@ -124,11 +130,12 @@ export const Customers = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Phone Number (Optional)</label>
+              <label className="block text-sm font-medium text-gray-700">Phone Number <span className="text-gray-400 font-normal">(Optional)</span></label>
               <input
-                type="text"
+                type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
+                placeholder="+1 (555) 000-0000"
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
             </div>
@@ -165,10 +172,13 @@ export const Customers = () => {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {customers.map((c) => (
-                  <tr key={c.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{c.first_name} {c.last_name}</td>
+                  <tr key={c.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {c.first_name} {c.last_name}
+                      <div className="text-xs text-gray-400 font-mono mt-0.5">#{c.id.substring(0,8)}</div>
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{c.email}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{c.phone_number || 'N/A'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{c.phone || c.phone_number || <span className="text-gray-300 italic">Unprovided</span>}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                         c.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'

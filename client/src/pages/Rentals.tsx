@@ -140,7 +140,7 @@ export const Rentals = () => {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {transactions.map((tx) => (
-                  <tr key={tx.id}>
+                  <tr key={tx.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{tx.id.substring(0,8)}...</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(tx.transaction_date).toLocaleDateString()}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
@@ -154,7 +154,9 @@ export const Rentals = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <Link to={`/rentals/${tx.id}`} className="text-blue-600 hover:text-blue-900">Manage</Link>
+                      <Link to={`/rentals/${tx.id}`} className="text-blue-600 hover:text-blue-900 flex justify-end items-center">
+                        Manage <span aria-hidden="true" className="ml-1">&rarr;</span>
+                      </Link>
                     </td>
                   </tr>
                 ))}

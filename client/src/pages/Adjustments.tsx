@@ -171,7 +171,7 @@ export const Adjustments = () => {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {adjustments.map((adj) => (
-                  <tr key={adj.id}>
+                  <tr key={adj.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{adj.id.substring(0,8)}...</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{adj.reason}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
