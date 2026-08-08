@@ -116,12 +116,14 @@ export const ProductDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [cartStatus, setCartStatus] = useState<'idle' | 'adding' | 'success'>('idle');
   
   // Selection States
   const [quantity, setQuantity] = useState(1);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [validationError, setValidationError] = useState('');
+  const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -192,32 +194,42 @@ export const ProductDetail = () => {
       return;
     }
     
-    if (variants.length > 0) {
+    if (variants.length > 0 && !selectedVariantId) {
       setIsModalOpen(true);
     } else {
-      addToCartDirectly(null);
+      addToCartDirectly(selectedVariantId);
     }
   };
 
   const addToCartDirectly = (variantId: string | null) => {
-    const cartItem = {
-      productId: id,
-      productName: product?.name,
-      variantId,
-      variantName: variantId ? variants.find(v => v.id === variantId)?.name : null,
-      quantity,
-      startDate,
-      endDate,
-      unitPrice: 150 // Standard Standard rate
-    };
-    
-    const existing = JSON.parse(localStorage.getItem('demo_cart') || '[]');
-    existing.push(cartItem);
-    localStorage.setItem('demo_cart', JSON.stringify(existing));
-    window.dispatchEvent(new Event('cart_updated'));
-    
-    setIsModalOpen(false);
-    alert("Added to cart successfully! (F2 completion boundary)");
+    setCartStatus('adding');
+
+    setTimeout(() => {
+      const cartItem = {
+        productId: id,
+        productName: product?.name,
+        variantId,
+        variantName: variantId ? variants.find(v => v.id === variantId)?.name : null,
+        quantity,
+        startDate,
+        endDate,
+        unitPrice: 150, // Standard rate
+        sku: product?.sku
+      };
+      
+      const existing = JSON.parse(localStorage.getItem('demo_cart') || '[]');
+      existing.push(cartItem);
+      localStorage.setItem('demo_cart', JSON.stringify(existing));
+      window.dispatchEvent(new Event('cart_updated'));
+      
+      setIsModalOpen(false);
+      setCartStatus('success');
+    }, 400);
+  };
+
+  const handleConfigureConfirm = (variantId: string) => {
+    setSelectedVariantId(variantId);
+    addToCartDirectly(variantId);
   };
 
   if (loading) {
@@ -268,7 +280,6 @@ export const ProductDetail = () => {
             <ProductCardImage imageUrl={product.image_url} sku={product.sku || ''} alt={product.name} />
           </div>
           <div className="absolute bottom-6 flex gap-3">
-             {/* Thumbnail placeholders */}
              <div className="w-16 h-16 rounded-lg bg-gray-900 border-2 border-blue-500 cursor-pointer overflow-hidden flex items-center justify-center">
                <ProductImage sku={product.sku || ''} className="w-10 h-10 object-contain" />
              </div>
@@ -350,7 +361,7 @@ export const ProductDetail = () => {
               </div>
             </div>
             
-            {variants.length > 0 && (
+            {variants.length > 0 && !selectedVariantId && (
               <div className="p-4 bg-blue-900/20 border border-blue-800/50 rounded-xl text-blue-300 text-sm flex items-start">
                 <svg className="w-5 h-5 mr-3 flex-shrink-0 mt-0.5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
@@ -358,19 +369,45 @@ export const ProductDetail = () => {
                 <span className="leading-relaxed">This product requires configuration. You will select your specific variant in the next step before adding to cart.</span>
               </div>
             )}
+
+            {selectedVariantId && (
+              <div className="p-4 bg-blue-900/20 border border-blue-800/50 rounded-xl text-blue-300 text-sm flex justify-between items-center">
+                <span>Selected Configuration: <strong className="text-white">{variants.find(v => v.id === selectedVariantId)?.name}</strong></span>
+                <button 
+                  onClick={() => setIsModalOpen(true)}
+                  className="text-xs text-blue-400 hover:text-blue-300 font-bold underline"
+                >
+                  Change Option
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="mt-10 pt-8 border-t border-gray-800">
             <button 
               onClick={handleAddToCart}
-              disabled={!product.in_stock}
+              disabled={!product.in_stock || cartStatus !== 'idle'}
               className={`w-full font-bold py-4 rounded-xl shadow-lg flex justify-center items-center text-lg transition-all ${
-                product.in_stock 
-                  ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-900/20' 
-                  : 'bg-gray-800 text-gray-500 cursor-not-allowed border border-gray-700'
+                !product.in_stock
+                  ? 'bg-gray-800 text-gray-500 cursor-not-allowed border border-gray-700'
+                  : cartStatus === 'success'
+                    ? 'bg-emerald-600 text-white shadow-emerald-950/20'
+                    : 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-900/20'
               }`}
             >
-              {product.in_stock ? (
+              {cartStatus === 'adding' ? (
+                <>
+                  <svg className="animate-spin h-5 w-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                  Adding...
+                </>
+              ) : cartStatus === 'success' ? (
+                <>
+                  <svg className="w-6 h-6 mr-2 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  Added to Cart!
+                </>
+              ) : product.in_stock ? (
                 <>
                   <svg className="w-6 h-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -381,6 +418,20 @@ export const ProductDetail = () => {
                 'Currently Unavailable'
               )}
             </button>
+
+            {cartStatus === 'success' && (
+              <div className="mt-4 p-4 bg-emerald-900/20 border border-emerald-800/50 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+                <span className="text-sm text-emerald-300 font-medium">✓ Equipment successfully reserved in your cart.</span>
+                <div className="flex gap-3">
+                  <Link to="/store" className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white text-xs font-bold rounded-lg transition-colors border border-gray-700">
+                    Continue Shopping
+                  </Link>
+                  <Link to="/cart" className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-lg transition-colors shadow">
+                    View Cart
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -388,7 +439,7 @@ export const ProductDetail = () => {
       <VariantConfigureModal 
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onConfirm={addToCartDirectly}
+        onConfirm={handleConfigureConfirm}
         variants={variants}
         productName={product.name}
       />
