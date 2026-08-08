@@ -38,6 +38,7 @@ import { OrderSuccess } from './pages/store/OrderSuccess';
 
 // Vendor Pages
 import { VendorDashboard } from './pages/vendor/VendorDashboard';
+import { VendorAnalytics } from './pages/vendor/VendorAnalytics';
 
 function App() {
   return (
@@ -99,6 +100,7 @@ function App() {
             <Route path="rentals" element={<Rentals />} />
             <Route path="rentals/:id" element={<RentalDetail />} />
             <Route path="customers" element={<Customers />} />
+            <Route path="reports" element={<VendorAnalytics />} />
           </Route>
 
           {/* ──────────────────────────────────────────────────────
