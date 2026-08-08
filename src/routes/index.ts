@@ -20,6 +20,7 @@ import * as variantController from '../controllers/variant.controller';
 import * as assetController from '../controllers/asset.controller';
 import * as pricingController from '../controllers/pricing.controller';
 import * as rentalConfigController from '../controllers/rentalConfig.controller';
+import * as transactionController from '../controllers/transaction.controller';
 
 // Apply requireTenantContext to all domain routes
 const tenantRouter = Router();
@@ -84,6 +85,14 @@ tenantRouter.put('/rental-settings', rentalConfigController.updateSettings);
 tenantRouter.post('/late-fee-rules', rentalConfigController.createLateFeeRule);
 tenantRouter.get('/late-fee-rules/:id', rentalConfigController.getLateFeeRule);
 tenantRouter.get('/late-fee-rules', rentalConfigController.listLateFeeRules);
+
+// Transactions
+tenantRouter.post('/transactions', transactionController.createTransaction);
+tenantRouter.get('/transactions', transactionController.listTransactions);
+tenantRouter.get('/transactions/:id', transactionController.getTransaction);
+tenantRouter.post('/transactions/:id/lines', transactionController.addTransactionLine);
+tenantRouter.post('/transactions/:id/confirm', transactionController.confirmTransaction);
+tenantRouter.post('/transactions/:id/cancel', transactionController.cancelTransaction);
 
 appRouter.use(tenantRouter);
 
