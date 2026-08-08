@@ -122,15 +122,15 @@ export const Login = () => {
   const tabColor = {
     customer: 'border-blue-500 text-blue-400',
     vendor: 'border-indigo-500 text-indigo-400',
-    admin: 'border-gray-400 text-gray-300',
+    admin: 'border-gray-400 text-gray-700',
   }[activeTab];
 
   return (
     <div className="flex justify-center items-center py-12">
-      <div className="bg-gray-900 border border-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-md">
+      <div className="bg-white border border-gray-200 p-8 rounded-2xl shadow-2xl w-full max-w-md">
 
         {/* Role Tabs */}
-        <div className="flex border-b border-gray-700 mb-6">
+        <div className="flex border-b border-gray-300 mb-6">
           {(Object.keys(ROLE_LABELS) as RoleTab[]).map((tab) => (
             <button
               key={tab}
@@ -144,7 +144,7 @@ export const Login = () => {
               className={`flex-1 py-2.5 text-sm font-semibold transition-colors border-b-2 -mb-px ${
                 activeTab === tab
                   ? `border-${tab === 'customer' ? 'blue' : tab === 'vendor' ? 'indigo' : 'gray'}-500 text-${tab === 'customer' ? 'blue' : tab === 'vendor' ? 'indigo' : 'gray'}-400`
-                  : 'border-transparent text-gray-500 hover:text-gray-300'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
               {ROLE_LABELS[tab].label}
@@ -154,7 +154,7 @@ export const Login = () => {
 
         <form className="space-y-5" onSubmit={handleLogin}>
           <div className="text-center mb-2">
-            <h3 className="text-xl font-bold text-white">
+            <h3 className="text-xl font-bold text-gray-900">
               {ROLE_LABELS[activeTab].label} Login
             </h3>
             <p className="text-xs text-gray-500 mt-1">{ROLE_LABELS[activeTab].description}</p>
@@ -170,7 +170,7 @@ export const Login = () => {
           )}
 
           <div>
-            <label htmlFor="email" className="block text-xs font-bold text-gray-400 uppercase tracking-wide mb-1.5">
+            <label htmlFor="email" className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">
               Email Address
             </label>
             <input
@@ -179,14 +179,14 @@ export const Login = () => {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="block w-full px-4 py-3 border border-gray-700 rounded-xl bg-gray-950 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:text-sm transition-colors"
+              className="block w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-gray-900 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:text-sm transition-colors"
               placeholder="Enter your email"
             />
           </div>
 
           <div>
             <div className="flex justify-between items-center mb-1.5">
-              <label htmlFor="password" className="block text-xs font-bold text-gray-400 uppercase tracking-wide">
+              <label htmlFor="password" className="block text-xs font-bold text-gray-500 uppercase tracking-wide">
                 Password
               </label>
               <Link to="/forgot-password" className="text-xs font-bold text-blue-500 hover:text-blue-400 transition-colors">
@@ -199,7 +199,7 @@ export const Login = () => {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="block w-full px-4 py-3 border border-gray-700 rounded-xl bg-gray-950 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:text-sm transition-colors"
+              className="block w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-gray-900 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:text-sm transition-colors"
               placeholder="Enter your password"
             />
           </div>
@@ -216,10 +216,10 @@ export const Login = () => {
         </form>
 
         {/* Footer Links */}
-        <div className="mt-6 text-center text-sm border-t border-gray-800 pt-5 space-y-2">
+        <div className="mt-6 text-center text-sm border-t border-gray-200 pt-5 space-y-2">
           {activeTab === 'customer' && (
             <div>
-              <span className="text-gray-400">Don't have an account? </span>
+              <span className="text-gray-500">Don't have an account? </span>
               <Link to="/signup" className="font-bold text-blue-500 hover:text-blue-400 transition-colors">
                 Register as Customer
               </Link>
@@ -227,7 +227,7 @@ export const Login = () => {
           )}
           {activeTab === 'vendor' && (
             <div>
-              <span className="text-gray-400">New vendor? </span>
+              <span className="text-gray-500">New vendor? </span>
               <Link to="/vendor-signup" className="font-bold text-indigo-400 hover:text-indigo-300 transition-colors">
                 Register as Vendor
               </Link>
@@ -248,7 +248,7 @@ export const Login = () => {
                 setPassword(ROLE_LABELS[nextTab].defaultPassword || '');
                 setError(null);
               }}
-              className="text-xs font-bold text-gray-400 hover:text-white transition-colors"
+              className="text-xs font-bold text-gray-500 hover:text-gray-900 transition-colors"
             >
               {activeTab === 'customer' ? 'Switch to Vendor Login' : 'Switch to Customer Login'}
             </button>

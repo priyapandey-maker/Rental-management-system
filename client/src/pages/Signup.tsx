@@ -51,7 +51,7 @@ export const Signup = () => {
   return (
     <form className="space-y-4" onSubmit={handleRegister}>
       <div>
-        <h3 className="text-xl font-bold text-white text-center mb-6">User Registration</h3>
+        <h3 className="text-xl font-bold text-gray-900 text-center mb-6">User Registration</h3>
       </div>
       
       {error && (
@@ -68,67 +68,67 @@ export const Signup = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-300">First Name</label>
+          <label className="block text-sm font-medium text-gray-700">First Name</label>
           <input
             type="text"
             required
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-200 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-300">Last Name</label>
+          <label className="block text-sm font-medium text-gray-700">Last Name</label>
           <input
             type="text"
             required
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-200 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-300">Email ID</label>
+        <label className="block text-sm font-medium text-gray-700">Email ID</label>
         <input
           type="email"
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+          className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-200 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-300">Password</label>
+        <label className="block text-sm font-medium text-gray-700">Password</label>
         <input
           type="password"
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+          className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-200 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-300">Confirm Password</label>
+        <label className="block text-sm font-medium text-gray-700">Confirm Password</label>
         <input
           type="password"
           required
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+          className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-200 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-300">Coupon Code <span className="text-gray-500 text-xs">(For new signup)</span></label>
+        <label className="block text-sm font-medium text-gray-700">Coupon Code <span className="text-gray-500 text-xs">(For new signup)</span></label>
         <input
           type="text"
           value={couponCode}
           onChange={(e) => setCouponCode(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+          className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-200 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           placeholder="Optional"
         />
       </div>
@@ -144,13 +144,13 @@ export const Signup = () => {
 
       <div className="mt-6 flex flex-col items-center space-y-2 text-sm">
         <div>
-          <span className="text-gray-400">Are you a vendor? </span>
+          <span className="text-gray-500">Are you a vendor? </span>
           <Link to="/vendor-signup" className="font-medium text-blue-400 hover:text-blue-300">
             Become a Vendor
           </Link>
         </div>
         <div>
-          <span className="text-gray-400">Already have an account? </span>
+          <span className="text-gray-500">Already have an account? </span>
           <Link to="/login" className="font-medium text-blue-400 hover:text-blue-300">
             Log In
           </Link>

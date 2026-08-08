@@ -31,11 +31,11 @@ export const OrderSuccess = () => {
   const total = subTotal + deliveryCharges;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 text-gray-100 pb-12 pt-8 print:p-0 print:m-0 print:text-black">
+    <div className="max-w-4xl mx-auto space-y-8 text-gray-900 pb-12 pt-8 print:p-0 print:m-0 print:text-black">
       
       {/* Non-printable back navigation */}
       <div className="mb-6 print:hidden">
-        <Link to="/store" className="text-sm font-bold text-gray-400 hover:text-white transition-colors flex items-center">
+        <Link to="/store" className="text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors flex items-center">
           <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
@@ -43,20 +43,20 @@ export const OrderSuccess = () => {
         </Link>
       </div>
 
-      <div className="bg-gray-900 border border-gray-800 rounded-3xl p-10 shadow-2xl print:shadow-none print:border-none print:bg-white print:text-black">
+      <div className="bg-white border border-gray-200 rounded-3xl p-10 shadow-2xl print:shadow-none print:border-none print:bg-white print:text-black">
         
         {/* Success Header */}
-        <div className="text-center mb-12 border-b border-gray-800 print:border-gray-300 pb-10">
+        <div className="text-center mb-12 border-b border-gray-200 print:border-gray-300 pb-10">
           <div className="mx-auto w-24 h-24 bg-green-900/30 text-green-500 rounded-full flex items-center justify-center mb-6 print:hidden">
             <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
           
-          <h1 className="text-4xl font-extrabold text-white print:text-black mb-4 tracking-tight">Thank you for your order</h1>
+          <h1 className="text-4xl font-extrabold text-gray-900 print:text-black mb-4 tracking-tight">Thank you for your order</h1>
           
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-6 mt-6">
-            <div className="bg-gray-800 print:bg-gray-100 px-6 py-3 rounded-xl border border-gray-700 print:border-gray-300 flex flex-col items-center">
+            <div className="bg-gray-100 print:bg-gray-100 px-6 py-3 rounded-xl border border-gray-300 print:border-gray-300 flex flex-col items-center">
               <span className="text-xs text-gray-500 print:text-gray-600 uppercase font-bold tracking-wider mb-1">Order Number</span>
               <span className="text-xl font-bold text-blue-400 print:text-blue-600">{orderId}</span>
             </div>
@@ -69,7 +69,7 @@ export const OrderSuccess = () => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           <div>
-            <h3 className="font-bold text-white text-lg mb-1">Your Payment has been processed</h3>
+            <h3 className="font-bold text-gray-900 text-lg mb-1">Your Payment has been processed</h3>
             <p className="text-sm text-blue-300/80">Demo payment simulation complete. No real funds were transferred.</p>
           </div>
         </div>
@@ -78,11 +78,11 @@ export const OrderSuccess = () => {
           
           {/* Delivery & Billing Summary */}
           <div>
-            <h3 className="text-sm font-bold text-gray-400 print:text-gray-600 uppercase tracking-wider mb-4 border-b border-gray-800 print:border-gray-300 pb-2">Delivery & Billing</h3>
+            <h3 className="text-sm font-bold text-gray-500 print:text-gray-600 uppercase tracking-wider mb-4 border-b border-gray-200 print:border-gray-300 pb-2">Delivery & Billing</h3>
             <div className="space-y-6">
               <div>
                 <p className="text-xs font-bold text-gray-500 print:text-gray-500 uppercase mb-1">Delivery Address</p>
-                <p className="text-sm text-gray-300 print:text-black font-medium leading-relaxed">
+                <p className="text-sm text-gray-700 print:text-black font-medium leading-relaxed">
                   John Doe<br/>
                   123 Rental Ave, Apt 4B<br/>
                   San Francisco, CA 94107
@@ -90,7 +90,7 @@ export const OrderSuccess = () => {
               </div>
               <div>
                 <p className="text-xs font-bold text-gray-500 print:text-gray-500 uppercase mb-1">Billing Address</p>
-                <p className="text-sm text-gray-300 print:text-black font-medium leading-relaxed">
+                <p className="text-sm text-gray-700 print:text-black font-medium leading-relaxed">
                   Same as Delivery Address
                 </p>
               </div>
@@ -99,7 +99,7 @@ export const OrderSuccess = () => {
 
           {/* Order Summary */}
           <div>
-            <h3 className="text-sm font-bold text-gray-400 print:text-gray-600 uppercase tracking-wider mb-4 border-b border-gray-800 print:border-gray-300 pb-2">Order Summary</h3>
+            <h3 className="text-sm font-bold text-gray-500 print:text-gray-600 uppercase tracking-wider mb-4 border-b border-gray-200 print:border-gray-300 pb-2">Order Summary</h3>
             
             {orderItems.length === 0 ? (
               <p className="text-sm text-gray-500 italic">No items found for this order.</p>
@@ -109,27 +109,27 @@ export const OrderSuccess = () => {
                   {orderItems.map((item, idx) => (
                     <div key={idx} className="flex justify-between items-start text-sm">
                       <div className="pr-4">
-                        <p className="font-bold text-white print:text-black mb-1">{item.productName}</p>
+                        <p className="font-bold text-gray-900 print:text-black mb-1">{item.productName}</p>
                         {item.variantName && <p className="text-xs text-blue-400 mb-1">{item.variantName}</p>}
                         <p className="text-xs text-gray-500 font-mono mb-1">{new Date(item.startDate).toLocaleDateString()} - {new Date(item.endDate).toLocaleDateString()}</p>
-                        <p className="text-gray-400 print:text-gray-600 text-xs">Qty: {item.quantity} x ${item.unitPrice}</p>
+                        <p className="text-gray-500 print:text-gray-600 text-xs">Qty: {item.quantity} x ${item.unitPrice}</p>
                       </div>
-                      <span className="font-bold text-white print:text-black whitespace-nowrap">${(item.unitPrice * item.quantity).toFixed(2)}</span>
+                      <span className="font-bold text-gray-900 print:text-black whitespace-nowrap">${(item.unitPrice * item.quantity).toFixed(2)}</span>
                     </div>
                   ))}
                 </div>
                 
-                <div className="space-y-3 pt-4 border-t border-gray-800 print:border-gray-300 text-sm">
-                  <div className="flex justify-between text-gray-400 print:text-gray-600">
+                <div className="space-y-3 pt-4 border-t border-gray-200 print:border-gray-300 text-sm">
+                  <div className="flex justify-between text-gray-500 print:text-gray-600">
                     <span>Rental Sub Total</span>
-                    <span className="font-medium text-white print:text-black">${subTotal.toFixed(2)}</span>
+                    <span className="font-medium text-gray-900 print:text-black">${subTotal.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between text-gray-400 print:text-gray-600">
+                  <div className="flex justify-between text-gray-500 print:text-gray-600">
                     <span>Delivery Charges</span>
-                    <span className="font-medium text-white print:text-black">${deliveryCharges.toFixed(2)}</span>
+                    <span className="font-medium text-gray-900 print:text-black">${deliveryCharges.toFixed(2)}</span>
                   </div>
-                  <div className="border-t border-gray-800 print:border-gray-300 pt-3 flex justify-between items-center">
-                    <span className="text-base font-bold text-gray-300 print:text-black">Total Paid</span>
+                  <div className="border-t border-gray-200 print:border-gray-300 pt-3 flex justify-between items-center">
+                    <span className="text-base font-bold text-gray-700 print:text-black">Total Paid</span>
                     <span className="text-2xl font-bold text-blue-400 print:text-black">${total.toFixed(2)}</span>
                   </div>
                 </div>
@@ -139,11 +139,11 @@ export const OrderSuccess = () => {
         </div>
 
         {/* Print Actions */}
-        <div className="pt-8 border-t border-gray-800 print:hidden flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="pt-8 border-t border-gray-200 print:hidden flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-gray-500">A confirmation email has been sent to your address.</p>
           <button 
             onClick={handlePrint}
-            className="px-8 py-3.5 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-white font-bold rounded-xl shadow transition-colors flex items-center"
+            className="px-8 py-3.5 bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-900 font-bold rounded-xl shadow transition-colors flex items-center"
           >
             <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />

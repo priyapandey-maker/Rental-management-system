@@ -33,12 +33,12 @@ export const VariantConfigureModal: React.FC<VariantConfigureModalProps> = ({ is
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 transition-opacity">
-      <div className="bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="bg-white border border-gray-200 rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden flex flex-col max-h-[90vh]">
         
         {/* Header */}
-        <div className="px-6 py-5 border-b border-gray-800 flex justify-between items-center bg-gray-900/50">
-          <h2 className="text-xl font-bold text-white tracking-tight">Configure Options</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors focus:outline-none bg-gray-800 hover:bg-gray-700 p-1.5 rounded-md">
+        <div className="px-6 py-5 border-b border-gray-200 flex justify-between items-center bg-white/50">
+          <h2 className="text-xl font-bold text-gray-900 tracking-tight">Configure Options</h2>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-900 transition-colors focus:outline-none bg-gray-100 hover:bg-gray-200 p-1.5 rounded-md">
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -47,8 +47,8 @@ export const VariantConfigureModal: React.FC<VariantConfigureModalProps> = ({ is
         
         {/* Body */}
         <div className="p-6 overflow-y-auto custom-scrollbar">
-          <p className="text-sm font-medium text-gray-400 mb-6">
-            Select an available configuration for <span className="text-white font-semibold">{productName}</span>
+          <p className="text-sm font-medium text-gray-500 mb-6">
+            Select an available configuration for <span className="text-gray-900 font-semibold">{productName}</span>
           </p>
           
           <div className="space-y-4">
@@ -61,10 +61,10 @@ export const VariantConfigureModal: React.FC<VariantConfigureModalProps> = ({ is
                   key={variant.id} 
                   className={`flex items-start p-4 border rounded-xl transition-all duration-200 ${
                     !isAvailable 
-                      ? 'border-gray-800 bg-gray-900/50 opacity-60 cursor-not-allowed' 
+                      ? 'border-gray-200 bg-white/50 opacity-60 cursor-not-allowed' 
                       : isSelected 
                         ? 'border-blue-500 bg-blue-900/20 shadow-[0_0_15px_rgba(59,130,246,0.1)] cursor-pointer' 
-                        : 'border-gray-800 bg-gray-800/50 hover:bg-gray-800 hover:border-gray-700 cursor-pointer'
+                        : 'border-gray-200 bg-gray-100/50 hover:bg-gray-100 hover:border-gray-300 cursor-pointer'
                   }`}
                 >
                   <div className="flex items-center h-5 mt-1">
@@ -75,17 +75,17 @@ export const VariantConfigureModal: React.FC<VariantConfigureModalProps> = ({ is
                       checked={isSelected}
                       disabled={!isAvailable}
                       onChange={() => setSelectedVariant(variant.id)}
-                      className="focus:ring-blue-500 h-4 w-4 text-blue-600 bg-gray-900 border-gray-700 cursor-pointer disabled:cursor-not-allowed"
+                      className="focus:ring-blue-500 h-4 w-4 text-blue-600 bg-white border-gray-300 cursor-pointer disabled:cursor-not-allowed"
                     />
                   </div>
                   <div className="ml-4 flex-1 flex items-center">
                     {/* Visual Representation */}
-                    <div className="w-16 h-16 bg-gray-950 border border-gray-800 rounded-lg flex-shrink-0 flex items-center justify-center mr-4 overflow-hidden">
+                    <div className="w-16 h-16 bg-gray-50 border border-gray-200 rounded-lg flex-shrink-0 flex items-center justify-center mr-4 overflow-hidden">
                        <ProductImage sku={variant.sku} className="w-10 h-10 object-contain" />
                     </div>
                     <div className="flex-1">
                       <div className="flex justify-between items-start">
-                        <span className={`block text-base font-bold ${!isAvailable ? 'text-gray-500' : 'text-gray-100'}`}>
+                        <span className={`block text-base font-bold ${!isAvailable ? 'text-gray-500' : 'text-gray-900'}`}>
                           {variant.name}
                         </span>
                         {!isAvailable && (
@@ -104,10 +104,10 @@ export const VariantConfigureModal: React.FC<VariantConfigureModalProps> = ({ is
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-5 border-t border-gray-800 bg-gray-900/80 flex justify-end space-x-3">
+        <div className="px-6 py-5 border-t border-gray-200 bg-white/80 flex justify-end space-x-3">
           <button 
             onClick={onClose}
-            className="px-5 py-2.5 border border-gray-700 rounded-lg shadow-sm text-sm font-medium text-gray-300 bg-gray-800 hover:bg-gray-700 hover:text-white transition-colors"
+            className="px-5 py-2.5 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 hover:text-gray-900 transition-colors"
           >
             Cancel
           </button>
@@ -117,7 +117,7 @@ export const VariantConfigureModal: React.FC<VariantConfigureModalProps> = ({ is
             className={`px-6 py-2.5 rounded-lg shadow text-sm font-bold transition-all ${
               isValidSelection 
                 ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-900/20' 
-                : 'bg-gray-800 text-gray-500 cursor-not-allowed border border-gray-700'
+                : 'bg-gray-100 text-gray-500 cursor-not-allowed border border-gray-300'
             }`}
           >
             Configure & Add

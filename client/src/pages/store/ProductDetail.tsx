@@ -234,7 +234,7 @@ export const ProductDetail = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-32 text-gray-400">
+      <div className="flex flex-col items-center justify-center py-32 text-gray-500">
         <svg className="animate-spin h-10 w-10 mb-4 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
         <p className="text-lg font-medium tracking-wide">Loading product details...</p>
       </div>
@@ -244,12 +244,12 @@ export const ProductDetail = () => {
   if (error || !product) {
     return (
       <div className="flex flex-col items-center justify-center py-32">
-        <div className="bg-gray-900 border border-red-900/50 p-8 rounded-2xl max-w-md text-center shadow-xl">
+        <div className="bg-white border border-red-900/50 p-8 rounded-2xl max-w-md text-center shadow-xl">
           <svg className="mx-auto h-16 w-16 text-red-500 mb-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
-          <h2 className="text-2xl font-bold text-white mb-2">Product Not Found</h2>
-          <p className="text-gray-400 mb-8">{error || 'The requested equipment could not be found in our catalog.'}</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Product Not Found</h2>
+          <p className="text-gray-500 mb-8">{error || 'The requested equipment could not be found in our catalog.'}</p>
           <Link to="/store" className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold rounded-lg transition-colors">
             Return to Catalog
           </Link>
@@ -259,18 +259,18 @@ export const ProductDetail = () => {
   }
 
   return (
-    <div className="space-y-6 text-gray-100 pb-12">
+    <div className="space-y-6 text-gray-900 pb-12">
       {/* Breadcrumb */}
       <nav className="text-sm font-medium flex items-center space-x-3 mb-8">
-        <Link to="/store" className="text-gray-500 hover:text-white transition-colors">All Products</Link>
+        <Link to="/store" className="text-gray-500 hover:text-gray-900 transition-colors">All Products</Link>
         <svg className="w-4 h-4 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-        <span className="text-gray-100">{product.name}</span>
+        <span className="text-gray-900">{product.name}</span>
       </nav>
 
-      <div className="bg-gray-900 rounded-2xl shadow-2xl border border-gray-800 overflow-hidden flex flex-col lg:flex-row">
+      <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden flex flex-col lg:flex-row">
         
         {/* Large Product Image (Left) */}
-        <div className="lg:w-[55%] p-10 bg-gray-950 flex flex-col items-center justify-center min-h-[500px] relative border-b lg:border-b-0 lg:border-r border-gray-800">
+        <div className="lg:w-[55%] p-10 bg-gray-50 flex flex-col items-center justify-center min-h-[500px] relative border-b lg:border-b-0 lg:border-r border-gray-200">
           {!product.in_stock && (
             <div className="absolute top-6 left-6 z-10 bg-red-900/80 text-red-100 text-sm font-bold px-4 py-1.5 rounded backdrop-blur-md border border-red-800/50">
               OUT OF STOCK
@@ -280,7 +280,7 @@ export const ProductDetail = () => {
             <ProductCardImage imageUrl={product.image_url} sku={product.sku || ''} alt={product.name} />
           </div>
           <div className="absolute bottom-6 flex gap-3">
-             <div className="w-16 h-16 rounded-lg bg-gray-900 border-2 border-blue-500 cursor-pointer overflow-hidden flex items-center justify-center">
+             <div className="w-16 h-16 rounded-lg bg-white border-2 border-blue-500 cursor-pointer overflow-hidden flex items-center justify-center">
                <ProductImage sku={product.sku || ''} className="w-10 h-10 object-contain" />
              </div>
           </div>
@@ -288,15 +288,15 @@ export const ProductDetail = () => {
 
         {/* Product Details & Selection (Right) */}
         <div className="lg:w-[45%] p-10 flex flex-col">
-          <h1 className="text-4xl font-extrabold text-white mb-3 tracking-tight">{product.name}</h1>
-          <p className="text-base text-gray-400 mb-8 flex items-center">
+          <h1 className="text-4xl font-extrabold text-gray-900 mb-3 tracking-tight">{product.name}</h1>
+          <p className="text-base text-gray-500 mb-8 flex items-center">
             {product.type} 
             <span className="mx-3 text-gray-700">•</span> 
             <span className="font-mono text-sm">{product.sku || 'SKU-BASE-001'}</span>
           </p>
           
-          <div className="mb-10 bg-gray-800/50 p-6 rounded-xl border border-gray-700/50">
-            <p className="text-sm text-gray-400 uppercase tracking-wider mb-1 font-semibold">Rental Rate</p>
+          <div className="mb-10 bg-gray-100/50 p-6 rounded-xl border border-gray-300/50">
+            <p className="text-sm text-gray-500 uppercase tracking-wider mb-1 font-semibold">Rental Rate</p>
             <p className="text-5xl font-bold text-blue-400">
               $150.00<span className="text-xl font-medium text-gray-500"> / day</span>
             </p>
@@ -305,7 +305,7 @@ export const ProductDetail = () => {
           <div className="space-y-8 flex-1">
             {/* Rental Period */}
             <div>
-              <h3 className="text-sm font-bold text-gray-300 uppercase tracking-wider mb-4">Rental Period</h3>
+              <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wider mb-4">Rental Period</h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-medium text-gray-500 mb-1.5">Start Date & Time</label>
@@ -316,7 +316,7 @@ export const ProductDetail = () => {
                       setStartDate(e.target.value);
                       if (validationError) validateDates();
                     }}
-                    className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg shadow-inner py-2.5 px-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                    className="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg shadow-inner py-2.5 px-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                   />
                 </div>
                 <div>
@@ -328,7 +328,7 @@ export const ProductDetail = () => {
                       setEndDate(e.target.value);
                       if (validationError) validateDates();
                     }}
-                    className="w-full bg-gray-950 border border-gray-700 text-white rounded-lg shadow-inner py-2.5 px-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                    className="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg shadow-inner py-2.5 px-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                   />
                 </div>
               </div>
@@ -342,12 +342,12 @@ export const ProductDetail = () => {
 
             {/* Quantity */}
             <div>
-              <h3 className="text-sm font-bold text-gray-300 uppercase tracking-wider mb-4">Quantity</h3>
-              <div className="flex items-center border border-gray-700 w-36 rounded-lg overflow-hidden bg-gray-950">
+              <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wider mb-4">Quantity</h3>
+              <div className="flex items-center border border-gray-300 w-36 rounded-lg overflow-hidden bg-gray-50">
                 <button 
                   type="button"
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="w-12 h-12 flex items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 transition-colors"
+                  className="w-12 h-12 flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" /></svg>
                 </button>
@@ -355,12 +355,12 @@ export const ProductDetail = () => {
                   type="number" 
                   value={quantity}
                   readOnly
-                  className="flex-1 w-full text-center bg-transparent border-none p-0 focus:ring-0 text-base font-bold text-white [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className="flex-1 w-full text-center bg-white border-gray-300 p-0 focus:ring-0 text-base font-bold text-gray-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
                 <button 
                   type="button"
                   onClick={() => setQuantity(quantity + 1)}
-                  className="w-12 h-12 flex items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 transition-colors"
+                  className="w-12 h-12 flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors"
                 >
                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
                 </button>
@@ -378,7 +378,7 @@ export const ProductDetail = () => {
 
             {selectedVariantId && (
               <div className="p-4 bg-blue-900/20 border border-blue-800/50 rounded-xl text-blue-300 text-sm flex justify-between items-center">
-                <span>Selected Configuration: <strong className="text-white">{variants.find(v => v.id === selectedVariantId)?.name}</strong></span>
+                <span>Selected Configuration: <strong className="text-gray-900">{variants.find(v => v.id === selectedVariantId)?.name}</strong></span>
                 <button 
                   onClick={() => setIsModalOpen(true)}
                   className="text-xs text-blue-400 hover:text-blue-300 font-bold underline"
@@ -389,13 +389,13 @@ export const ProductDetail = () => {
             )}
           </div>
 
-          <div className="mt-10 pt-8 border-t border-gray-800">
+          <div className="mt-10 pt-8 border-t border-gray-200">
             <button 
               onClick={handleAddToCart}
               disabled={!product.in_stock || cartStatus !== 'idle'}
               className={`w-full font-bold py-4 rounded-xl shadow-lg flex justify-center items-center text-lg transition-all ${
                 !product.in_stock
-                  ? 'bg-gray-800 text-gray-500 cursor-not-allowed border border-gray-700'
+                  ? 'bg-gray-100 text-gray-500 cursor-not-allowed border border-gray-300'
                   : cartStatus === 'success'
                     ? 'bg-emerald-600 text-white shadow-emerald-950/20'
                     : 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-900/20'
@@ -429,7 +429,7 @@ export const ProductDetail = () => {
               <div className="mt-4 p-4 bg-emerald-900/20 border border-emerald-800/50 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4">
                 <span className="text-sm text-emerald-300 font-medium">✓ Equipment successfully reserved in your cart.</span>
                 <div className="flex gap-3">
-                  <Link to="/store" className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white text-xs font-bold rounded-lg transition-colors border border-gray-700">
+                  <Link to="/store" className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-900 text-xs font-bold rounded-lg transition-colors border border-gray-300">
                     Continue Shopping
                   </Link>
                   <Link to="/cart" className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-lg transition-colors shadow">

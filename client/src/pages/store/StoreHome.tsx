@@ -179,15 +179,15 @@ export const StoreHome = () => {
   };
 
   return (
-    <div className="space-y-10 text-gray-100 pb-16">
+    <div className="space-y-10 text-gray-900 pb-16">
       
       {/* Compact Hero Banner */}
-      <section className="bg-gray-900 border border-gray-800 rounded-3xl p-8 md:p-10 shadow-xl flex flex-col md:flex-row justify-between items-center gap-6">
+      <section className="bg-white border border-gray-200 rounded-3xl p-8 md:p-10 shadow-xl flex flex-col md:flex-row justify-between items-center gap-6">
         <div className="max-w-xl space-y-3 text-center md:text-left">
-          <h1 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
+          <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
             Rent Premium Equipment Instantly
           </h1>
-          <p className="text-gray-400 text-sm md:text-base leading-relaxed">
+          <p className="text-gray-500 text-sm md:text-base leading-relaxed">
             High-quality gear, tools, and accessories. Flexible terms, secure checkouts, and dynamic operations tracking.
           </p>
         </div>
@@ -199,7 +199,7 @@ export const StoreHome = () => {
             placeholder="Search catalog..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-gray-950 border border-gray-700 text-white rounded-xl py-3 pl-4 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm placeholder-gray-500 shadow-inner"
+            className="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-xl py-3 pl-4 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm placeholder-gray-500 shadow-inner"
           />
           <span className="absolute right-3.5 top-3.5 text-gray-500">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -212,16 +212,16 @@ export const StoreHome = () => {
       <div className="flex flex-col lg:flex-row gap-8 items-start">
         
         {/* Left Filters Panel */}
-        <aside className="w-full lg:w-64 flex-shrink-0 bg-gray-900 border border-gray-800 rounded-2xl p-6 space-y-6">
+        <aside className="w-full lg:w-64 flex-shrink-0 bg-white border border-gray-200 rounded-2xl p-6 space-y-6">
           <div>
-            <h3 className="text-xs font-bold text-gray-400 tracking-wider uppercase mb-4">Categories</h3>
+            <h3 className="text-xs font-bold text-gray-500 tracking-wider uppercase mb-4">Categories</h3>
             <div className="flex flex-wrap lg:flex-col gap-2">
               <button 
                 onClick={() => setSelectedCategoryId('all')}
                 className={`px-4 py-2 rounded-lg text-left text-sm font-medium transition-all ${
                   selectedCategoryId === 'all' 
                     ? 'bg-blue-600 text-white font-bold' 
-                    : 'bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700'
+                    : 'bg-gray-100 text-gray-500 hover:text-gray-900 hover:bg-gray-200'
                 }`}
               >
                 All Equipment
@@ -233,7 +233,7 @@ export const StoreHome = () => {
                   className={`px-4 py-2 rounded-lg text-left text-sm font-medium transition-all ${
                     selectedCategoryId === category.id 
                       ? 'bg-blue-600 text-white font-bold' 
-                      : 'bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700'
+                      : 'bg-gray-100 text-gray-500 hover:text-gray-900 hover:bg-gray-200'
                   }`}
                 >
                   {category.name}
@@ -242,12 +242,12 @@ export const StoreHome = () => {
             </div>
           </div>
 
-          <div className="border-t border-gray-800 pt-6">
-            <h3 className="text-xs font-bold text-gray-400 tracking-wider uppercase mb-4">Sort By</h3>
+          <div className="border-t border-gray-200 pt-6">
+            <h3 className="text-xs font-bold text-gray-500 tracking-wider uppercase mb-4">Sort By</h3>
             <select 
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="w-full bg-gray-950 border border-gray-700 text-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full bg-gray-50 border border-gray-300 text-gray-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="recommended">Recommended</option>
               <option value="name-asc">Name (A - Z)</option>
@@ -258,7 +258,7 @@ export const StoreHome = () => {
           {(searchQuery || selectedCategoryId !== 'all' || sortBy !== 'recommended') && (
             <button
               onClick={handleClearFilters}
-              className="w-full py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-bold rounded-lg transition-colors border border-gray-700"
+              className="w-full py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-lg transition-colors border border-gray-300"
             >
               Clear Filters
             </button>
@@ -271,22 +271,22 @@ export const StoreHome = () => {
             /* Skeleton Loading Grid */
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
               {[1, 2, 3, 4, 5, 6].map(i => (
-                <div key={i} className="bg-gray-900 border border-gray-800 rounded-2xl p-5 space-y-4 animate-pulse">
-                  <div className="aspect-video bg-gray-800 rounded-xl"></div>
-                  <div className="h-4 bg-gray-800 rounded w-2/3"></div>
-                  <div className="h-3 bg-gray-800 rounded w-1/2"></div>
-                  <div className="h-8 bg-gray-800 rounded w-full pt-4"></div>
+                <div key={i} className="bg-white border border-gray-200 rounded-2xl p-5 space-y-4 animate-pulse">
+                  <div className="aspect-video bg-gray-100 rounded-xl"></div>
+                  <div className="h-4 bg-gray-100 rounded w-2/3"></div>
+                  <div className="h-3 bg-gray-100 rounded w-1/2"></div>
+                  <div className="h-8 bg-gray-100 rounded w-full pt-4"></div>
                 </div>
               ))}
             </div>
           ) : error ? (
             /* Error Display State */
-            <div className="bg-gray-900 border border-red-900/50 rounded-2xl p-8 text-center max-w-lg mx-auto shadow-xl">
+            <div className="bg-white border border-red-900/50 rounded-2xl p-8 text-center max-w-lg mx-auto shadow-xl">
               <svg className="mx-auto h-12 w-12 text-red-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
-              <h3 className="text-lg font-bold text-white mb-2">Unable to load products</h3>
-              <p className="text-sm text-gray-400 mb-6">{error}</p>
+              <h3 className="text-lg font-bold text-gray-900 mb-2">Unable to load products</h3>
+              <p className="text-sm text-gray-500 mb-6">{error}</p>
               <button 
                 onClick={fetchData}
                 className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold rounded-lg transition-colors"
@@ -296,17 +296,17 @@ export const StoreHome = () => {
             </div>
           ) : sortedProducts.length === 0 ? (
             /* Empty Search/Filter State */
-            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-12 text-center max-w-lg mx-auto shadow-xl">
+            <div className="bg-white border border-gray-200 rounded-2xl p-12 text-center max-w-lg mx-auto shadow-xl">
               <svg className="mx-auto h-12 w-12 text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0a2 2 0 01-2 2H6a2 2 0 01-2-2m16 0V9a2 2 0 00-2-2H6a2 2 0 00-2 2v4" />
               </svg>
-              <h3 className="text-lg font-bold text-white mb-2">No matching products found</h3>
-              <p className="text-sm text-gray-400 mb-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-2">No matching products found</h3>
+              <p className="text-sm text-gray-500 mb-6">
                 Try refining your search terms or selecting a different category.
               </p>
               <button 
                 onClick={handleClearFilters}
-                className="px-6 py-2.5 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-white text-sm font-bold rounded-lg transition-colors"
+                className="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-900 text-sm font-bold rounded-lg transition-colors"
               >
                 Reset Search Filters
               </button>
@@ -317,28 +317,28 @@ export const StoreHome = () => {
               {sortedProducts.map(product => (
                 <div 
                   key={product.id}
-                  className="group bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden shadow-lg hover:border-gray-700 transition-all flex flex-col"
+                  className="group bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-lg hover:border-gray-300 transition-all flex flex-col"
                 >
                   {/* Stable Aspect-Ratio Image Container */}
-                  <div className="aspect-video bg-gray-950 flex items-center justify-center border-b border-gray-800/50 overflow-hidden relative">
+                  <div className="aspect-video bg-gray-50 flex items-center justify-center border-b border-gray-200/50 overflow-hidden relative">
                     <ProductCardImage imageUrl={product.image_url} sku={product.sku} alt={product.name} />
                   </div>
 
                   <div className="p-5 flex-1 flex flex-col space-y-4">
                     <div className="space-y-1.5">
                       <div className="flex justify-between items-center">
-                        <span className="text-[10px] font-bold bg-gray-800 text-blue-400 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                        <span className="text-[10px] font-bold bg-gray-100 text-blue-400 px-2 py-0.5 rounded-full uppercase tracking-wider">
                           {getCategoryName(product.category_id)}
                         </span>
                         <span className="text-[10px] font-mono text-gray-500">
                           {product.sku}
                         </span>
                       </div>
-                      <h3 className="text-lg font-bold text-white line-clamp-1 group-hover:text-blue-400 transition-colors">
+                      <h3 className="text-lg font-bold text-gray-900 line-clamp-1 group-hover:text-blue-400 transition-colors">
                         {product.name}
                       </h3>
                       {product.description && (
-                        <p className="text-gray-400 text-xs line-clamp-2 leading-relaxed">
+                        <p className="text-gray-500 text-xs line-clamp-2 leading-relaxed">
                           {product.description}
                         </p>
                       )}
