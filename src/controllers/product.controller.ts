@@ -71,3 +71,14 @@ export const listProducts = async (req: Request, res: Response, next: NextFuncti
     next(error);
   }
 };
+
+export const deleteProduct = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const orgId = req.context.organizationId!;
+    const id = validateString(req.params.id, 'id', 1, 36);
+    await productService.deleteProduct(id, orgId);
+    res.status(204).end();
+  } catch (error) {
+    next(error);
+  }
+};

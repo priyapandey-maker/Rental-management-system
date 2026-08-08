@@ -74,4 +74,9 @@ export class ProductRepository extends BaseRepository {
     const sql = `SELECT * FROM products WHERE organization_id = ? ORDER BY name ASC`;
     return this.query<ProductRow[]>(sql, [organizationId], connection);
   }
+
+  async delete(id: string, organizationId: string, connection?: QueryConnection): Promise<void> {
+    const sql = `DELETE FROM products WHERE id = ? AND organization_id = ?`;
+    await this.query<ResultSetHeader>(sql, [id, organizationId], connection);
+  }
 }

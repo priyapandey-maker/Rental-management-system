@@ -85,4 +85,9 @@ export class ProductService {
   async listProducts(orgId: string): Promise<ProductRow[]> {
     return this.productRepo.list(orgId);
   }
+
+  async deleteProduct(id: string, orgId: string): Promise<void> {
+    await this.getProductById(id, orgId); // checks ownership/existence
+    await this.productRepo.delete(id, orgId);
+  }
 }

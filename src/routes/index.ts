@@ -80,6 +80,7 @@ vendorRouter.post('/products', productController.createProduct);
 vendorRouter.get('/products', productController.listProducts);
 vendorRouter.get('/products/:id', productController.getProduct);
 vendorRouter.put('/products/:id', productController.updateProduct);
+vendorRouter.delete('/products/:id', productController.deleteProduct);
 
 // Variant management
 vendorRouter.post('/variants', variantController.createVariant);
@@ -199,6 +200,7 @@ adminRouter.post('/products', productController.createProduct);
 adminRouter.get('/products/:id', productController.getProduct);
 adminRouter.put('/products/:id', productController.updateProduct);
 adminRouter.get('/products', productController.listProducts);
+adminRouter.delete('/products/:id', productController.deleteProduct);
 adminRouter.post('/attributes', attributeController.createAttribute);
 adminRouter.get('/attributes/:id', attributeController.getAttribute);
 adminRouter.get('/attributes', attributeController.listAttributes);
@@ -284,6 +286,7 @@ legacyRouter.post('/products', productController.createProduct);
 legacyRouter.get('/products/:id', productController.getProduct);
 legacyRouter.put('/products/:id', productController.updateProduct);
 legacyRouter.get('/products', productController.listProducts);
+legacyRouter.delete('/products/:id', productController.deleteProduct);
 legacyRouter.post('/attributes', attributeController.createAttribute);
 legacyRouter.get('/attributes/:id', attributeController.getAttribute);
 legacyRouter.get('/attributes', attributeController.listAttributes);
