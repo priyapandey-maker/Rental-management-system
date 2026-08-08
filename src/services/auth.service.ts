@@ -9,8 +9,8 @@ const JWT_SECRET = process.env.JWT_SECRET || 'rental_demo_jwt_secret_hackathon';
 export class AuthService {
   private authRepo = new AuthRepository();
 
-  private generateToken(userId: string, orgId: string) {
-    return jwt.sign({ userId, orgId }, JWT_SECRET, { expiresIn: '24h' });
+  private generateToken(userId: string, orgId: string, role: string) {
+    return jwt.sign({ userId, orgId, role }, JWT_SECRET, { expiresIn: '24h' });
   }
 
   async registerUser(data: { email: string; password: string; firstName: string; lastName: string }) {
@@ -31,7 +31,8 @@ export class AuthService {
       email: data.email,
       passwordHash,
       firstName: data.firstName,
-      lastName: data.lastName
+      lastName: data.lastName,
+      userType: 'customer'
     });
 
     return { message: 'Registration successful', userId, orgId };
@@ -55,7 +56,8 @@ export class AuthService {
       email: data.email,
       passwordHash,
       firstName: data.firstName,
-      lastName: data.lastName
+      lastName: data.lastName,
+      userType: 'vendor'
     });
 
     return { message: 'Registration successful', userId, orgId };
@@ -80,7 +82,7 @@ export class AuthService {
       throw new AuthenticationError('Invalid login credentials');
     }
 
-    const token = this.generateToken(user.id, user.organization_id);
+    const token = this.generateToken(user.id, user.organization_id, user.user_type);
 
     return {
       token,
@@ -89,7 +91,8 @@ export class AuthService {
         email: user.email,
         firstName: user.first_name,
         lastName: user.last_name,
-        organizationId: user.organization_id
+        organizationId: user.organization_id,
+        role: user.user_type
       }
     };
   }

@@ -23,10 +23,14 @@ export const Login = () => {
       const response: any = await apiClient.post('/auth/login', { email, password });
       
       // Store the real JWT and user context
-      login(response.user.id, response.user.organizationId, response.token);
+      login(response.user.id, response.user.organizationId, response.user.role, response.token);
       
-      // Redirect to storefront as requested by customer journey
-      navigate('/store');
+      // Route based on role
+      if (response.user.role === 'vendor' || response.user.role === 'admin') {
+        navigate('/dashboard');
+      } else {
+        navigate('/store');
+      }
     } catch (err: any) {
       setError(err.response?.data?.error || 'Invalid email or password.');
     }

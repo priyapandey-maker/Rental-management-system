@@ -31,9 +31,9 @@ async function seedDemoData() {
   // User
   const demoHash = await bcrypt.hash('DemoPassword123!', 10);
   await pool.query(
-    `INSERT INTO users (id, organization_id, email, password_hash, first_name, last_name, status, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, 'ACTIVE', NOW(), NOW())
-     ON DUPLICATE KEY UPDATE password_hash = VALUES(password_hash)`,
+    `INSERT INTO users (id, organization_id, email, password_hash, first_name, last_name, status, user_type, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, 'active', 'admin', NOW(), NOW())
+     ON DUPLICATE KEY UPDATE password_hash = VALUES(password_hash), user_type = VALUES(user_type)`,
     [demoData.userId, demoData.orgId, 'admin3@demorental.co', demoHash, 'Admin', 'User']
   );
   console.log('✓ User created');

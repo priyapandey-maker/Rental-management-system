@@ -9,11 +9,12 @@ export class AuthRepository {
     passwordHash: string;
     firstName: string;
     lastName: string;
+    userType?: 'customer' | 'vendor' | 'admin';
   }): Promise<string> {
     const id = crypto.randomUUID();
     const query = `
-      INSERT INTO users (id, organization_id, email, password_hash, first_name, last_name, status)
-      VALUES (?, ?, ?, ?, ?, ?, 'active')
+      INSERT INTO users (id, organization_id, email, password_hash, first_name, last_name, status, user_type)
+      VALUES (?, ?, ?, ?, ?, ?, 'active', ?)
     `;
 
     try {
@@ -23,7 +24,8 @@ export class AuthRepository {
         data.email,
         data.passwordHash,
         data.firstName,
-        data.lastName
+        data.lastName,
+        data.userType || 'customer'
       ]);
       return id;
     } catch (err: any) {
@@ -36,7 +38,7 @@ export class AuthRepository {
 
   async findUserByEmail(email: string): Promise<any> {
     const query = `
-      SELECT id, organization_id, email, password_hash, first_name, last_name, status
+      SELECT id, organization_id, email, password_hash, first_name, last_name, status, user_type
       FROM users
       WHERE email = ?
     `;
