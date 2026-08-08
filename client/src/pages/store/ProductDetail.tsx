@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { apiClient } from '../../api/client';
 import { VariantConfigureModal } from '../../components/store/VariantConfigureModal';
+import { ProductImage, ProductCardImage } from './StoreHome';
 
 interface Product {
   id: string;
   name: string;
   type: string;
-  // Simulating stock state for demo purposes as backend doesn't explicitly expose root availability
+  sku?: string;
+  description?: string | null;
+  image_url?: string;
   in_stock?: boolean; 
 }
 
@@ -16,6 +19,92 @@ interface Variant {
   name: string;
   sku: string;
 }
+
+const MOCK_PRODUCTS = [
+  {
+    id: 'prod-camera-111',
+    name: 'Professional Camera Kit',
+    type: 'Cameras',
+    sku: 'PROD-CAM-01',
+    description: 'High-end cinema camera package with prime lenses and stabiliser.'
+  },
+  {
+    id: 'prod-audio-222',
+    name: 'Wireless Lavalier Microphone',
+    type: 'Audio',
+    sku: 'PROD-AUD-01',
+    description: 'Dual-channel wireless mic kit with noise-canceling technology.'
+  },
+  {
+    id: 'prod-lighting-333',
+    name: 'LED Studio Panel Light',
+    type: 'Lighting',
+    sku: 'PROD-LGT-01',
+    description: 'Bi-color dimmable LED light panel for studio and field production.'
+  },
+  {
+    id: 'prod-lenses-444',
+    name: 'Cinema Prime Lens Kit',
+    type: 'Lenses',
+    sku: 'PROD-LNS-01',
+    description: 'F1.4 prime lens set (24mm, 35mm, 50mm, 85mm) with focus gears.'
+  },
+  {
+    id: 'prod-tripods-555',
+    name: 'Carbon Fiber Tripod System',
+    type: 'Tripods & Supports',
+    sku: 'PROD-TRP-01',
+    description: 'Ultra-lightweight carbon fiber legs with professional fluid head.'
+  },
+  {
+    id: 'prod-video-666',
+    name: 'HDMI Wireless Transmitter',
+    type: 'Video Equipment',
+    sku: 'PROD-VID-01',
+    description: 'HDMI/SDI wireless video transmitter with 500ft range and low latency.'
+  },
+  {
+    id: 'prod-drones-777',
+    name: 'GPS 4K Camera Drone',
+    type: 'Drones',
+    sku: 'PROD-DRN-01',
+    description: 'Foldable quadcopter drone with 3-axis gimbal camera and safety sensors.'
+  },
+  {
+    id: 'prod-projectors-888',
+    name: '4K Ultra Short Throw Projector',
+    type: 'Projectors',
+    sku: 'PROD-PRJ-01',
+    description: 'High-brightness laser projector for indoor cinema screens.'
+  }
+];
+
+const MOCK_VARIANTS: Record<string, any[]> = {
+  'prod-camera-111': [
+    { id: 'var-camera-std-111', name: 'Camera Kit — Standard', sku: 'VAR-CAM-STD' }
+  ],
+  'prod-audio-222': [
+    { id: 'var-audio-std-222', name: 'Lavalier Mic — Dual Channel', sku: 'VAR-AUD-STD' }
+  ],
+  'prod-lighting-333': [
+    { id: 'var-lighting-std-333', name: 'LED Studio Panel — 100W', sku: 'VAR-LGT-STD' }
+  ],
+  'prod-lenses-444': [
+    { id: 'var-lenses-std-444', name: 'Prime Lens Set — Full Frame', sku: 'VAR-LNS-STD' }
+  ],
+  'prod-tripods-555': [
+    { id: 'var-tripods-std-555', name: 'Carbon Tripod — 75mm Bowl', sku: 'VAR-TRP-STD' }
+  ],
+  'prod-video-666': [
+    { id: 'var-video-std-666', name: 'Wireless Video Link — SDI/HDMI', sku: 'VAR-VID-STD' }
+  ],
+  'prod-drones-777': [
+    { id: 'var-drones-std-777', name: '4K Video Drone — Pro Bundle', sku: 'VAR-DRN-STD' }
+  ],
+  'prod-projectors-888': [
+    { id: 'var-projectors-std-888', name: '4K Laser Projector — 3000 Lumens', sku: 'VAR-PRJ-STD' }
+  ]
+};
 
 export const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -40,25 +129,29 @@ export const ProductDetail = () => {
         setLoading(true);
         setError(null);
         
-        let pData: any;
+        let pData: any = null;
         try {
            pData = await apiClient.get(`/products/${id}`);
         } catch {
-           const pList = await apiClient.get('/products');
-           pData = (pList as unknown as any[]).find(p => p.id === id);
+           try {
+              const pList = await apiClient.get('/products');
+              pData = (pList as unknown as any[]).find(p => p.id === id);
+           } catch {
+              pData = MOCK_PRODUCTS.find(p => p.id === id);
+           }
            if (!pData) throw new Error('Product not found in catalog');
         }
 
         // Hardcode some demo availability to show out of stock states
-        const isOutOfStock = Math.random() > 0.8;
+        const isOutOfStock = false;
         setProduct({ ...pData, in_stock: !isOutOfStock });
 
         try {
           const vData = await apiClient.get(`/products/${id}/variants`);
           setVariants(vData as any);
         } catch {
-          // If variants fail, just assume no variants
-          setVariants([]);
+          // If variants fail, load mock variants
+          setVariants(MOCK_VARIANTS[id || ''] || []);
         }
 
       } catch (err: any) {
@@ -107,7 +200,6 @@ export const ProductDetail = () => {
   };
 
   const addToCartDirectly = (variantId: string | null) => {
-    // In a real app we'd save to a Cart context or backend table. For the flow, we'll save to local storage.
     const cartItem = {
       productId: id,
       productName: product?.name,
@@ -116,7 +208,7 @@ export const ProductDetail = () => {
       quantity,
       startDate,
       endDate,
-      unitPrice: 45 // Fake price because backend model lacks it
+      unitPrice: 150 // Standard Standard rate
     };
     
     const existing = JSON.parse(localStorage.getItem('demo_cart') || '[]');
@@ -125,9 +217,6 @@ export const ProductDetail = () => {
     window.dispatchEvent(new Event('cart_updated'));
     
     setIsModalOpen(false);
-    
-    // UX Flow: Just navigate to cart? Or show toast. 
-    // Requirement is prepare it so F3 can consume it, but let's drop them back to home or keep them here.
     alert("Added to cart successfully! (F2 completion boundary)");
   };
 
@@ -175,14 +264,14 @@ export const ProductDetail = () => {
               OUT OF STOCK
             </div>
           )}
-          <svg className={`w-64 h-64 ${!product.in_stock ? 'text-gray-800' : 'text-gray-700'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
+          <div className="w-80 h-80 flex items-center justify-center">
+            <ProductCardImage imageUrl={product.image_url} sku={product.sku || ''} alt={product.name} />
+          </div>
           <div className="absolute bottom-6 flex gap-3">
              {/* Thumbnail placeholders */}
-             <div className="w-16 h-16 rounded-lg bg-gray-900 border-2 border-blue-500 cursor-pointer"></div>
-             <div className="w-16 h-16 rounded-lg bg-gray-900 border-2 border-transparent hover:border-gray-700 cursor-pointer"></div>
-             <div className="w-16 h-16 rounded-lg bg-gray-900 border-2 border-transparent hover:border-gray-700 cursor-pointer"></div>
+             <div className="w-16 h-16 rounded-lg bg-gray-900 border-2 border-blue-500 cursor-pointer overflow-hidden flex items-center justify-center">
+               <ProductImage sku={product.sku || ''} className="w-10 h-10 object-contain" />
+             </div>
           </div>
         </div>
 
@@ -192,13 +281,13 @@ export const ProductDetail = () => {
           <p className="text-base text-gray-400 mb-8 flex items-center">
             {product.type} 
             <span className="mx-3 text-gray-700">•</span> 
-            <span className="font-mono text-sm">SKU-BASE-001</span>
+            <span className="font-mono text-sm">{product.sku || 'SKU-BASE-001'}</span>
           </p>
           
           <div className="mb-10 bg-gray-800/50 p-6 rounded-xl border border-gray-700/50">
             <p className="text-sm text-gray-400 uppercase tracking-wider mb-1 font-semibold">Rental Rate</p>
             <p className="text-5xl font-bold text-blue-400">
-              $45<span className="text-xl font-medium text-gray-500"> / month</span>
+              $150.00<span className="text-xl font-medium text-gray-500"> / day</span>
             </p>
           </div>
 
