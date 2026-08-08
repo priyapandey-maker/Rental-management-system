@@ -47,8 +47,8 @@ export const Dashboard = () => {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-extrabold text-gray-900">Dashboard</h1>
-        <p className="text-gray-500 mt-1">Real-time overview of your rental operations.</p>
+        <h1 className="text-3xl font-extrabold text-gray-900">Operations Dashboard</h1>
+        <p className="text-gray-500 mt-1">Real-time overview of the organization's rental operations and master data.</p>
       </div>
 
       {stats && (

@@ -46,10 +46,11 @@ export const Customers = () => {
 
     try {
       await apiClient.post('/customers', {
+        customer_number: `CUST-${Date.now().toString().slice(-6)}`,
         first_name: firstName,
         last_name: lastName,
         email,
-        phone_number: phone || undefined
+        phone: phone || undefined
       });
       setFormSuccess(true);
       setFirstName('');
@@ -58,7 +59,11 @@ export const Customers = () => {
       setPhone('');
       fetchCustomers(); // Refresh list
     } catch (err: any) {
-      setFormError(err.message || 'Failed to create customer');
+      let errorMsg = err.message || 'Failed to create customer';
+      if (errorMsg.includes("Field 'customer_number' is required")) {
+        errorMsg = "Customer number could not be generated. Please try again.";
+      }
+      setFormError(errorMsg);
     }
   };
 
