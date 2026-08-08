@@ -40,6 +40,9 @@ import { OrderSuccess } from './pages/store/OrderSuccess';
 import { VendorDashboard } from './pages/vendor/VendorDashboard';
 import { VendorAnalytics } from './pages/vendor/VendorAnalytics';
 
+// Public Marketing Pages
+import { LandingPage } from './pages/LandingPage';
+
 function App() {
   return (
     <AuthProvider>
@@ -66,11 +69,9 @@ function App() {
           </Route>
 
           {/* ──────────────────────────────────────────────────────
-              DEFAULT REDIRECT
-              Root always redirects to /login (auth check in each
-              portal layout handles further routing).
+              PUBLIC LANDING PAGE
           ────────────────────────────────────────────────────── */}
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/" element={<LandingPage />} />
 
           {/* ──────────────────────────────────────────────────────
               CUSTOMER STOREFRONT ROUTES

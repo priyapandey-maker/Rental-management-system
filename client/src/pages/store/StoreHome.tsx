@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { apiClient } from '../../api/client';
 import { ProductImage, ProductCardImage } from '../../components/store/ProductImage';
 
@@ -107,14 +107,15 @@ const MOCK_PRODUCTS: Product[] = [
 ];
 
 export const StoreHome = () => {
+  const [searchParams] = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Search & Filter state
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>(searchParams.get('category') || 'all');
   const [sortBy, setSortBy] = useState<string>('recommended');
 
   const fetchData = async () => {
