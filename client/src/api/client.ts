@@ -7,18 +7,22 @@ export const apiClient = axios.create({
   },
 });
 
-// Interceptor to attach auth headers
+// Request interceptor to attach authentication context
 apiClient.interceptors.request.use((config) => {
   const userId = localStorage.getItem('demo_user_id');
   const orgId = localStorage.getItem('demo_org_id');
-
+  const jwt = localStorage.getItem('jwt_token');
+  
   if (userId) {
     config.headers['x-user-id'] = userId;
   }
   if (orgId) {
     config.headers['x-organization-id'] = orgId;
   }
-
+  if (jwt) {
+    config.headers['Authorization'] = `Bearer ${jwt}`;
+  }
+  
   return config;
 });
 

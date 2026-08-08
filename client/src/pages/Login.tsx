@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { apiClient } from '../api/client';
 
 export const Login = () => {
   // Using demo UUIDs as default to maintain backend contract compatibility
@@ -10,24 +11,17 @@ export const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     
-    // Validate inputs locally
-    if (!loginId || !password) {
-      setError('Please enter both Login ID and Password.');
-      return;
-    }
-
-    // Since the backend lacks an actual auth exchange endpoint, we map
-    // the UI's Login ID and Password directly to the required UUIDs
-    // to preserve the frozen architecture.
     try {
-      login(loginId, password);
+      // loginId is treated as email
+      const response = await apiClient.post('/auth/login', { email: loginId, password });
+      login(response.data.user.id, response.data.user.organizationId, response.data.token);
       navigate('/dashboard');
-    } catch (err) {
-      setError('Invalid login credentials');
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Invalid login credentials');
     }
   };
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { apiClient } from '../api/client';
 
 export const VendorSignup = () => {
   const [firstName, setFirstName] = useState('');
@@ -12,40 +13,33 @@ export const VendorSignup = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   
   const [error, setError] = useState<string | null>(null);
-  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
-  const validatePassword = (pass: string) => {
-    if (pass.length < 6 || pass.length > 12) return 'Password must be 6-12 characters long.';
-    if (!/[A-Z]/.test(pass)) return 'Password must contain at least one uppercase letter.';
-    if (!/[a-z]/.test(pass)) return 'Password must contain at least one lowercase letter.';
-    if (!/[!@#$%^&*(),.?":{}|<>]/.test(pass)) return 'Password must contain at least one special character.';
-    return null;
-  };
+  const navigate = useNavigate();
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    setPasswordError(null);
+    setSuccess(null);
 
-    const passValidation = validatePassword(password);
-    if (passValidation) {
-      setPasswordError(passValidation);
-      return;
-    }
-
+    // Frontend validation
     if (password !== confirmPassword) {
-      setPasswordError('Passwords do not match.');
+      setError('Passwords do not match');
+      return;
+    }
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{6,12})/;
+    if (!passwordRegex.test(password)) {
+      setError('Password does not meet requirements');
       return;
     }
 
-    if (!productCategory) {
-      setError('Please select a Product Category.');
-      return;
+    try {
+      await apiClient.post('/auth/vendor-register', { email, password, firstName, lastName, companyName });
+      setSuccess('Registration successful! Please log in to continue. Note: GST No and Product Category were not saved (unsupported by backend).');
+      setTimeout(() => navigate('/login'), 4000);
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Registration failed');
     }
-
-    // Attempting registration. 
-    // We intentionally report the missing backend contract as requested.
-    setError('Registration failed: Vendor registration API is not implemented in the frozen backend architecture.');
   };
 
   return (
@@ -60,7 +54,13 @@ export const VendorSignup = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-4">
+      {success && (
+        <div className="p-3 bg-green-900/50 text-green-200 text-sm rounded-md border border-green-800">
+          {success}
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-300">First Name</label>
           <input
@@ -83,7 +83,7 @@ export const VendorSignup = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-300">Company Name</label>
           <input
@@ -134,17 +134,14 @@ export const VendorSignup = () => {
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-300">Password</label>
           <input
             type="password"
             required
             value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-              if (passwordError) setPasswordError(null);
-            }}
+            onChange={(e) => setPassword(e.target.value)}
             className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           />
         </div>
@@ -154,17 +151,11 @@ export const VendorSignup = () => {
             type="password"
             required
             value={confirmPassword}
-            onChange={(e) => {
-              setConfirmPassword(e.target.value);
-              if (passwordError) setPasswordError(null);
-            }}
+            onChange={(e) => setConfirmPassword(e.target.value)}
             className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           />
         </div>
       </div>
-      {passwordError && (
-        <p className="mt-1 text-sm text-red-400">{passwordError}</p>
-      )}
 
       <div className="pt-2">
         <button
