@@ -386,22 +386,22 @@ export const StoreHome = () => {
                       )}
                     </div>
 
-                    <div className="pt-2 border-t border-gray-850 flex items-end justify-between mt-auto">
+                    <div className="pt-2 border-t border-gray-100 flex items-center justify-between mt-auto gap-3">
                       <div>
-                        <span className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                        <span className="block text-[9px] font-bold text-gray-400 uppercase tracking-wider">
                           Standard Rate
                         </span>
-                        <span className="text-lg font-extrabold text-brand-400">
-                          $150.00<span className="text-xs font-normal text-gray-500"> / day</span>
+                        <span className="text-base font-extrabold text-brand-400">
+                          $150.00<span className="text-[10px] font-normal text-gray-400"> / day</span>
                         </span>
                       </div>
                       <Link 
                         to={`/store/product/${product.id}`}
-                        className="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold rounded-lg transition-colors flex items-center shadow"
+                        className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 bg-brand-600 hover:bg-brand-500 text-white text-[11px] font-bold rounded-lg transition-colors"
                       >
                         View Details
-                        <svg className="w-3.5 h-3.5 ml-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
                         </svg>
                       </Link>
                     </div>
