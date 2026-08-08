@@ -21,6 +21,7 @@ import * as assetController from '../controllers/asset.controller';
 import * as pricingController from '../controllers/pricing.controller';
 import * as rentalConfigController from '../controllers/rentalConfig.controller';
 import * as transactionController from '../controllers/transaction.controller';
+import * as orchestrationController from '../controllers/orchestration.controller';
 
 // Apply requireTenantContext to all domain routes
 const tenantRouter = Router();
@@ -126,5 +127,9 @@ tenantRouter.get('/adjustments/:id', adjustmentController.getAdjustment);
 tenantRouter.get('/adjustments/transactions/:txId', adjustmentController.listAdjustments);
 tenantRouter.put('/adjustments/:id/status', adjustmentController.updateStatus);
 
+// Orchestration (Fulfillment & Allocation)
+tenantRouter.post('/transactions/:id/allocate', orchestrationController.allocateTransaction);
+tenantRouter.post('/transactions/:id/fulfill', orchestrationController.fulfillTransaction);
+tenantRouter.post('/transactions/:id/return', orchestrationController.returnTransaction);
 appRouter.use(tenantRouter);
 
