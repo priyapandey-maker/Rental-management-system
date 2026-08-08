@@ -92,8 +92,8 @@ export async function runMigrations(
       if (executedMap.has(file)) {
         const previousChecksum = executedMap.get(file);
         if (previousChecksum && previousChecksum !== checksum) {
-          console.warn(
-            `[Migrator Warning] Migration file "${file}" has changed since execution (checksum mismatch).`
+          throw new Error(
+            `Checksum mismatch detected for historical migration file "${file}". Expected: ${previousChecksum}, Found: ${checksum}. Executed migrations are immutable and must not be altered.`
           );
         }
         results.push({
