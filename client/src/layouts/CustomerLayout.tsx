@@ -18,24 +18,6 @@ export const CustomerLayout = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [cartCount, setCartCount] = useState(0);
 
-  // Auth gate
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  // Role gate: non-customers go to their portal
-  if (role === 'admin') return <Navigate to="/dashboard" replace />;
-  if (role === 'vendor') return <Navigate to="/vendor/dashboard" replace />;
-
-
   const updateCartCount = () => {
     try {
       const stored = JSON.parse(localStorage.getItem('demo_cart') || '[]');
@@ -55,6 +37,23 @@ export const CustomerLayout = () => {
       window.removeEventListener('storage', updateCartCount);
     };
   }, []);
+
+  // Auth gate
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  // Role gate: non-customers go to their portal
+  if (role === 'admin') return <Navigate to="/dashboard" replace />;
+  if (role === 'vendor') return <Navigate to="/vendor/dashboard" replace />;
 
   const handleLogout = () => {
     logout();
