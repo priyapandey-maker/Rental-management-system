@@ -1,41 +1,117 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { apiClient } from '../api/client';
+import { useAuth } from '../context/AuthContext';
+import {
+  DocumentTextIcon,
+  FunnelIcon,
+  PlusIcon,
+  ArrowPathIcon
+} from '@heroicons/react/24/outline';
+
+interface TransactionLine {
+  id: string;
+  product_id: string;
+  variant_id: string | null;
+  quantity: number;
+  rental_start_date: string;
+  rental_end_date: string;
+}
 
 interface Transaction {
   id: string;
   customer_id: string;
-  status: string;
+  status: 'DRAFT' | 'CONFIRMED' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED';
   transaction_date: string;
+  lines?: TransactionLine[];
 }
 
 interface Customer {
   id: string;
   first_name: string;
+  lastName?: string;
   last_name: string;
   status: string;
+  email?: string;
+}
+
+interface Product {
+  id: string;
+  name: string;
 }
 
 export const Rentals = () => {
+  const { orgId } = useAuth();
+  const isVendor = window.location.pathname.startsWith('/vendor');
+
+  // Data States
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [variantsMap, setVariantsMap] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Form State
+  // Filters State
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+
+  // Form State (Create Draft Rental)
   const [selectedCustomerId, setSelectedCustomerId] = useState('');
+  const [creating, setCreating] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [formSuccess, setFormSuccess] = useState(false);
 
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [txs, custs] = await Promise.all([
+      setError(null);
+
+      // Fetch flat collections
+      const [txs, custs, prods] = await Promise.all([
         apiClient.get('/transactions'),
-        apiClient.get('/customers')
+        apiClient.get('/customers'),
+        apiClient.get('/products')
       ]);
-      setTransactions(txs as any);
-      setCustomers((custs as any).filter((c: any) => c.status === 'active'));
+
+      const txList = Array.isArray(txs) ? txs : [];
+      const customerList = Array.isArray(custs) ? custs : [];
+      const productList = Array.isArray(prods) ? prods : [];
+
+      setCustomers(customerList.filter((c: any) => c.status === 'active'));
+      setProducts(productList);
+
+      // Load transaction lines in parallel to show product details in the list
+      const txsWithLines = await Promise.all(
+        txList.map(async (tx: any) => {
+          try {
+            const detail = await apiClient.get(`/transactions/${tx.id}`);
+            return detail as any as Transaction;
+          } catch {
+            return tx as any as Transaction;
+          }
+        })
+      );
+
+      setTransactions(txsWithLines);
+
+      // Build product variant names cache
+      const vMap: Record<string, string> = {};
+      await Promise.all(
+        productList.map(async (p: any) => {
+          try {
+            const vars = await apiClient.get(`/products/${p.id}/variants`);
+            if (Array.isArray(vars)) {
+              vars.forEach((v: any) => {
+                vMap[v.id] = v.name;
+              });
+            }
+          } catch (e) {
+            console.error(e);
+          }
+        })
+      );
+      setVariantsMap(vMap);
     } catch (err: any) {
       setError(err.message || 'Failed to fetch rentals');
     } finally {
@@ -58,7 +134,8 @@ export const Rentals = () => {
     }
 
     try {
-      const createdTx = await apiClient.post('/transactions', {
+      setCreating(true);
+      await apiClient.post('/transactions', {
         customer_id: selectedCustomerId
       });
       setFormSuccess(true);
@@ -66,43 +143,72 @@ export const Rentals = () => {
       fetchData(); // Refresh list
     } catch (err: any) {
       setFormError(err.message || 'Failed to create rental transaction');
+    } finally {
+      setCreating(false);
     }
   };
 
+  // Filter rentals
+  const filteredRentals = transactions.filter((tx) => {
+    const cust = customers.find(c => c.id === tx.customer_id);
+    const customerName = cust ? `${cust.first_name} ${cust.last_name}`.toLowerCase() : '';
+    const matchSearch = 
+      tx.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      customerName.includes(searchTerm.toLowerCase());
+    
+    const matchStatus = statusFilter ? tx.status === statusFilter : true;
+    return matchSearch && matchStatus;
+  });
+
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-extrabold text-gray-900">Rental Transactions</h1>
-        <p className="text-gray-500 mt-1">Manage transactional states, create rental contracts, and trigger allocations.</p>
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-extrabold text-gray-900">Rental Operations</h1>
+          <p className="text-gray-500 mt-1">Manage rental lifecycles, assign active serials, and coordinate fulfillments.</p>
+        </div>
+        <button
+          onClick={fetchData}
+          className="p-2 text-gray-400 hover:text-indigo-600 rounded-lg border border-gray-200 bg-white shadow-sm"
+          title="Refresh operations"
+        >
+          <ArrowPathIcon className="h-5 w-5" />
+        </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Create Rental Transaction form */}
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 h-fit">
-          <h3 className="text-lg leading-6 font-semibold text-gray-900 mb-4">Create Draft Rental</h3>
+        {/* Create Draft Rental Form */}
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 h-fit space-y-4">
+          <div>
+            <h3 className="text-lg font-bold text-gray-900">Start New Rental</h3>
+            <p className="text-xs text-gray-400 mt-0.5">Initialize a blank draft contract for an active customer.</p>
+          </div>
+          
           <form className="space-y-4" onSubmit={handleCreateRental}>
             {formError && (
-              <div className="p-3 bg-red-50 text-red-700 text-sm rounded-md border border-red-200">
+              <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs font-semibold rounded-lg">
                 {formError}
               </div>
             )}
             {formSuccess && (
-              <div className="p-3 bg-green-50 text-green-700 text-sm rounded-md border border-green-200">
+              <div className="p-3 bg-green-50 border border-green-200 text-green-700 text-xs font-semibold rounded-lg">
                 Rental transaction created successfully!
               </div>
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Select Active Customer</label>
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Select Active Customer</label>
               <select
                 value={selectedCustomerId}
                 onChange={(e) => setSelectedCustomerId(e.target.value)}
-                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md border"
+                className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2.5 px-3 focus:ring-indigo-500 focus:border-indigo-500 text-sm shadow-inner"
+                disabled={creating}
               >
                 <option value="">-- Choose Customer --</option>
                 {customers.map((c) => (
                   <option key={c.id} value={c.id}>
-                    {c.first_name} {c.last_name}
+                    {c.first_name} {c.last_name} ({c.email || 'No email'})
                   </option>
                 ))}
               </select>
@@ -110,58 +216,135 @@ export const Rentals = () => {
 
             <button
               type="submit"
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-sm font-bold rounded-lg transition-colors flex justify-center items-center shadow"
+              disabled={creating}
             >
-              Start Rental
+              {creating ? 'Starting...' : 'Create Draft Contract'}
             </button>
           </form>
         </div>
 
         {/* Rentals List */}
-        <div className="lg:col-span-2 bg-white shadow-sm border border-gray-200 rounded-lg">
-          <div className="px-6 py-5 border-b border-gray-200">
-            <h3 className="text-lg leading-6 font-semibold text-gray-900">All Rentals</h3>
+        <div className="lg:col-span-2 bg-white shadow-sm border border-gray-200 rounded-xl overflow-hidden flex flex-col">
+          {/* Filters Bar */}
+          <div className="p-5 border-b border-gray-200 bg-gray-50 flex flex-col sm:flex-row gap-4 items-center justify-between">
+            <div className="flex items-center space-x-2 w-full sm:w-auto">
+              <FunnelIcon className="h-5 w-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search by customer or contract ID..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="bg-white border border-gray-300 text-gray-900 rounded-lg py-1.5 px-3 text-xs w-full sm:w-64 focus:ring-indigo-500 focus:border-indigo-500"
+              />
+            </div>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="bg-white border border-gray-300 text-gray-900 rounded-lg py-1.5 px-3 text-xs w-full sm:w-40 focus:ring-indigo-500 focus:border-indigo-500"
+            >
+              <option value="">All Statuses</option>
+              <option value="DRAFT">Draft</option>
+              <option value="CONFIRMED">Confirmed</option>
+              <option value="ACTIVE">Active</option>
+              <option value="COMPLETED">Completed</option>
+              <option value="CANCELLED">Cancelled</option>
+            </select>
           </div>
+
           {loading ? (
-            <div className="p-6 text-center text-gray-500">Loading rentals...</div>
+            <div className="p-12 text-center text-gray-500">
+              <svg className="animate-spin h-8 w-8 mx-auto mb-4 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+              <span>Loading rentals operational queue...</span>
+            </div>
           ) : error ? (
-            <div className="p-6 text-center text-red-600">Error: {error}</div>
-          ) : transactions.length === 0 ? (
-            <div className="p-6 text-center text-gray-500">No rental transactions found.</div>
+            <div className="p-12 text-center">
+              <p className="text-red-600 font-medium mb-4">Error: {error}</p>
+              <button 
+                onClick={fetchData}
+                className="px-5 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-500 transition-colors"
+              >
+                Retry Request
+              </button>
+            </div>
+          ) : filteredRentals.length === 0 ? (
+            <div className="p-12 text-center text-gray-400 space-y-4">
+              <DocumentTextIcon className="mx-auto h-12 w-12 text-gray-300" />
+              <p className="text-base font-medium">No rentals found matching current filters.</p>
+            </div>
           ) : (
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Transaction ID</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {transactions.map((tx) => (
-                  <tr key={tx.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{tx.id.substring(0,8)}...</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(tx.transaction_date).toLocaleDateString()}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        tx.status === 'ACTIVE' ? 'bg-green-100 text-green-800' :
-                        tx.status === 'CONFIRMED' ? 'bg-blue-100 text-blue-800' :
-                        tx.status === 'COMPLETED' ? 'bg-gray-100 text-gray-800' :
-                        'bg-yellow-100 text-yellow-800'
-                      }`}>
-                        {tx.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <Link to={`/rentals/${tx.id}`} className="text-blue-600 hover:text-blue-900 flex justify-end items-center">
-                        Manage <span aria-hidden="true" className="ml-1">&rarr;</span>
-                      </Link>
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200 text-left">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Contract ID</th>
+                    <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Customer</th>
+                    <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Rental details</th>
+                    <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {filteredRentals.map((tx) => {
+                    const cust = customers.find(c => c.id === tx.customer_id);
+                    const customerName = cust ? `${cust.first_name} ${cust.last_name}` : 'Unknown Customer';
+                    const firstLine = tx.lines?.[0];
+                    const prodName = firstLine ? products.find(p => p.id === firstLine.product_id)?.name || 'Unknown Item' : null;
+                    const varName = firstLine?.variant_id ? variantsMap[firstLine.variant_id] || '' : '';
+                    
+                    const detailsLink = isVendor ? `/vendor/rentals/${tx.id}` : `/rentals/${tx.id}`;
+
+                    return (
+                      <tr key={tx.id} className="hover:bg-gray-50 transition-colors">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm font-bold text-gray-900">{tx.id.substring(0, 8)}...</div>
+                          <div className="text-xs text-gray-400 mt-0.5">{new Date(tx.transaction_date).toLocaleDateString()}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm font-bold text-gray-900">{customerName}</div>
+                          <div className="text-xs text-gray-450">{cust?.email || ''}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {prodName ? (
+                            <>
+                              <div className="text-sm font-semibold text-gray-900">{prodName}</div>
+                              <div className="text-xs text-indigo-600 font-medium">
+                                {varName} {tx.lines && tx.lines.length > 1 ? `(+${tx.lines.length - 1} other)` : ''}
+                              </div>
+                            </>
+                          ) : (
+                            <span className="text-xs text-gray-400 italic">No items added</span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`inline-flex px-2 py-0.5 text-[10px] leading-5 font-bold rounded uppercase border ${
+                            tx.status === 'ACTIVE' 
+                              ? 'bg-purple-50 text-purple-700 border-purple-200' 
+                              : tx.status === 'CONFIRMED' 
+                                ? 'bg-blue-50 text-blue-700 border-blue-200' 
+                                : tx.status === 'COMPLETED' 
+                                  ? 'bg-green-50 text-green-700 border-green-200' 
+                                  : tx.status === 'CANCELLED'
+                                    ? 'bg-red-50 text-red-700 border-red-200'
+                                    : 'bg-yellow-50 text-yellow-700 border-yellow-200'
+                          }`}>
+                            {tx.status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-semibold">
+                          <Link 
+                            to={detailsLink} 
+                            className="inline-flex items-center text-indigo-600 hover:text-indigo-900 transition-colors"
+                          >
+                            Manage &rarr;
+                          </Link>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
       </div>
