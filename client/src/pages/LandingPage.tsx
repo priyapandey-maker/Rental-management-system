@@ -243,12 +243,16 @@ export const LandingPage = () => {
             {/* Right: Product Card Showcase */}
             <div className="flex-1 w-full max-w-lg lg:max-w-none relative">
               <div className="grid grid-cols-2 gap-4">
-                {/* Featured large card */}
-                <div className="col-span-1 bg-sky-50 rounded-2xl p-5 shadow-sm border border-sky-100 group hover:shadow-md transition-all">
-                  <div className="aspect-square bg-white rounded-xl flex items-center justify-center mb-3 overflow-hidden shadow-inner">
-                    <ProductImage sku="PROD-CAM-01" className="w-4/5 h-4/5" />
+                {/* Featured large card — Camera */}
+                <div className="col-span-1 bg-violet-50 rounded-2xl p-3 shadow-sm border border-violet-100 group hover:shadow-lg transition-all">
+                  <div className="aspect-square rounded-xl overflow-hidden mb-3 bg-violet-100">
+                    <img
+                      src="/images/hero-camera.jpg"
+                      alt="Professional Camera Kit"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
                   </div>
-                  <div className="text-xs font-bold text-sky-600 uppercase tracking-wider mb-1">Cameras</div>
+                  <div className="text-xs font-bold text-violet-600 uppercase tracking-wider mb-1">Cameras</div>
                   <div className="text-sm font-extrabold text-gray-900 leading-tight">Professional Camera Kit</div>
                   <div className="flex items-center justify-between mt-2">
                     <div className="text-base font-black text-blue-600">from $120<span className="text-xs font-semibold text-gray-400">/day</span></div>
@@ -258,21 +262,31 @@ export const LandingPage = () => {
 
                 {/* Two smaller stacked cards */}
                 <div className="col-span-1 flex flex-col gap-4">
-                  <div className="bg-amber-50 rounded-2xl p-4 shadow-sm border border-amber-100 group hover:shadow-md transition-all">
-                    <div className="aspect-square bg-white rounded-xl flex items-center justify-center mb-3 overflow-hidden shadow-inner">
-                      <ProductImage sku="PROD-LGT-01" className="w-4/5 h-4/5" />
+                  {/* LED Panel */}
+                  <div className="bg-gray-900 rounded-2xl p-3 shadow-sm border border-gray-700 group hover:shadow-lg transition-all">
+                    <div className="aspect-square rounded-xl overflow-hidden mb-2 bg-gray-800">
+                      <img
+                        src="/images/hero-led-panel.jpg"
+                        alt="LED Studio Panel Light"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
                     </div>
-                    <div className="text-[10px] font-bold text-amber-600 uppercase tracking-wider mb-0.5">Lighting</div>
-                    <div className="text-xs font-bold text-gray-900 leading-tight">LED Studio Panel</div>
-                    <div className="text-sm font-black text-blue-600 mt-1">$45<span className="text-[10px] font-semibold text-gray-400">/day</span></div>
+                    <div className="text-[10px] font-bold text-amber-400 uppercase tracking-wider mb-0.5">Lighting</div>
+                    <div className="text-xs font-bold text-white leading-tight">LED Studio Panel</div>
+                    <div className="text-sm font-black text-blue-400 mt-1">$45<span className="text-[10px] font-semibold text-gray-500">/day</span></div>
                   </div>
 
-                  <div className="bg-purple-50 rounded-2xl p-4 shadow-sm border border-purple-100 group hover:shadow-md transition-all">
-                    <div className="aspect-square bg-white rounded-xl flex items-center justify-center mb-3 overflow-hidden shadow-inner">
-                      <ProductImage sku="PROD-VID-01" className="w-4/5 h-4/5" />
+                  {/* HDMI Transmitter */}
+                  <div className="bg-white rounded-2xl p-3 shadow-sm border border-gray-200 group hover:shadow-lg transition-all">
+                    <div className="aspect-square rounded-xl overflow-hidden mb-2 bg-gray-50">
+                      <img
+                        src="/images/hero-hdmi-transmitter.jpg"
+                        alt="HDMI Wireless Transmitter"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
                     </div>
-                    <div className="text-[10px] font-bold text-purple-600 uppercase tracking-wider mb-0.5">Video</div>
-                    <div className="text-xs font-bold text-gray-900 leading-tight">HDMI Transmitter</div>
+                    <div className="text-[10px] font-bold text-orange-600 uppercase tracking-wider mb-0.5">Video</div>
+                    <div className="text-xs font-bold text-gray-900 leading-tight">4K HDMI Transmitter</div>
                     <div className="text-sm font-black text-blue-600 mt-1">$35<span className="text-[10px] font-semibold text-gray-400">/day</span></div>
                   </div>
                 </div>
