@@ -112,7 +112,7 @@ function App() {
               redirects vendor → /vendor/dashboard
               redirects customer → /store
           ────────────────────────────────────────────────────── */}
-          <Route path="/" element={<MainLayout />}>
+          <Route element={<MainLayout />}>
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="customers" element={<Customers />} />
             <Route path="products" element={<Products />} />

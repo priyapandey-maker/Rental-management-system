@@ -32,7 +32,7 @@ apiClient.interceptors.response.use(
       localStorage.removeItem('demo_org_id');
       localStorage.removeItem('demo_user_role');
       // Avoid redirect loop if already on /login
-      if (window.location.pathname !== '/login') {
+      if (window.location.pathname !== '/login' && window.location.pathname !== '/') {
         window.location.href = '/login';
       }
     }

@@ -15,10 +15,14 @@ import {
 import { Outlet, Navigate, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
+import { Logo } from '../components/Logo';
+
 export const MainLayout = () => {
   const { isAuthenticated, isLoading, logout, orgId, role } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+
+  console.log("MainLayout rendered for path:", location.pathname);
 
   if (isLoading) {
     return (
@@ -71,11 +75,11 @@ export const MainLayout = () => {
     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
       {/* Sidebar */}
       <div className="w-full md:w-64 bg-white border-r border-gray-200 flex-shrink-0 flex flex-col">
-        <div className="h-16 flex items-center px-6 border-b border-gray-200">
-          <div className="text-xl font-bold text-brand-700 leading-tight">
-            Rental Management<br />
-            <span className="text-sm font-semibold text-gray-500">Admin Console</span>
-          </div>
+        <div className="h-16 flex items-center justify-between px-4 border-b border-gray-200">
+          <Logo size="sm" isLink={true} linkTo="/dashboard" />
+          <span className="text-[10px] font-bold bg-gray-100 text-gray-500 px-2 py-1 rounded uppercase tracking-wider">
+            Admin
+          </span>
         </div>
 
         <div className="flex-1 overflow-y-auto py-4 px-3 space-y-8">

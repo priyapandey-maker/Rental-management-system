@@ -13,6 +13,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../context/AuthContext';
 import { RoleGuard } from '../components/RoleGuard';
+import { Logo } from '../components/Logo';
 
 const NavItem = ({
   to,
@@ -57,8 +58,8 @@ const VendorSidebar = ({ onClose }: { onClose?: () => void }) => {
       {/* Header */}
       <div className="h-16 flex items-center justify-between px-5 border-b border-brand-800">
         <div>
-          <div className="text-lg font-bold text-white leading-tight">RentalStore</div>
-          <div className="text-xs text-brand-300 font-medium">Vendor Portal</div>
+          <Logo size="sm" isLink={true} linkTo="/vendor/dashboard" theme="dark" />
+          <div className="text-[10px] text-brand-300 font-bold uppercase tracking-wider mt-1">Vendor Portal</div>
         </div>
         {onClose && (
           <button onClick={onClose} className="text-brand-300 hover:text-white md:hidden">

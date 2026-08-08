@@ -9,6 +9,7 @@ import {
   XMarkIcon
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../context/AuthContext';
+import { Logo } from '../components/Logo';
 
 export const CustomerLayout = () => {
   const { userId, isAuthenticated, isLoading, role, logout } = useAuth();
@@ -79,10 +80,7 @@ export const CustomerLayout = () => {
             {/* Left: Logo & Nav */}
             <div className="flex items-center space-x-8">
               <Link to="/store" className="flex-shrink-0 flex items-center">
-                <div className="w-8 h-8 bg-brand-600 rounded flex items-center justify-center mr-2">
-                  <span className="text-gray-900 font-bold text-lg">R</span>
-                </div>
-                <span className="text-xl font-bold text-gray-900 tracking-tight hidden sm:block">RentalStore</span>
+                <Logo size="sm" isLink={false} theme="brand" />
               </Link>
 
               <nav className="hidden md:flex space-x-6">

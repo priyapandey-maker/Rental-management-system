@@ -1,19 +1,14 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
+import { Logo } from '../components/Logo';
 
 export const AuthLayout = () => {
   return (
     <div className="min-h-screen bg-white flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="flex justify-center">
-          {/* Logo Placeholder */}
-          <div className="h-12 w-12 rounded-full bg-brand-600 flex items-center justify-center">
-            <span className="text-gray-900 font-bold text-xl">RMS</span>
-          </div>
+        <div className="flex justify-center mb-6">
+          <Logo size="xl" isLink={false} />
         </div>
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Rental Management
-        </h2>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { apiClient } from '../api/client';
+import { Logo } from '../components/Logo';
 
 // Realistic product image map (served from /public/images/)
 const CATEGORY_IMAGES: Record<string, string> = {
@@ -152,15 +153,7 @@ export const LandingPage = () => {
       <header className={`fixed top-0 inset-x-0 z-50 bg-white transition-shadow duration-200 ${scrolled ? 'shadow-md border-b border-gray-100' : 'border-b border-transparent'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
           {/* Brand */}
-          <Link to="/" className="flex items-center gap-2.5 group flex-shrink-0">
-            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center shadow shadow-blue-200">
-              <CubeIcon className="w-5 h-5 text-white" />
-            </div>
-            <div className="leading-tight">
-              <span className="block text-base font-black tracking-tight text-gray-900 uppercase">RMS</span>
-              <span className="block text-[9px] font-bold text-gray-400 uppercase tracking-widest -mt-0.5">Rental Management</span>
-            </div>
-          </Link>
+          <Logo size="md" isLink={true} linkTo="/" />
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-8">
@@ -705,12 +698,9 @@ export const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
             <div className="col-span-2 md:col-span-1">
-              <Link to="/" className="flex items-center gap-2 mb-3">
-                <div className="w-6 h-6 rounded-lg bg-blue-600 flex items-center justify-center">
-                  <CubeIcon className="w-4 h-4 text-white" />
-                </div>
-                <span className="text-base font-black tracking-tight text-gray-900 uppercase">RMS</span>
-              </Link>
+              <div className="mb-3">
+                <Logo size="sm" isLink={true} linkTo="/" />
+              </div>
               <p className="text-xs text-gray-500 leading-relaxed max-w-[180px]">Rental management, simplified for customers and vendors.</p>
             </div>
 
