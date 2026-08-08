@@ -1,78 +1,102 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export const Login = () => {
-  const [userId, setUserId] = useState('demo-user-uuid');
-  const [orgId, setOrgId] = useState('demo-org-uuid');
+  // Using demo UUIDs as default to maintain backend contract compatibility
+  const [loginId, setLoginId] = useState('demo-user-uuid');
+  const [password, setPassword] = useState('demo-org-uuid');
+  const [error, setError] = useState<string | null>(null);
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (userId && orgId) {
-      login(userId, orgId);
+    setError(null);
+    
+    // Validate inputs locally
+    if (!loginId || !password) {
+      setError('Please enter both Login ID and Password.');
+      return;
+    }
+
+    // Since the backend lacks an actual auth exchange endpoint, we map
+    // the UI's Login ID and Password directly to the required UUIDs
+    // to preserve the frozen architecture.
+    try {
+      login(loginId, password);
       navigate('/dashboard');
+    } catch (err) {
+      setError('Invalid login credentials');
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          RMS Demo Login
-        </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Use the demo user and organization UUIDs
-        </p>
+    <form className="space-y-6" onSubmit={handleLogin}>
+      <div>
+        <h3 className="text-xl font-bold text-white text-center mb-6">Sign In</h3>
       </div>
+      
+      {error && (
+        <div className="p-3 bg-red-900/50 text-red-200 text-sm rounded-md border border-red-800">
+          {error}
+        </div>
+      )}
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form className="space-y-6" onSubmit={handleLogin}>
-            <div>
-              <label htmlFor="userId" className="block text-sm font-medium text-gray-700">
-                User ID (x-user-id)
-              </label>
-              <div className="mt-1">
-                <input
-                  id="userId"
-                  type="text"
-                  required
-                  value={userId}
-                  onChange={(e) => setUserId(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="orgId" className="block text-sm font-medium text-gray-700">
-                Organization ID (x-organization-id)
-              </label>
-              <div className="mt-1">
-                <input
-                  id="orgId"
-                  type="text"
-                  required
-                  value={orgId}
-                  onChange={(e) => setOrgId(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                />
-              </div>
-            </div>
-
-            <div>
-              <button
-                type="submit"
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                Enter Demo
-              </button>
-            </div>
-          </form>
+      <div>
+        <label htmlFor="loginId" className="block text-sm font-medium text-gray-300">
+          Login ID (Email or User UUID)
+        </label>
+        <div className="mt-1">
+          <input
+            id="loginId"
+            type="text"
+            required
+            value={loginId}
+            onChange={(e) => setLoginId(e.target.value)}
+            className="appearance-none block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            placeholder="Enter your login ID"
+          />
         </div>
       </div>
-    </div>
+
+      <div>
+        <div className="flex justify-between items-center">
+          <label htmlFor="password" className="block text-sm font-medium text-gray-300">
+            Password (Org UUID for demo)
+          </label>
+          <Link to="/forgot-password" className="text-sm font-medium text-blue-400 hover:text-blue-300">
+            Forgot Password?
+          </Link>
+        </div>
+        <div className="mt-1">
+          <input
+            id="password"
+            type="password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="appearance-none block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            placeholder="Enter your password"
+          />
+        </div>
+      </div>
+
+      <div>
+        <button
+          type="submit"
+          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        >
+          Log In
+        </button>
+      </div>
+      
+      <div className="mt-6 text-center text-sm">
+        <span className="text-gray-400">Don't have an account? </span>
+        <Link to="/signup" className="font-medium text-blue-400 hover:text-blue-300">
+          Register Here
+        </Link>
+      </div>
+    </form>
   );
 };

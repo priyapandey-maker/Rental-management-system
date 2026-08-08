@@ -2,7 +2,11 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { MainLayout } from './layouts/MainLayout';
+import { AuthLayout } from './layouts/AuthLayout';
 import { Login } from './pages/Login';
+import { Signup } from './pages/Signup';
+import { VendorSignup } from './pages/VendorSignup';
+import { ForgotPassword } from './pages/ForgotPassword';
 import { Dashboard } from './pages/Dashboard';
 import { Customers } from './pages/Customers';
 import { Products } from './pages/Products';
@@ -19,7 +23,12 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
-          <Route path="/login" element={<Login />} />
+          <Route element={<AuthLayout />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/vendor-signup" element={<VendorSignup />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+          </Route>
           
           <Route path="/" element={<MainLayout />}>
             <Route index element={<Navigate to="/dashboard" replace />} />
