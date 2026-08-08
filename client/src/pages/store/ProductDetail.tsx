@@ -368,8 +368,8 @@ export const ProductDetail = () => {
             </div>
             
             {variants.length > 0 && !selectedVariantId && (
-              <div className="p-4 bg-brand-900/20 border border-brand-800/50 rounded-xl text-brand-300 text-sm flex items-start">
-                <svg className="w-5 h-5 mr-3 flex-shrink-0 mt-0.5 text-brand-400" fill="currentColor" viewBox="0 0 20 20">
+              <div className="p-4 bg-brand-50 border border-brand-200 rounded-xl text-brand-800 text-sm flex items-start">
+                <svg className="w-5 h-5 mr-3 flex-shrink-0 mt-0.5 text-brand-600" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                 </svg>
                 <span className="leading-relaxed">This product requires configuration. You will select your specific variant in the next step before adding to cart.</span>
@@ -377,11 +377,11 @@ export const ProductDetail = () => {
             )}
 
             {selectedVariantId && (
-              <div className="p-4 bg-brand-900/20 border border-brand-800/50 rounded-xl text-brand-300 text-sm flex justify-between items-center">
+              <div className="p-4 bg-brand-50 border border-brand-200 rounded-xl text-brand-800 text-sm flex justify-between items-center">
                 <span>Selected Configuration: <strong className="text-gray-900">{variants.find(v => v.id === selectedVariantId)?.name}</strong></span>
                 <button 
                   onClick={() => setIsModalOpen(true)}
-                  className="text-xs text-brand-400 hover:text-brand-300 font-bold underline"
+                  className="text-xs text-brand-600 hover:text-brand-700 font-bold underline"
                 >
                   Change Option
                 </button>
@@ -426,8 +426,8 @@ export const ProductDetail = () => {
             </button>
 
             {cartStatus === 'success' && (
-              <div className="mt-4 p-4 bg-emerald-900/20 border border-emerald-800/50 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4">
-                <span className="text-sm text-emerald-300 font-medium">✓ Equipment successfully reserved in your cart.</span>
+              <div className="mt-4 p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+                <span className="text-sm text-emerald-800 font-medium">✓ Equipment successfully reserved in your cart.</span>
                 <div className="flex gap-3">
                   <Link to="/store" className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-900 text-xs font-bold rounded-lg transition-colors border border-gray-300">
                     Continue Shopping
