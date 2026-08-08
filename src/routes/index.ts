@@ -22,6 +22,10 @@ import * as pricingController from '../controllers/pricing.controller';
 import * as rentalConfigController from '../controllers/rentalConfig.controller';
 import * as transactionController from '../controllers/transaction.controller';
 import * as orchestrationController from '../controllers/orchestration.controller';
+import * as invoiceController from '../controllers/invoice.controller';
+import * as paymentController from '../controllers/payment.controller';
+import * as dashboardController from '../controllers/dashboard.controller';
+import * as readController from '../controllers/read.controller';
 
 // Apply requireTenantContext to all domain routes
 const tenantRouter = Router();
@@ -131,5 +135,22 @@ tenantRouter.put('/adjustments/:id/status', adjustmentController.updateStatus);
 tenantRouter.post('/transactions/:id/allocate', orchestrationController.allocateTransaction);
 tenantRouter.post('/transactions/:id/fulfill', orchestrationController.fulfillTransaction);
 tenantRouter.post('/transactions/:id/return', orchestrationController.returnTransaction);
+// Invoices
+tenantRouter.post('/invoices', invoiceController.createInvoice);
+tenantRouter.get('/invoices/:id', invoiceController.getInvoice);
+tenantRouter.post('/invoices/:id/issue', invoiceController.issueInvoice);
+
+// Payments
+tenantRouter.post('/payments', paymentController.recordPayment);
+tenantRouter.get('/payments/:id', paymentController.getPayment);
+tenantRouter.get('/payments/invoices/:invoiceId', paymentController.listPaymentsByInvoice);
+
+// Dashboard
+tenantRouter.get('/dashboard', dashboardController.getDashboardSummary);
+
+// Reads
+tenantRouter.get('/reads/transactions', readController.listTransactions);
+tenantRouter.get('/reads/invoices', readController.listInvoices);
+
 appRouter.use(tenantRouter);
 
