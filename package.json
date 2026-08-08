@@ -1,0 +1,28 @@
+{
+  "name": "rental-management-system",
+  "version": "1.0.0",
+  "description": "Production-quality rental management business system",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "db:migrate": "ts-node src/scripts/migrate.ts"
+  },
+  "keywords": [
+    "rental",
+    "management",
+    "mysql",
+    "clean-architecture"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "mysql2": "^3.12.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  }
+}
