@@ -226,7 +226,7 @@ export const Cart = () => {
               <div className="pt-6 border-t border-gray-800 space-y-3">
                 <button 
                   disabled={items.length === 0}
-                  onClick={() => navigate('/store/checkout')}
+                  onClick={() => navigate('/store/delivery')}
                   className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl shadow flex justify-center items-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Checkout
@@ -234,7 +234,7 @@ export const Cart = () => {
 
                 <button 
                   disabled={items.length === 0}
-                  onClick={() => navigate('/store/checkout')}
+                  onClick={() => navigate('/store/delivery')}
                   className="w-full bg-gray-800 hover:bg-gray-700 border border-gray-700 text-white font-bold py-3.5 rounded-xl shadow flex justify-center items-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Pay with Saved Card

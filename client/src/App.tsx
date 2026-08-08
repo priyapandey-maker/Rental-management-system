@@ -81,6 +81,7 @@ function App() {
             <Route path="product/:id" element={<ProductDetail />} />
             <Route path="cart" element={<Cart />} />
             <Route path="checkout" element={<CheckoutAddress />} />
+            <Route path="delivery" element={<CheckoutAddress />} />
             <Route path="payment" element={<Payment />} />
             <Route path="success" element={<OrderSuccess />} />
           </Route>
