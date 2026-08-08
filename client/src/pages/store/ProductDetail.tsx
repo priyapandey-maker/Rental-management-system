@@ -345,19 +345,25 @@ export const ProductDetail = () => {
               <h3 className="text-sm font-bold text-gray-300 uppercase tracking-wider mb-4">Quantity</h3>
               <div className="flex items-center border border-gray-700 w-36 rounded-lg overflow-hidden bg-gray-950">
                 <button 
+                  type="button"
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="w-12 py-3 bg-gray-800 hover:bg-gray-700 text-gray-300 font-bold transition-colors"
-                >-</button>
+                  className="w-12 h-12 flex items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" /></svg>
+                </button>
                 <input 
                   type="number" 
                   value={quantity}
                   readOnly
-                  className="flex-1 text-center bg-transparent border-none p-0 focus:ring-0 text-base font-bold text-white"
+                  className="flex-1 w-full text-center bg-transparent border-none p-0 focus:ring-0 text-base font-bold text-white [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
                 <button 
+                  type="button"
                   onClick={() => setQuantity(quantity + 1)}
-                  className="w-12 py-3 bg-gray-800 hover:bg-gray-700 text-gray-300 font-bold transition-colors"
-                >+</button>
+                  className="w-12 h-12 flex items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 transition-colors"
+                >
+                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                </button>
               </div>
             </div>
             
