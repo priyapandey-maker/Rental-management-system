@@ -82,4 +82,27 @@ export class AssetRepository extends BaseRepository {
     const sql = `UPDATE assets SET condition_status = ? WHERE id = ? AND organization_id = ?`;
     await this.query<ResultSetHeader>(sql, [status, id, orgId], connection);
   }
+
+  async update(
+    id: string,
+    organizationId: string,
+    updates: Partial<Pick<AssetRow, 'product_variant_id' | 'asset_tag' | 'serial_number' | 'qr_code' | 'acquisition_date' | 'acquisition_cost' | 'condition_status' | 'lifecycle_status' | 'location'>>,
+    connection?: QueryConnection
+  ): Promise<void> {
+    const fields: string[] = [];
+    const params: any[] = [];
+    for (const [key, value] of Object.entries(updates)) {
+      fields.push(`\`${key}\` = ?`);
+      params.push(value);
+    }
+    if (fields.length === 0) return;
+    params.push(id, organizationId);
+    const sql = `UPDATE assets SET ${fields.join(', ')} WHERE id = ? AND organization_id = ?`;
+    await this.query<ResultSetHeader>(sql, params, connection);
+  }
+
+  async delete(id: string, organizationId: string, connection?: QueryConnection): Promise<void> {
+    const sql = `DELETE FROM assets WHERE id = ? AND organization_id = ?`;
+    await this.query<ResultSetHeader>(sql, [id, organizationId], connection);
+  }
 }

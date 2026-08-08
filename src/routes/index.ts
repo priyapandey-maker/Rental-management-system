@@ -95,6 +95,8 @@ vendorRouter.get('/categories/:id', categoryController.getCategory);
 vendorRouter.post('/assets', assetController.createAsset);
 vendorRouter.get('/assets/:id', assetController.getAsset);
 vendorRouter.get('/assets', assetController.listAssets);
+vendorRouter.put('/assets/:id', assetController.updateAsset);
+vendorRouter.delete('/assets/:id', assetController.deleteAsset);
 
 // Pricing
 vendorRouter.post('/rental-periods', pricingController.createRentalPeriod);
@@ -212,6 +214,8 @@ adminRouter.get('/products/:productId/variants', variantController.listVariantsB
 adminRouter.post('/assets', assetController.createAsset);
 adminRouter.get('/assets/:id', assetController.getAsset);
 adminRouter.get('/assets', assetController.listAssets);
+adminRouter.put('/assets/:id', assetController.updateAsset);
+adminRouter.delete('/assets/:id', assetController.deleteAsset);
 adminRouter.post('/rental-periods', pricingController.createRentalPeriod);
 adminRouter.get('/rental-periods', pricingController.listRentalPeriods);
 adminRouter.post('/pricelists', pricingController.createPricelist);
@@ -298,6 +302,8 @@ legacyRouter.get('/products/:productId/variants', variantController.listVariants
 legacyRouter.post('/assets', assetController.createAsset);
 legacyRouter.get('/assets/:id', assetController.getAsset);
 legacyRouter.get('/assets', assetController.listAssets);
+legacyRouter.put('/assets/:id', assetController.updateAsset);
+legacyRouter.delete('/assets/:id', assetController.deleteAsset);
 legacyRouter.post('/rental-periods', pricingController.createRentalPeriod);
 legacyRouter.get('/rental-periods', pricingController.listRentalPeriods);
 legacyRouter.post('/pricelists', pricingController.createPricelist);
