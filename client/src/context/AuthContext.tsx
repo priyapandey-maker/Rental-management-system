@@ -1,22 +1,42 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
+export type UserRole = 'customer' | 'vendor' | 'admin' | null;
+
 interface AuthContextType {
   userId: string | null;
   orgId: string | null;
-  role: string | null;
+  role: UserRole;
+  token: string | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
   login: (userId: string, orgId: string, role: string, jwtToken?: string) => void;
   logout: () => void;
-  isAuthenticated: boolean;
-  token?: string | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [token, setToken] = useState<string | null>(localStorage.getItem('jwt_token'));
-  const [userId, setUserId] = useState<string | null>(localStorage.getItem('demo_user_id'));
-  const [orgId, setOrgId] = useState<string | null>(localStorage.getItem('demo_org_id'));
-  const [role, setRole] = useState<string | null>(localStorage.getItem('demo_user_role'));
+  const [isLoading, setIsLoading] = useState(true);
+  const [token, setToken] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [orgId, setOrgId] = useState<string | null>(null);
+  const [role, setRole] = useState<UserRole>(null);
+
+  // Hydrate from localStorage on mount
+  useEffect(() => {
+    const storedToken = localStorage.getItem('jwt_token');
+    const storedUserId = localStorage.getItem('demo_user_id');
+    const storedOrgId = localStorage.getItem('demo_org_id');
+    const storedRole = localStorage.getItem('demo_user_role') as UserRole;
+
+    if (storedToken && storedUserId && storedOrgId) {
+      setToken(storedToken);
+      setUserId(storedUserId);
+      setOrgId(storedOrgId);
+      setRole(storedRole);
+    }
+    setIsLoading(false);
+  }, []);
 
   const login = (newUserId: string, newOrgId: string, newRole: string, jwtToken?: string) => {
     localStorage.setItem('demo_user_id', newUserId);
@@ -28,7 +48,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
     setUserId(newUserId);
     setOrgId(newOrgId);
-    setRole(newRole);
+    setRole(newRole as UserRole);
   };
 
   const logout = () => {
@@ -36,16 +56,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem('demo_org_id');
     localStorage.removeItem('demo_user_role');
     localStorage.removeItem('jwt_token');
+    localStorage.removeItem('demo_cart');
+    localStorage.removeItem('demo_last_order');
     setToken(null);
     setUserId(null);
     setOrgId(null);
     setRole(null);
   };
 
-  const isAuthenticated = !!userId && !!orgId;
+  const isAuthenticated = !!userId && !!token;
 
   return (
-    <AuthContext.Provider value={{ userId, orgId, role, token, login, logout, isAuthenticated }}>
+    <AuthContext.Provider value={{ userId, orgId, role, token, isAuthenticated, isLoading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

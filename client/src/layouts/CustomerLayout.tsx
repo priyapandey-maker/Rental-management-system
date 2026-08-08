@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Outlet, Link, useNavigate } from 'react-router-dom';
+import { Outlet, Link, useNavigate, Navigate } from 'react-router-dom';
 import { 
   MagnifyingGlassIcon, 
   HeartIcon, 
@@ -11,12 +11,30 @@ import {
 import { useAuth } from '../context/AuthContext';
 
 export const CustomerLayout = () => {
-  const { userId, isAuthenticated, logout } = useAuth();
+  const { userId, isAuthenticated, isLoading, role, logout } = useAuth();
   const navigate = useNavigate();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [cartCount, setCartCount] = useState(0);
+
+  // Auth gate
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  // Role gate: non-customers go to their portal
+  if (role === 'admin') return <Navigate to="/dashboard" replace />;
+  if (role === 'vendor') return <Navigate to="/vendor/dashboard" replace />;
+
 
   const updateCartCount = () => {
     try {

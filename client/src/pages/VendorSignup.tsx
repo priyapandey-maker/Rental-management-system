@@ -36,9 +36,9 @@ export const VendorSignup = () => {
     try {
       await apiClient.post('/auth/vendor-register', { email, password, firstName, lastName, companyName, gstNo, productCategory });
       setSuccess('Registration successful! Please log in to continue.');
-      setTimeout(() => navigate('/login'), 4000);
+      setTimeout(() => navigate('/login'), 2500);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Registration failed');
+      setError(err.message || err.error?.message || 'Registration failed. Please try again.');
     }
   };
 

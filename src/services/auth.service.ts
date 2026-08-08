@@ -18,6 +18,13 @@ export class AuthService {
       throw new ValidationError('Missing required fields');
     }
 
+    // Pre-check: fail fast before creating an org if email already exists
+    const existing = await this.authRepo.findUserByEmail(data.email.toLowerCase().trim());
+    if (existing) {
+      const { ConflictError } = await import('../errors');
+      throw new ConflictError('An account with this email already exists.');
+    }
+
     // Hash password
     const passwordHash = await bcrypt.hash(data.password, 10);
 
@@ -28,7 +35,7 @@ export class AuthService {
     // Create User
     const userId = await this.authRepo.createUser({
       organizationId: orgId,
-      email: data.email,
+      email: data.email.toLowerCase().trim(),
       passwordHash,
       firstName: data.firstName,
       lastName: data.lastName,

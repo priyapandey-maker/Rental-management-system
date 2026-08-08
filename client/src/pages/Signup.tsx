@@ -41,10 +41,10 @@ export const Signup = () => {
 
     try {
       await apiClient.post('/auth/register', { email, password, firstName, lastName });
-      setSuccess('Registration successful! Please log in to continue. Note: Coupon Code was not saved (unsupported by backend).');
-      setTimeout(() => navigate('/login'), 4000);
+      setSuccess('Registration successful! Please log in to continue.');
+      setTimeout(() => navigate('/login'), 2500);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Registration failed');
+      setError(err.message || err.error?.message || 'Registration failed. Please try again.');
     }
   };
 

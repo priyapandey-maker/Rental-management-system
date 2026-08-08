@@ -1,6 +1,6 @@
 import { getPool } from '../db/pool';
 import crypto from 'crypto';
-import { DatabaseError, NotFoundError } from '../errors';
+import { ConflictError, DatabaseError, NotFoundError } from '../errors';
 
 export class AuthRepository {
   async createUser(data: {
@@ -17,6 +17,12 @@ export class AuthRepository {
       VALUES (?, ?, ?, ?, ?, ?, 'active', ?)
     `;
 
+    // Pre-check: verify email is globally unique before creating the org
+    const existing = await this.findUserByEmail(data.email);
+    if (existing) {
+      throw new ConflictError('An account with this email already exists.');
+    }
+
     try {
       await getPool().query(query, [
         id,
@@ -30,7 +36,7 @@ export class AuthRepository {
       return id;
     } catch (err: any) {
       if (err.code === 'ER_DUP_ENTRY') {
-        throw new Error('Email already registered for this organization');
+        throw new ConflictError('An account with this email already exists.');
       }
       throw new DatabaseError('Failed to create user');
     }
@@ -44,7 +50,7 @@ export class AuthRepository {
     `;
 
     try {
-      const [rows]: any = await getPool().query(query, [email]);
+      const [rows]: any = await getPool().query(query, [email.toLowerCase().trim()]);
       return rows[0] || null;
     } catch (err: any) {
       throw new DatabaseError('Failed to find user by email');
