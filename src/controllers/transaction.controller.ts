@@ -38,8 +38,19 @@ export const getTransaction = async (req: Request, res: Response, next: NextFunc
 export const listTransactions = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const orgId = req.context.organizationId!;
-    const txs = await txService.listTransactions(orgId);
-    res.json(txs);
+    const page = Math.max(1, parseInt(req.query.page as string) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20));
+    const status = (req.query.status as string) || undefined;
+    const result = await txService.listTransactionsPaginated(orgId, page, limit, status);
+    res.json({
+      data: result.data,
+      pagination: {
+        page,
+        limit,
+        totalItems: result.total,
+        totalPages: Math.ceil(result.total / limit),
+      },
+    });
   } catch (err) {
     next(err);
   }

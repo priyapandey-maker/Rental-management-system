@@ -80,8 +80,10 @@ export const Products = () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await apiClient.get('/products');
-      setProducts(Array.isArray(data) ? data : []);
+      // Use limit=100 to load all for the management view; wraps { data, pagination }
+      const data = await apiClient.get('/products?page=1&limit=100');
+      const result = data as any;
+      setProducts(Array.isArray(result) ? result : (result.data || []));
     } catch (err: any) {
       setError(err.message || 'Failed to fetch products catalog');
     } finally {

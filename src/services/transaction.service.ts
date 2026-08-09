@@ -58,6 +58,15 @@ export class TransactionService {
     return this.txRepo.listTransactions(orgId);
   }
 
+  async listTransactionsPaginated(
+    orgId: string,
+    page: number,
+    limit: number,
+    status?: string
+  ): Promise<{ data: TransactionRow[]; total: number }> {
+    return this.txRepo.listTransactionsPaginated(orgId, page, limit, status);
+  }
+
   async addTransactionLine(
     orgId: string,
     txId: string,

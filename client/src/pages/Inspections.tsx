@@ -75,15 +75,16 @@ export const Inspections = () => {
       // Load products, customers, transactions, returns, and allocations in parallel
       const isAdmin = location.pathname.startsWith('/admin');
       const [prodsData, custsData, txData, retData, allocsData] = await Promise.all([
-        apiClient.get(isAdmin ? '/admin/products' : '/products').catch(() => null),
-        apiClient.get(isAdmin ? '/admin/customers' : '/customers').catch(() => null),
-        apiClient.get(isAdmin ? '/admin/transactions' : '/transactions').catch(() => null),
+        apiClient.get(isAdmin ? '/admin/products?limit=100' : '/products?limit=100').catch(() => null),
+        apiClient.get(isAdmin ? '/admin/customers?limit=100' : '/customers?limit=100').catch(() => null),
+        apiClient.get(isAdmin ? '/admin/transactions?limit=100' : '/transactions?limit=100').catch(() => null),
         apiClient.get('/returns').catch(() => null),
         apiClient.get('/allocations').catch(() => null)
       ]);
 
-      const prodList = Array.isArray(prodsData) ? prodsData : MOCK_PRODUCTS;
-      const customerList = Array.isArray(custsData) ? custsData : [
+      const unwrap = (d: any) => d ? (Array.isArray(d) ? d : (d.data || [])) : null;
+      const prodList = unwrap(prodsData) || MOCK_PRODUCTS;
+      const customerList = unwrap(custsData) || [
         { id: 'cust-demo-01', first_name: 'Demo', last_name: 'Customer', email: 'cust-demo-01@assetflow.local' }
       ];
       setProducts(prodList);
@@ -91,9 +92,9 @@ export const Inspections = () => {
 
       // Merge transaction data
       const localTxs = JSON.parse(localStorage.getItem('demo_transactions') || '[]');
-      const backendTxs = Array.isArray(txData) ? txData : [];
+      const backendTxs = unwrap(txData) || [];
       const combinedTxs = [...localTxs, ...backendTxs];
-      const uniqueTxs = combinedTxs.filter((tx, idx, self) => 
+      const uniqueTxs = combinedTxs.filter((tx, idx, self) =>
         self.findIndex(t => t.id === tx.id) === idx
       );
       setTransactions(uniqueTxs);

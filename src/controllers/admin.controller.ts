@@ -4,6 +4,23 @@ import { validateString, validateOptionalEnum } from '../utils/validators';
 
 const adminService = new AdminService();
 
+// ─── Helper ───────────────────────────────────────────────────────────────────
+function parsePagination(req: Request, defaultLimit = 20) {
+  const page = Math.max(1, parseInt(req.query.page as string) || 1);
+  const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || defaultLimit));
+  return { page, limit };
+}
+
+function paginationMeta(page: number, limit: number, total: number) {
+  return {
+    page,
+    limit,
+    totalItems: total,
+    totalPages: Math.ceil(total / limit),
+  };
+}
+
+// ─── Dashboard ───────────────────────────────────────────────────────────────
 export const getDashboardSummary = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const summary = await adminService.getPlatformDashboard();
@@ -13,10 +30,13 @@ export const getDashboardSummary = async (req: Request, res: Response, next: Nex
   }
 };
 
+// ─── Vendors ─────────────────────────────────────────────────────────────────
 export const listVendors = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const vendors = await adminService.listVendors();
-    res.json(vendors);
+    const { page, limit } = parsePagination(req);
+    const search = (req.query.search as string) || undefined;
+    const result = await adminService.listVendorsPaginated(page, limit, search);
+    res.json({ data: result.data, pagination: paginationMeta(page, limit, result.total) });
   } catch (err) {
     next(err);
   }
@@ -26,12 +46,10 @@ export const updateVendorStatus = async (req: Request, res: Response, next: Next
   try {
     const id = validateString(req.params.id, 'id', 1, 36);
     const status = validateOptionalEnum(req.body.status, 'status', ['active', 'inactive', 'suspended']) as any;
-    
     if (!status) {
       res.status(400).json({ error: 'Status is required' });
       return;
     }
-
     await adminService.updateVendorStatus(id, status);
     res.json({ success: true });
   } catch (err) {
@@ -39,10 +57,13 @@ export const updateVendorStatus = async (req: Request, res: Response, next: Next
   }
 };
 
+// ─── Customers ───────────────────────────────────────────────────────────────
 export const listCustomers = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const data = await adminService.listCustomers();
-    res.json(data);
+    const { page, limit } = parsePagination(req);
+    const search = (req.query.search as string) || undefined;
+    const result = await adminService.listCustomersPaginated(page, limit, search);
+    res.json({ data: result.data, pagination: paginationMeta(page, limit, result.total) });
   } catch (err) {
     next(err);
   }
@@ -61,7 +82,7 @@ export const createCustomer = async (req: Request, res: Response, next: NextFunc
       last_name: req.body.last_name,
       email: req.body.email,
       phone: req.body.phone,
-      status: req.body.status
+      status: req.body.status,
     });
     res.status(201).json(customer);
   } catch (err) {
@@ -69,28 +90,39 @@ export const createCustomer = async (req: Request, res: Response, next: NextFunc
   }
 };
 
+// ─── Products ────────────────────────────────────────────────────────────────
 export const listProducts = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const data = await adminService.listProducts();
-    res.json(data);
+    const { page, limit } = parsePagination(req);
+    const search = (req.query.search as string) || undefined;
+    const status = (req.query.status as string) || undefined;
+    const result = await adminService.listProductsPaginated(page, limit, search, status);
+    res.json({ data: result.data, pagination: paginationMeta(page, limit, result.total) });
   } catch (err) {
     next(err);
   }
 };
 
+// ─── Assets ──────────────────────────────────────────────────────────────────
 export const listAssets = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const data = await adminService.listAssets();
-    res.json(data);
+    const { page, limit } = parsePagination(req);
+    const search = (req.query.search as string) || undefined;
+    const lifecycleStatus = (req.query.lifecycle_status as string) || undefined;
+    const result = await adminService.listAssetsPaginated(page, limit, search, lifecycleStatus);
+    res.json({ data: result.data, pagination: paginationMeta(page, limit, result.total) });
   } catch (err) {
     next(err);
   }
 };
 
+// ─── Transactions ────────────────────────────────────────────────────────────
 export const listTransactions = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const data = await adminService.listTransactions();
-    res.json(data);
+    const { page, limit } = parsePagination(req);
+    const status = (req.query.status as string) || undefined;
+    const result = await adminService.listTransactionsPaginated(page, limit, status);
+    res.json({ data: result.data, pagination: paginationMeta(page, limit, result.total) });
   } catch (err) {
     next(err);
   }

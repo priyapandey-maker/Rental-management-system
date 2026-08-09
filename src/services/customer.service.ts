@@ -87,4 +87,13 @@ export class CustomerService {
   async listCustomers(orgId: string): Promise<CustomerRow[]> {
     return this.customerRepo.list(orgId);
   }
+
+  async listCustomersPaginated(
+    orgId: string,
+    page: number,
+    limit: number,
+    search?: string
+  ): Promise<{ data: CustomerRow[]; total: number }> {
+    return this.customerRepo.listPaginated(orgId, page, limit, search);
+  }
 }

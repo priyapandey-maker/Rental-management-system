@@ -89,8 +89,9 @@ export const VendorDashboard = () => {
         apiClient.get('/transactions').catch(() => null)
       ]);
 
-      const prodList = Array.isArray(prodsData) ? prodsData : MOCK_PRODUCTS;
-      const customerList = Array.isArray(custsData) ? custsData : [
+      const unwrap = (d: any) => d ? (Array.isArray(d) ? d : (d.data || [])) : null;
+      const prodList = unwrap(prodsData) || MOCK_PRODUCTS;
+      const customerList = unwrap(custsData) || [
         { id: 'cust-demo-01', first_name: 'Demo', last_name: 'Customer', email: 'cust-demo-01@assetflow.local' }
       ];
       
@@ -98,7 +99,7 @@ export const VendorDashboard = () => {
       setCustomers(customerList);
 
       // Load transactions (merge backend + offline localStorage)
-      let txList = Array.isArray(txData) ? txData : [];
+      let txList = unwrap(txData) || [];
       
       // Load detailed lines for each backend transaction
       const detailedTxs = await Promise.all(

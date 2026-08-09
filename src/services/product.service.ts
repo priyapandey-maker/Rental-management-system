@@ -89,6 +89,16 @@ export class ProductService {
     return this.productRepo.list(orgId);
   }
 
+  async listProductsPaginated(
+    orgId: string,
+    page: number,
+    limit: number,
+    search?: string,
+    status?: string
+  ): Promise<{ data: ProductRow[]; total: number }> {
+    return this.productRepo.listPaginated(orgId, page, limit, search, status);
+  }
+
   async deleteProduct(id: string, orgId: string): Promise<void> {
     await this.getProductById(id, orgId); // checks ownership/existence
     await this.productRepo.delete(id, orgId);

@@ -82,6 +82,36 @@ export class ProductRepository extends BaseRepository {
     return this.query<ProductRow[]>(sql, [organizationId], connection);
   }
 
+  async listPaginated(
+    organizationId: string,
+    page: number,
+    limit: number,
+    search?: string,
+    status?: string,
+    connection?: QueryConnection
+  ): Promise<{ data: ProductRow[]; total: number }> {
+    const offset = (page - 1) * limit;
+    const params: any[] = [organizationId];
+    const conditions: string[] = ['organization_id = ?'];
+    if (search) {
+      conditions.push(`(name LIKE ? OR sku LIKE ?)`);
+      const like = `%${search}%`;
+      params.push(like, like);
+    }
+    if (status) {
+      conditions.push(`status = ?`);
+      params.push(status);
+    }
+    const where = `WHERE ${conditions.join(' AND ')}`;
+    const countSql = `SELECT COUNT(*) as total FROM products ${where}`;
+    const dataSql = `SELECT * FROM products ${where} ORDER BY name ASC LIMIT ? OFFSET ?`;
+    const [countRows, dataRows] = await Promise.all([
+      this.query<ProductRow[]>(countSql, [...params], connection),
+      this.query<ProductRow[]>(dataSql, [...params, limit, offset], connection),
+    ]);
+    return { data: dataRows, total: (countRows[0] as any).total };
+  }
+
   async delete(id: string, organizationId: string, connection?: QueryConnection): Promise<void> {
     const sql = `DELETE FROM products WHERE id = ? AND organization_id = ?`;
     await this.query<ResultSetHeader>(sql, [id, organizationId], connection);

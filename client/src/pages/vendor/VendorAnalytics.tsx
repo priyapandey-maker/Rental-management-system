@@ -82,19 +82,20 @@ export const VendorAnalytics = () => {
       setLoading(true);
       setError(null);
 
-      // Fetch lists in parallel
+      // Fetch lists in parallel (use limit=100 for analytics/reporting view)
       const [txs, custs, prods, assetsData, invoicesData] = await Promise.all([
-        apiClient.get('/transactions'),
-        apiClient.get('/customers'),
-        apiClient.get('/products'),
-        apiClient.get('/assets'),
+        apiClient.get('/transactions?page=1&limit=100'),
+        apiClient.get('/customers?page=1&limit=100'),
+        apiClient.get('/products?page=1&limit=100'),
+        apiClient.get('/assets?page=1&limit=100'),
         apiClient.get('/reads/invoices')
       ]);
 
-      const txList = Array.isArray(txs) ? txs : [];
-      setCustomers(Array.isArray(custs) ? custs : []);
-      setProducts(Array.isArray(prods) ? prods : []);
-      setAllAssets(Array.isArray(assetsData) ? assetsData : []);
+      const unwrap = (d: any) => d ? (Array.isArray(d) ? d : (d.data || [])) : [];
+      const txList = unwrap(txs);
+      setCustomers(unwrap(custs));
+      setProducts(unwrap(prods));
+      setAllAssets(unwrap(assetsData));
 
       // Map Invoice status by transaction ID
       const invList = invoicesData && Array.isArray((invoicesData as any).data) ? (invoicesData as any).data : [];
@@ -107,7 +108,7 @@ export const VendorAnalytics = () => {
       setInvoicesMap(invMap);
 
       // Load all product variants to resolve SKU names
-      const activeProducts = Array.isArray(prods) ? prods : [];
+      const activeProducts = unwrap(prods);
       const vMap: Record<string, string> = {};
       await Promise.all(
         activeProducts.map(async (p: any) => {

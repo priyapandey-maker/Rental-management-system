@@ -73,14 +73,16 @@ export const Assets = () => {
       setLoading(true);
       setError(null);
 
-      // Fetch assets and products
+      // Fetch assets and products with limit=100 to avoid unbounded queries
       const [assetsData, productsData] = await Promise.all([
-        apiClient.get('/assets'),
-        apiClient.get('/products')
+        apiClient.get('/assets?page=1&limit=100'),
+        apiClient.get('/products?page=1&limit=100')
       ]);
 
-      const activeAssets = Array.isArray(assetsData) ? assetsData : [];
-      const activeProducts = Array.isArray(productsData) ? productsData : [];
+      const assetsResult = assetsData as any;
+      const productsResult = productsData as any;
+      const activeAssets = Array.isArray(assetsResult) ? assetsResult : (assetsResult.data || []);
+      const activeProducts = Array.isArray(productsResult) ? productsResult : (productsResult.data || []);
 
       setAssets(activeAssets);
       setProducts(activeProducts);

@@ -73,8 +73,19 @@ export const updateCustomer = async (req: Request, res: Response, next: NextFunc
 export const listCustomers = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const orgId = req.context.organizationId!;
-    const customers = await customerService.listCustomers(orgId);
-    res.json(customers);
+    const page = Math.max(1, parseInt(req.query.page as string) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20));
+    const search = (req.query.search as string) || undefined;
+    const result = await customerService.listCustomersPaginated(orgId, page, limit, search);
+    res.json({
+      data: result.data,
+      pagination: {
+        page,
+        limit,
+        totalItems: result.total,
+        totalPages: Math.ceil(result.total / limit),
+      },
+    });
   } catch (error) {
     next(error);
   }

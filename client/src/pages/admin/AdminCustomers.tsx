@@ -1,5 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { apiClient } from '../../api/client';
+import { Pagination } from '../../components/ui/Pagination';
+import { usePagination } from '../../components/ui/usePagination';
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
 interface Customer {
   id: string;
@@ -22,6 +25,10 @@ export const AdminCustomers = () => {
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
+  const [searchInput, setSearchInput] = useState('');
+
+  const pagination = usePagination(20);
 
   // Form State
   const [firstName, setFirstName] = useState('');
@@ -32,28 +39,43 @@ export const AdminCustomers = () => {
   const [formError, setFormError] = useState<string | null>(null);
   const [formSuccess, setFormSuccess] = useState(false);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
+      const params = new URLSearchParams({
+        page: String(pagination.page),
+        limit: String(pagination.limit),
+        ...(search ? { search } : {}),
+      });
       const [custData, vendorData] = await Promise.all([
-        apiClient.get('/admin/customers'),
-        apiClient.get('/admin/vendors')
+        apiClient.get(`/admin/customers?${params}`),
+        apiClient.get('/admin/vendors?page=1&limit=100'),
       ]);
-      setCustomers(custData as any);
-      setVendors(vendorData as any);
-      if ((vendorData as any).length > 0) {
-        setSelectedVendorId((vendorData as any)[0].id);
+      const custResult = custData as any;
+      setCustomers(custResult.data || []);
+      pagination.setPaginationFromResponse(custResult.pagination || { page: 1, limit: 20, totalItems: 0, totalPages: 1 });
+      const vendorResult = vendorData as any;
+      const vendorList = vendorResult.data || vendorResult || [];
+      setVendors(vendorList);
+      if (vendorList.length > 0 && !selectedVendorId) {
+        setSelectedVendorId(vendorList[0].id);
       }
     } catch (err: any) {
       setError(err.message || 'Failed to fetch data');
     } finally {
       setLoading(false);
     }
-  };
+  }, [pagination.page, pagination.limit, search]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    pagination.resetPage();
+    setSearch(searchInput);
+  };
 
   const handleCreateCustomer = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,31 +88,24 @@ export const AdminCustomers = () => {
     }
 
     try {
-      // Create via the vendor's context directly, or admin if we exposed an admin create endpoint.
-      // Since admin can access vendor endpoints if they act on behalf... 
-      // Actually, we only created list endpoints in /admin. 
-      // The old /admin POST routes still point to the tenant-isolated controllers.
-      // Wait, if the admin router hits `customerController.createCustomer`, it expects req.context.organizationId.
-      // We will need to send `organization_id` in the body and update the controller to accept it from an admin.
-      // For now, let's assume we update the backend to accept it.
       await apiClient.post('/admin/customers', {
         organization_id: selectedVendorId,
         customer_number: `CUST-${Date.now().toString().slice(-6)}`,
         first_name: firstName,
         last_name: lastName,
         email,
-        phone: phone || undefined
+        phone: phone || undefined,
       });
       setFormSuccess(true);
       setFirstName('');
       setLastName('');
       setEmail('');
       setPhone('');
-      fetchData(); 
+      fetchData();
     } catch (err: any) {
       let errorMsg = err.message || 'Failed to create customer';
       if (errorMsg.toLowerCase().includes('duplicate')) {
-        errorMsg = "A customer with this email already exists for this vendor.";
+        errorMsg = 'A customer with this email already exists for this vendor.';
       }
       setFormError(errorMsg);
     }
@@ -127,8 +142,10 @@ export const AdminCustomers = () => {
                 onChange={(e) => setSelectedVendorId(e.target.value)}
                 className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-brand-500 focus:border-brand-500 sm:text-sm rounded-md"
               >
-                {vendors.map(v => (
-                  <option key={v.id} value={v.id}>{v.name}</option>
+                {vendors.map((v) => (
+                  <option key={v.id} value={v.id}>
+                    {v.name}
+                  </option>
                 ))}
               </select>
             </div>
@@ -167,7 +184,9 @@ export const AdminCustomers = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Phone Number <span className="text-gray-400 font-normal">(Optional)</span></label>
+              <label className="block text-sm font-medium text-gray-700">
+                Phone Number <span className="text-gray-400 font-normal">(Optional)</span>
+              </label>
               <input
                 type="tel"
                 value={phone}
@@ -186,50 +205,93 @@ export const AdminCustomers = () => {
         </div>
 
         {/* Right Side: Customers List */}
-        <div className="lg:col-span-2 bg-white shadow-sm border border-gray-200 rounded-lg">
-          <div className="px-6 py-5 border-b border-gray-200">
+        <div className="lg:col-span-2 bg-white shadow-sm border border-gray-200 rounded-lg flex flex-col">
+          <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between gap-4 flex-wrap">
             <h3 className="text-lg leading-6 font-semibold text-gray-900">All Customers</h3>
+            <form onSubmit={handleSearchSubmit} className="flex items-center gap-2">
+              <div className="relative">
+                <MagnifyingGlassIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search customers…"
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  className="pl-8 pr-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-brand-500 focus:border-brand-500 w-48"
+                />
+              </div>
+              <button
+                type="submit"
+                className="px-3 py-2 bg-brand-600 text-white text-sm rounded-md hover:bg-brand-700 transition-colors"
+              >
+                Search
+              </button>
+              {search && (
+                <button
+                  type="button"
+                  onClick={() => { setSearchInput(''); setSearch(''); pagination.resetPage(); }}
+                  className="px-3 py-2 bg-gray-100 text-gray-700 text-sm rounded-md hover:bg-gray-200 transition-colors"
+                >
+                  Clear
+                </button>
+              )}
+            </form>
           </div>
+
           {loading ? (
-            <div className="p-6 text-center text-gray-500">Loading customers...</div>
+            <div className="p-6 text-center text-gray-500">Loading customers…</div>
           ) : error ? (
             <div className="p-6 text-center text-red-600">Error: {error}</div>
           ) : customers.length === 0 ? (
-            <div className="p-6 text-center text-gray-500">No customers found.</div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vendor</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {customers.map((c) => (
-                    <tr key={c.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {c.first_name} {c.last_name}
-                        <div className="text-xs text-gray-400 font-mono mt-0.5">#{c.id.substring(0,8)}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-brand-700 font-medium">
-                        {c.organization_name}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{c.email}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          c.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                        }`}>
-                          {c.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="p-6 text-center text-gray-500">
+              {search ? `No customers found for "${search}".` : 'No customers found.'}
             </div>
+          ) : (
+            <>
+              <div className="overflow-x-auto flex-1">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vendor</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {customers.map((c) => (
+                      <tr key={c.id} className="hover:bg-gray-50 transition-colors">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          {c.first_name} {c.last_name}
+                          <div className="text-xs text-gray-400 font-mono mt-0.5">#{c.id.substring(0, 8)}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-brand-700 font-medium">
+                          {c.organization_name}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{c.email}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <span
+                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                              c.status === 'active'
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-red-100 text-red-800'
+                            }`}
+                          >
+                            {c.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <Pagination
+                page={pagination.page}
+                totalPages={pagination.totalPages}
+                totalItems={pagination.totalItems}
+                pageSize={pagination.limit}
+                onPageChange={pagination.setPage}
+              />
+            </>
           )}
         </div>
       </div>

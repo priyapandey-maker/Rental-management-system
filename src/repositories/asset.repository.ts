@@ -73,6 +73,36 @@ export class AssetRepository extends BaseRepository {
     return this.query<AssetRow[]>(sql, [organizationId], connection);
   }
 
+  async listPaginated(
+    organizationId: string,
+    page: number,
+    limit: number,
+    search?: string,
+    lifecycleStatus?: string,
+    connection?: QueryConnection
+  ): Promise<{ data: AssetRow[]; total: number }> {
+    const offset = (page - 1) * limit;
+    const params: any[] = [organizationId];
+    const conditions: string[] = ['a.organization_id = ?'];
+    if (search) {
+      conditions.push(`(a.asset_tag LIKE ? OR a.serial_number LIKE ?)`);
+      const like = `%${search}%`;
+      params.push(like, like);
+    }
+    if (lifecycleStatus) {
+      conditions.push(`a.lifecycle_status = ?`);
+      params.push(lifecycleStatus);
+    }
+    const where = `WHERE ${conditions.join(' AND ')}`;
+    const countSql = `SELECT COUNT(*) as total FROM assets a ${where}`;
+    const dataSql = `SELECT a.* FROM assets a ${where} ORDER BY a.asset_tag ASC LIMIT ? OFFSET ?`;
+    const [countRows, dataRows] = await Promise.all([
+      this.query<AssetRow[]>(countSql, [...params], connection),
+      this.query<AssetRow[]>(dataSql, [...params, limit, offset], connection),
+    ]);
+    return { data: dataRows, total: (countRows[0] as any).total };
+  }
+
   async updateLifecycleStatus(id: string, orgId: string, status: string, connection?: QueryConnection): Promise<void> {
     const sql = `UPDATE assets SET lifecycle_status = ? WHERE id = ? AND organization_id = ?`;
     await this.query<ResultSetHeader>(sql, [status, id, orgId], connection);

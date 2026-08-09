@@ -83,4 +83,29 @@ export class CustomerRepository extends BaseRepository {
     const sql = `SELECT * FROM customers WHERE organization_id = ? ORDER BY customer_number ASC`;
     return this.query<CustomerRow[]>(sql, [organizationId], connection);
   }
+
+  async listPaginated(
+    organizationId: string,
+    page: number,
+    limit: number,
+    search?: string,
+    connection?: QueryConnection
+  ): Promise<{ data: CustomerRow[]; total: number }> {
+    const offset = (page - 1) * limit;
+    const params: any[] = [organizationId];
+    const conditions: string[] = ['organization_id = ?'];
+    if (search) {
+      conditions.push(`(first_name LIKE ? OR last_name LIKE ? OR email LIKE ? OR customer_number LIKE ?)`);
+      const like = `%${search}%`;
+      params.push(like, like, like, like);
+    }
+    const where = `WHERE ${conditions.join(' AND ')}`;
+    const countSql = `SELECT COUNT(*) as total FROM customers ${where}`;
+    const dataSql = `SELECT * FROM customers ${where} ORDER BY customer_number ASC LIMIT ? OFFSET ?`;
+    const [countRows, dataRows] = await Promise.all([
+      this.query<CustomerRow[]>(countSql, [...params], connection),
+      this.query<CustomerRow[]>(dataSql, [...params, limit, offset], connection),
+    ]);
+    return { data: dataRows, total: (countRows[0] as any).total };
+  }
 }

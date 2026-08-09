@@ -31,8 +31,11 @@ export const Adjustments = () => {
   const fetchTransactions = async () => {
     try {
       const isAdmin = location.pathname.startsWith('/admin');
-      const data = await apiClient.get(isAdmin ? '/admin/transactions' : '/transactions');
-      setTransactions((data as any).filter((tx: any) => tx.status !== 'DRAFT'));
+      const endpoint = isAdmin ? '/admin/transactions?limit=100' : '/transactions?limit=100';
+      const data = await apiClient.get(endpoint);
+      const result = data as any;
+      const list = result.data ?? result;
+      setTransactions(Array.isArray(list) ? list.filter((tx: any) => tx.status !== 'DRAFT') : []);
     } catch (err) {
       console.error(err);
     }

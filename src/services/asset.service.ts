@@ -82,6 +82,16 @@ export class AssetService {
     return this.assetRepo.list(orgId);
   }
 
+  async listAssetsPaginated(
+    orgId: string,
+    page: number,
+    limit: number,
+    search?: string,
+    lifecycleStatus?: string
+  ): Promise<{ data: AssetRow[]; total: number }> {
+    return this.assetRepo.listPaginated(orgId, page, limit, search, lifecycleStatus);
+  }
+
   async updateAsset(
     id: string,
     orgId: string,

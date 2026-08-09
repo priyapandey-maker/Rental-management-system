@@ -69,8 +69,20 @@ export const updateProduct = async (req: Request, res: Response, next: NextFunct
 export const listProducts = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const orgId = req.context.organizationId!;
-    const products = await productService.listProducts(orgId);
-    res.json(products);
+    const page = Math.max(1, parseInt(req.query.page as string) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20));
+    const search = (req.query.search as string) || undefined;
+    const status = (req.query.status as string) || undefined;
+    const result = await productService.listProductsPaginated(orgId, page, limit, search, status);
+    res.json({
+      data: result.data,
+      pagination: {
+        page,
+        limit,
+        totalItems: result.total,
+        totalPages: Math.ceil(result.total / limit),
+      },
+    });
   } catch (error) {
     next(error);
   }

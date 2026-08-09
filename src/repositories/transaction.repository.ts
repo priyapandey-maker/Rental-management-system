@@ -67,6 +67,30 @@ export class TransactionRepository extends BaseRepository {
     return this.query<TransactionRow[]>(sql, [orgId], conn);
   }
 
+  async listTransactionsPaginated(
+    orgId: string,
+    page: number,
+    limit: number,
+    status?: string,
+    conn?: QueryConnection
+  ): Promise<{ data: TransactionRow[]; total: number }> {
+    const offset = (page - 1) * limit;
+    const params: any[] = [orgId];
+    const conditions: string[] = ['organization_id = ?'];
+    if (status) {
+      conditions.push(`status = ?`);
+      params.push(status);
+    }
+    const where = `WHERE ${conditions.join(' AND ')}`;
+    const countSql = `SELECT COUNT(*) as total FROM rental_transactions ${where}`;
+    const dataSql = `SELECT * FROM rental_transactions ${where} ORDER BY created_at DESC LIMIT ? OFFSET ?`;
+    const [countRows, dataRows] = await Promise.all([
+      this.query<TransactionRow[]>(countSql, [...params], conn),
+      this.query<TransactionRow[]>(dataSql, [...params, limit, offset], conn),
+    ]);
+    return { data: dataRows, total: (countRows[0] as any).total };
+  }
+
   async createTransactionLine(data: { id: string, organization_id: string, transaction_id: string, product_id: string, variant_id: string | null, quantity: number, rental_start_date: Date, rental_end_date: Date }, conn?: QueryConnection): Promise<void> {
     const sql = `
       INSERT INTO rental_transaction_lines (

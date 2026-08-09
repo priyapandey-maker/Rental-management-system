@@ -70,16 +70,19 @@ export const Rentals = () => {
       setLoading(true);
       setError(null);
 
-      // Fetch flat collections
+      // Fetch flat collections (with limit=100 for management view)
       const [txs, custs, prods] = await Promise.all([
-        apiClient.get('/transactions'),
-        apiClient.get('/customers'),
-        apiClient.get('/products')
+        apiClient.get('/transactions?page=1&limit=100'),
+        apiClient.get('/customers?page=1&limit=100'),
+        apiClient.get('/products?page=1&limit=100')
       ]);
 
-      const txList = Array.isArray(txs) ? txs : [];
-      const customerList = Array.isArray(custs) ? custs : [];
-      const productList = Array.isArray(prods) ? prods : [];
+      const txResult = txs as any;
+      const custResult = custs as any;
+      const prodResult = prods as any;
+      const txList = Array.isArray(txResult) ? txResult : (txResult.data || []);
+      const customerList = Array.isArray(custResult) ? custResult : (custResult.data || []);
+      const productList = Array.isArray(prodResult) ? prodResult : (prodResult.data || []);
 
       setCustomers(customerList.filter((c: any) => c.status === 'active'));
       setProducts(productList);

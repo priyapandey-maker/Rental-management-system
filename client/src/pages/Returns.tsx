@@ -18,9 +18,13 @@ export const Returns = () => {
     try {
       setLoading(true);
       const isAdmin = location.pathname.startsWith('/admin');
-      const data = await apiClient.get(isAdmin ? '/admin/transactions' : '/transactions');
+      const endpoint = isAdmin ? '/admin/transactions?limit=100&status=ACTIVE' : '/transactions?limit=100';
+      const data = await apiClient.get(endpoint);
+      // Unwrap paginated response { data, pagination } or plain array
+      const result = data as any;
+      const list = Array.isArray(result) ? result : (result.data || []);
       // Filter for ACTIVE transactions eligible for returns
-      const filtered = (data as any).filter((tx: any) => tx.status === 'ACTIVE');
+      const filtered = list.filter((tx: any) => tx.status === 'ACTIVE');
       setTransactions(filtered);
     } catch (err: any) {
       setError(err.message || 'Failed to fetch transactions');
