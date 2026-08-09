@@ -16,12 +16,20 @@ import { VendorSignup } from './pages/VendorSignup';
 import { ForgotPassword } from './pages/ForgotPassword';
 import { ResetPassword } from './pages/ResetPassword';
 
-// Admin / Ops Pages (existing)
+// Admin / Ops Pages (legacy / vendor shared)
 import { Dashboard } from './pages/Dashboard';
 import { Customers } from './pages/Customers';
 import { Products } from './pages/Products';
 import { Assets } from './pages/Assets';
 import { Rentals } from './pages/Rentals';
+
+// Admin Specific Pages
+import { AdminDashboard } from './pages/admin/AdminDashboard';
+import { AdminVendors } from './pages/admin/AdminVendors';
+import { AdminCustomers } from './pages/admin/AdminCustomers';
+import { AdminProducts } from './pages/admin/AdminProducts';
+import { AdminAssets } from './pages/admin/AdminAssets';
+import { AdminRentals } from './pages/admin/AdminRentals';
 import { RentalDetail } from './pages/RentalDetail';
 import { Fulfillment } from './pages/Fulfillment';
 import { Returns } from './pages/Returns';
@@ -119,16 +127,18 @@ function App() {
               redirects customer → /store
           ────────────────────────────────────────────────────── */}
           <Route element={<MainLayout />}>
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="customers" element={<Customers />} />
-            <Route path="products" element={<Products />} />
-            <Route path="assets" element={<Assets />} />
-            <Route path="rentals" element={<Rentals />} />
-            <Route path="rentals/:id" element={<RentalDetail />} />
-            <Route path="fulfillment" element={<Fulfillment />} />
-            <Route path="returns" element={<Returns />} />
-            <Route path="inspections" element={<Inspections />} />
-            <Route path="adjustments" element={<Adjustments />} />
+            <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/vendors" element={<AdminVendors />} />
+            <Route path="/admin/customers" element={<AdminCustomers />} />
+            <Route path="/admin/products" element={<AdminProducts />} />
+            <Route path="/admin/assets" element={<AdminAssets />} />
+            <Route path="/admin/rentals" element={<AdminRentals />} />
+            <Route path="/admin/rentals/:id" element={<RentalDetail />} />
+            <Route path="/admin/fulfillment" element={<Fulfillment />} />
+            <Route path="/admin/returns" element={<Returns />} />
+            <Route path="/admin/inspections" element={<Inspections />} />
+            <Route path="/admin/adjustments" element={<Adjustments />} />
           </Route>
 
         </Routes>

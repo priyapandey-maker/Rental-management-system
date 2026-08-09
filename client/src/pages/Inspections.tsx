@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { apiClient } from '../api/client';
 import { MOCK_PRODUCTS } from '../components/store/MockProductData';
 import { 
@@ -39,6 +40,7 @@ interface Inspection {
 }
 
 export const Inspections = () => {
+  const location = useLocation();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -71,10 +73,11 @@ export const Inspections = () => {
       setError(null);
 
       // Load products, customers, transactions, returns, and allocations in parallel
+      const isAdmin = location.pathname.startsWith('/admin');
       const [prodsData, custsData, txData, retData, allocsData] = await Promise.all([
-        apiClient.get('/products').catch(() => null),
-        apiClient.get('/customers').catch(() => null),
-        apiClient.get('/transactions').catch(() => null),
+        apiClient.get(isAdmin ? '/admin/products' : '/products').catch(() => null),
+        apiClient.get(isAdmin ? '/admin/customers' : '/customers').catch(() => null),
+        apiClient.get(isAdmin ? '/admin/transactions' : '/transactions').catch(() => null),
         apiClient.get('/returns').catch(() => null),
         apiClient.get('/allocations').catch(() => null)
       ]);

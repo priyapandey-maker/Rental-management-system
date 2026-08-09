@@ -51,7 +51,7 @@ export const MainLayout = () => {
   };
 
   const NavItem = ({ to, label, icon: Icon }: { to: string; label: string; icon: any }) => {
-    const isActive = location.pathname === to || (to !== '/dashboard' && location.pathname.startsWith(to));
+    const isActive = location.pathname === to || (to !== '/admin/dashboard' && location.pathname.startsWith(to));
     return (
       <Link
         to={to}
@@ -76,7 +76,7 @@ export const MainLayout = () => {
       {/* Sidebar */}
       <div className="w-full md:w-64 bg-white border-r border-gray-200 flex-shrink-0 flex flex-col">
         <div className="h-16 flex items-center justify-between px-4 border-b border-gray-200">
-          <Logo size="sm" isLink={true} linkTo="/dashboard" />
+          <Logo size="sm" isLink={true} linkTo="/admin/dashboard" />
           <span className="text-[10px] font-bold bg-gray-100 text-gray-500 px-2 py-1 rounded uppercase tracking-wider">
             Admin
           </span>
@@ -88,7 +88,7 @@ export const MainLayout = () => {
               Overview
             </h3>
             <div className="space-y-1">
-              <NavItem to="/dashboard" label="Admin Dashboard" icon={HomeIcon} />
+              <NavItem to="/admin/dashboard" label="Admin Dashboard" icon={HomeIcon} />
             </div>
           </div>
 
@@ -97,8 +97,8 @@ export const MainLayout = () => {
               Users &amp; Partners
             </h3>
             <div className="space-y-1">
-              <NavItem to="/customers" label="Customers" icon={UsersIcon} />
-              <NavItem to="/customers?view=vendors" label="Vendors" icon={BuildingStorefrontIcon} />
+              <NavItem to="/admin/customers" label="Customers" icon={UsersIcon} />
+              <NavItem to="/admin/vendors" label="Vendors / Tenants" icon={BuildingStorefrontIcon} />
             </div>
           </div>
 
@@ -107,9 +107,8 @@ export const MainLayout = () => {
               Catalog &amp; Inventory
             </h3>
             <div className="space-y-1">
-              <NavItem to="/products" label="Products" icon={ArchiveBoxIcon} />
-              <NavItem to="/products?view=variants" label="Variants" icon={DocumentCheckIcon} />
-              <NavItem to="/assets" label="Assets" icon={CubeIcon} />
+              <NavItem to="/admin/products" label="Products" icon={ArchiveBoxIcon} />
+              <NavItem to="/admin/assets" label="Assets" icon={CubeIcon} />
             </div>
           </div>
 
@@ -118,8 +117,8 @@ export const MainLayout = () => {
               Rentals
             </h3>
             <div className="space-y-1">
-              <NavItem to="/rentals" label="Rentals / Orders" icon={DocumentDuplicateIcon} />
-              <NavItem to="/returns" label="Returns" icon={ArrowPathIcon} />
+              <NavItem to="/admin/rentals" label="Rentals / Orders" icon={DocumentDuplicateIcon} />
+              <NavItem to="/admin/returns" label="Returns" icon={ArrowPathIcon} />
             </div>
           </div>
 
@@ -128,10 +127,8 @@ export const MainLayout = () => {
               Operations &amp; Finance
             </h3>
             <div className="space-y-1">
-              <NavItem to="/inspections" label="Inspections" icon={ClipboardDocumentCheckIcon} />
-              <NavItem to="/adjustments" label="Adjustments" icon={CurrencyDollarIcon} />
-              <NavItem to="/rentals?tab=payments" label="Invoices / Payments" icon={CurrencyDollarIcon} />
-              <NavItem to="/dashboard?view=analytics" label="Analytics" icon={ChartBarIcon} />
+              <NavItem to="/admin/inspections" label="Inspections" icon={ClipboardDocumentCheckIcon} />
+              <NavItem to="/admin/adjustments" label="Adjustments" icon={CurrencyDollarIcon} />
             </div>
           </div>
         </div>

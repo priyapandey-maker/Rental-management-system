@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { apiClient } from '../api/client';
 
 interface Transaction {
@@ -15,6 +16,7 @@ interface Adjustment {
 }
 
 export const Adjustments = () => {
+  const location = useLocation();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [selectedTxId, setSelectedTxId] = useState('');
   const [adjustments, setAdjustments] = useState<Adjustment[]>([]);
@@ -28,7 +30,8 @@ export const Adjustments = () => {
 
   const fetchTransactions = async () => {
     try {
-      const data = await apiClient.get('/transactions');
+      const isAdmin = location.pathname.startsWith('/admin');
+      const data = await apiClient.get(isAdmin ? '/admin/transactions' : '/transactions');
       setTransactions((data as any).filter((tx: any) => tx.status !== 'DRAFT'));
     } catch (err) {
       console.error(err);

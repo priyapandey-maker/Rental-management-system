@@ -3,7 +3,7 @@ import { DashboardRepository } from '../repositories/dashboard.repository';
 export class DashboardService {
   constructor(private dashboardRepo = new DashboardRepository()) {}
 
-  async getDashboardSummary(orgId: string) {
+  async getDashboardSummary(orgId?: string) {
     const [revenue, activeRentals, assetAvailability, outstandingPayments] = await Promise.all([
       this.dashboardRepo.getRevenueSummary(orgId),
       this.dashboardRepo.getActiveRentalsCount(orgId),
