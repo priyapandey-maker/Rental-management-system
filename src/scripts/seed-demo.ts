@@ -249,10 +249,8 @@ async function seedDemoData() {
   // DRAFT: 2 (~5%)
   // CANCELLED: 2 (~5%)
   const txStatuses = [
-    ...Array(18).fill('COMPLETED'),
-    ...Array(6).fill('RETURNED'),
-    ...Array(4).fill('FULFILLED'),
-    ...Array(4).fill('ALLOCATED'),
+    ...Array(24).fill('COMPLETED'),
+    ...Array(8).fill('ACTIVE'),
     ...Array(4).fill('CONFIRMED'),
     ...Array(2).fill('DRAFT'),
     ...Array(2).fill('CANCELLED'),
@@ -285,13 +283,13 @@ async function seedDemoData() {
       );
 
       // Downstream generation
-      if (['ALLOCATED', 'FULFILLED', 'RETURNED', 'COMPLETED'].includes(status)) {
+      if (['CONFIRMED', 'ACTIVE', 'COMPLETED'].includes(status)) {
         const allocId = `alloc-${lineId}`;
         const randomAsset = ALL_ASSETS.find(a => a.variantId === randomVariant.variantId) || ALL_ASSETS[0];
         
         let allocStatus = 'ALLOCATED';
-        if (['FULFILLED'].includes(status)) allocStatus = 'FULFILLED';
-        if (['RETURNED', 'COMPLETED'].includes(status)) allocStatus = 'RETURNED';
+        if (['ACTIVE'].includes(status)) allocStatus = 'FULFILLED';
+        if (['COMPLETED'].includes(status)) allocStatus = 'RETURNED';
 
         await pool.query(
           `INSERT INTO asset_allocations (id, organization_id, transaction_line_id, asset_id, status, quantity, allocated_at, created_at, updated_at)
@@ -334,7 +332,7 @@ async function seedDemoData() {
           // Inspection
           const inspectId = `inspect-${allocId}`;
           await pool.query(
-            `INSERT INTO asset_inspections (id, organization_id, return_line_id, asset_id, inspection_date, condition_status, created_at)
+            `INSERT INTO asset_inspections (id, organization_id, return_line_id, asset_id, inspected_at, condition_status, created_at)
              VALUES (?, ?, ?, ?, NOW(), 'GOOD', NOW())
              ON DUPLICATE KEY UPDATE condition_status = VALUES(condition_status)`,
             [inspectId, DEMO_ORG_ID, `rl-${allocId}`, randomAsset.assetId]
@@ -359,10 +357,10 @@ async function seedDemoData() {
       if (invStatus === 'PAID') {
         const payId = `pay-${invId}`;
         await pool.query(
-          `INSERT INTO rental_payments (id, organization_id, invoice_id, amount, payment_method, status, payment_date, created_at)
-           VALUES (?, ?, ?, ?, 'CREDIT_CARD', 'SUCCESS', NOW(), NOW())
+          `INSERT INTO rental_payments (id, organization_id, invoice_id, customer_id, amount, payment_method, status, payment_date, created_at)
+           VALUES (?, ?, ?, ?, ?, 'CREDIT_CARD', 'COMPLETED', NOW(), NOW())
            ON DUPLICATE KEY UPDATE status = VALUES(status)`,
-          [payId, DEMO_ORG_ID, invId, totalAmount]
+          [payId, DEMO_ORG_ID, invId, cust.id, totalAmount]
         );
       }
     }
@@ -371,8 +369,8 @@ async function seedDemoData() {
     if (status === 'COMPLETED' && Math.random() > 0.8) {
        const adjId = `adj-${txId}`;
        await pool.query(
-          `INSERT INTO rental_adjustments (id, organization_id, transaction_id, type, amount, status, created_at, updated_at)
-           VALUES (?, ?, ?, 'FEE', 500.00, 'APPLIED', NOW(), NOW())
+          `INSERT INTO rental_adjustments (id, organization_id, transaction_id, reason, amount, status, created_at, updated_at)
+           VALUES (?, ?, ?, 'Late Return Fee', 500.00, 'APPLIED', NOW(), NOW())
            ON DUPLICATE KEY UPDATE status = VALUES(status)`,
           [adjId, DEMO_ORG_ID, txId]
        );
