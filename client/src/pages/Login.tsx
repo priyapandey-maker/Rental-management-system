@@ -10,7 +10,7 @@ const ROLE_LABELS: Record<RoleTab, { label: string; description: string; color: 
     label: 'Customer',
     description: 'Browse & rent products',
     color: 'blue',
-    defaultEmail: 'customer@assetflow.local',
+    defaultEmail: 'cust-demo-01@assetflow.local',
     defaultPassword: 'Customer@2024!',
   },
   vendor: {
@@ -78,8 +78,7 @@ export const Login = () => {
         } 
         // Match seed credentials for Customer
         else if (
-          (email === 'aarav@example.com' && password === 'DemoPassword123!') ||
-          (email === 'customer@assetflow.local')
+          (email === 'cust-demo-01@assetflow.local')
         ) {
           response = {
             user: { id: 'd3a6d95c-12fe-4c98-a755-677737be0f26', role: 'customer', organizationId: '6f3875f5-49a2-4bee-9dc1-927b5907020a' },
