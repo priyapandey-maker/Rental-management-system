@@ -23,6 +23,13 @@ const CATEGORY_IMAGES: Record<string, string> = {
   'D-WRB': '/images/prod-wrb.png',
   'D-HAPP': '/images/prod-happ.png',
   'D-EVT': '/images/prod-evt.png',
+  LPT: '/images/prod-lpt.png',
+  GAM: '/images/prod-gam.png',
+  FURN: '/images/prod-furn.png',
+  TVP: '/images/prod-tvp.png',
+  WRB: '/images/prod-wrb.png',
+  HAPP: '/images/prod-happ.png',
+  EVT: '/images/prod-evt.png',
 };
 
 const PRODUCT_IMAGES: Record<string, string> = {
@@ -44,6 +51,13 @@ const PRODUCT_IMAGES: Record<string, string> = {
   'D-WRB': '/images/prod-wrb.png',
   'D-HAPP': '/images/prod-happ.png',
   'D-EVT': '/images/prod-evt.png',
+  LPT: '/images/prod-lpt.png',
+  GAM: '/images/prod-gam.png',
+  FURN: '/images/prod-furn.png',
+  TVP: '/images/prod-tvp.png',
+  WRB: '/images/prod-wrb.png',
+  HAPP: '/images/prod-happ.png',
+  EVT: '/images/prod-evt.png',
 };
 import {
   MagnifyingGlassIcon,
@@ -109,6 +123,13 @@ const CATEGORY_COLORS: Record<string, { bg: string; accent: string; iconBg: stri
   'D-WRB': { bg: 'bg-lime-50',   accent: 'text-lime-600',   iconBg: 'bg-lime-100' },
   'D-HAPP': { bg: 'bg-cyan-50',  accent: 'text-cyan-600',   iconBg: 'bg-cyan-100' },
   'D-EVT': { bg: 'bg-fuchsia-50',accent: 'text-fuchsia-600',iconBg: 'bg-fuchsia-100' },
+  LPT: { bg: 'bg-gray-50',   accent: 'text-gray-600',   iconBg: 'bg-gray-100' },
+  GAM: { bg: 'bg-red-50',    accent: 'text-red-600',    iconBg: 'bg-red-100' },
+  FURN: { bg: 'bg-orange-50',accent: 'text-orange-600', iconBg: 'bg-orange-100' },
+  TVP: { bg: 'bg-pink-50',   accent: 'text-pink-600',   iconBg: 'bg-pink-100' },
+  WRB: { bg: 'bg-lime-50',   accent: 'text-lime-600',   iconBg: 'bg-lime-100' },
+  HAPP: { bg: 'bg-cyan-50',  accent: 'text-cyan-600',   iconBg: 'bg-cyan-100' },
+  EVT: { bg: 'bg-fuchsia-50',accent: 'text-fuchsia-600',iconBg: 'bg-fuchsia-100' },
 };
 
 const PROD_COLORS: Record<string, { bg: string; badge: string }> = {
@@ -130,6 +151,13 @@ const PROD_COLORS: Record<string, { bg: string; badge: string }> = {
   'D-WRB': { bg: 'bg-lime-50',   badge: 'bg-lime-100 text-lime-700' },
   'D-HAPP': { bg: 'bg-cyan-50',  badge: 'bg-cyan-100 text-cyan-700' },
   'D-EVT': { bg: 'bg-fuchsia-50',badge: 'bg-fuchsia-100 text-fuchsia-700' },
+  LPT: { bg: 'bg-gray-50',   badge: 'bg-gray-100 text-gray-700' },
+  GAM: { bg: 'bg-red-50',    badge: 'bg-red-100 text-red-700' },
+  FURN: { bg: 'bg-orange-50',badge: 'bg-orange-100 text-orange-700' },
+  TVP: { bg: 'bg-pink-50',   badge: 'bg-pink-100 text-pink-700' },
+  WRB: { bg: 'bg-lime-50',   badge: 'bg-lime-100 text-lime-700' },
+  HAPP: { bg: 'bg-cyan-50',  badge: 'bg-cyan-100 text-cyan-700' },
+  EVT: { bg: 'bg-fuchsia-50',badge: 'bg-fuchsia-100 text-fuchsia-700' },
 };
 
 const getSkuCode = (sku: string) => {
