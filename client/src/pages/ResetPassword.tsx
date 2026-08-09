@@ -48,7 +48,7 @@ export const ResetPassword = () => {
       <div>
         <h3 className="text-xl font-bold text-gray-900 text-center mb-6">Create New Password</h3>
       </div>
-      
+
       {error && (
         <div className="p-3 bg-red-50 text-red-700 text-sm rounded-md border border-red-200">
           {error}
@@ -104,4 +104,4 @@ export const ResetPassword = () => {
         </Link>
       </div>
     </form>
-};
+  );
