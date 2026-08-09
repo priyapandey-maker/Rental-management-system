@@ -73,6 +73,7 @@ export const VendorDashboard = () => {
   const [adjustments, setAdjustments] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [customers, setCustomers] = useState<any[]>([]);
+  const [returns, setReturns] = useState<any[]>([]);
 
   const fetchData = async () => {
     if (!orgId) return;
@@ -125,6 +126,10 @@ export const VendorDashboard = () => {
       // Load adjustments
       let localAdjustments = JSON.parse(localStorage.getItem('demo_adjustments') || '[]');
       setAdjustments(localAdjustments);
+
+      // Load returns
+      let localReturns = JSON.parse(localStorage.getItem('demo_returns') || '[]');
+      setReturns(localReturns);
 
       // Update counts
       const activeRentalsCount = uniqueTxs.filter(tx => tx.status === 'ACTIVE').length;
@@ -286,19 +291,35 @@ export const VendorDashboard = () => {
                     {start} &rarr; {end}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-0.5 text-[10px] font-bold rounded uppercase border ${
-                      tx.status === 'ACTIVE' 
-                        ? 'bg-purple-50 text-purple-700 border-purple-200' 
-                        : tx.status === 'CONFIRMED' 
-                          ? 'bg-brand-50 text-brand-700 border-brand-200' 
-                          : tx.status === 'COMPLETED' 
-                            ? 'bg-green-50 text-green-700 border-green-200' 
-                            : tx.status === 'CANCELLED'
-                              ? 'bg-red-50 text-red-700 border-red-200'
-                              : 'bg-yellow-50 text-yellow-700 border-yellow-200'
-                    }`}>
-                      {tx.status}
-                    </span>
+                    {(() => {
+                      const ret = returns.find(r => r.transaction_id === tx.id);
+                      if (ret) {
+                        return (
+                          <span className={`inline-flex px-2 py-0.5 text-[10px] font-bold rounded uppercase border ${
+                            ret.status === 'PENDING'
+                              ? 'bg-amber-50 text-amber-700 border-amber-200'
+                              : 'bg-green-50 text-green-700 border-green-200'
+                          }`}>
+                            {ret.status === 'PENDING' ? 'Return Requested' : 'Returned'}
+                          </span>
+                        );
+                      }
+                      return (
+                        <span className={`inline-flex px-2 py-0.5 text-[10px] font-bold rounded uppercase border ${
+                          tx.status === 'ACTIVE' 
+                            ? 'bg-purple-50 text-purple-700 border-purple-200' 
+                            : tx.status === 'CONFIRMED' 
+                              ? 'bg-brand-50 text-brand-700 border-brand-200' 
+                              : tx.status === 'COMPLETED' 
+                                ? 'bg-green-50 text-green-700 border-green-200' 
+                                : tx.status === 'CANCELLED'
+                                  ? 'bg-red-50 text-red-700 border-red-200'
+                                  : 'bg-yellow-50 text-yellow-700 border-yellow-200'
+                        }`}>
+                          {tx.status}
+                        </span>
+                      );
+                    })()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right font-semibold">
                     <Link to={`/vendor/rentals/${tx.id}`} className="text-brand-600 hover:text-brand-900 transition-colors">

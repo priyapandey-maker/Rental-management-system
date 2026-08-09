@@ -49,6 +49,7 @@ interface Allocation {
   asset_id: string;
   status: string;
   quantity: number;
+  transaction_line_id?: string;
 }
 
 interface Invoice {
@@ -97,6 +98,7 @@ export const RentalDetail = () => {
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [returnRecord, setReturnRecord] = useState<any>(null);
 
   // Lists for forms
   const [products, setProducts] = useState<Product[]>([]);
@@ -241,6 +243,16 @@ export const RentalDetail = () => {
           setAdjustments([]);
         }
       }
+
+      // Load return details
+      try {
+        const retData = await apiClient.get(`/returns/transactions/${id}`);
+        setReturnRecord(retData);
+      } catch {
+        const localReturns = JSON.parse(localStorage.getItem('demo_returns') || '[]');
+        const ret = localReturns.find((r: any) => r.transaction_id === id);
+        setReturnRecord(ret || null);
+      }
     } catch (err: any) {
       setError(err.message || 'Failed to load transaction details');
     } finally {
@@ -379,7 +391,69 @@ export const RentalDetail = () => {
       await apiClient.post(`/transactions/${id}/return`);
       loadRentalData();
     } catch (err: any) {
-      alert(err.message || 'Receive Return failed');
+      console.warn('API Receive Return failed, simulating offline return acceptance:', err);
+      
+      const localReturns = JSON.parse(localStorage.getItem('demo_returns') || '[]');
+      const ret = localReturns.find((r: any) => r.transaction_id === id);
+      if (ret) {
+        ret.status = 'RECEIVED';
+      } else {
+        localReturns.push({
+          id: `ret-demo-${Date.now()}`,
+          transaction_id: id,
+          status: 'RECEIVED',
+          returned_at: new Date().toISOString()
+        });
+      }
+      localStorage.setItem('demo_returns', JSON.stringify(localReturns));
+
+      const allLocalAllocations = JSON.parse(localStorage.getItem('demo_allocations') || '[]');
+      allLocalAllocations.forEach((a: any) => {
+        if (a.transaction_line_id && transaction?.lines.some(l => l.id === a.transaction_line_id)) {
+          a.status = 'RETURNED';
+        }
+      });
+      localStorage.setItem('demo_allocations', JSON.stringify(allLocalAllocations));
+
+      const localTxs = JSON.parse(localStorage.getItem('demo_transactions') || '[]');
+      const tx = localTxs.find((t: any) => t.id === id);
+      if (tx) {
+        tx.status = 'COMPLETED';
+        localStorage.setItem('demo_transactions', JSON.stringify(localTxs));
+      }
+
+      loadRentalData();
+      fetchAllAssets();
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleRequestReturn = async () => {
+    if (!id) return;
+    try {
+      setActionLoading(true);
+      await apiClient.post('/returns', { transaction_id: id });
+      loadRentalData();
+    } catch (err: any) {
+      console.warn('API return creation failed, simulating offline return request:', err);
+      
+      const localReturns = JSON.parse(localStorage.getItem('demo_returns') || '[]');
+      const existingIdx = localReturns.findIndex((r: any) => r.transaction_id === id);
+      const newRet = {
+        id: `ret-demo-${Date.now()}`,
+        transaction_id: id,
+        status: 'PENDING',
+        returned_at: new Date().toISOString()
+      };
+      if (existingIdx >= 0) {
+        localReturns[existingIdx] = newRet;
+      } else {
+        localReturns.push(newRet);
+      }
+      localStorage.setItem('demo_returns', JSON.stringify(localReturns));
+      
+      loadRentalData();
     } finally {
       setActionLoading(false);
     }
@@ -600,15 +674,25 @@ export const RentalDetail = () => {
               </>
             )}
 
-            {transaction.status === 'ACTIVE' && (
-              <button 
-                onClick={handleReturn}
-                disabled={actionLoading}
-                className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors"
-              >
-                Receive Return
-              </button>
-            )}
+            {transaction.status === 'ACTIVE' && !isCustomer && (
+               <button 
+                 onClick={handleReturn}
+                 disabled={actionLoading}
+                 className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors"
+               >
+                 {returnRecord?.status === 'PENDING' ? 'Receive Return (Awaiting Intake)' : 'Receive Return'}
+               </button>
+             )}
+
+             {isCustomer && transaction.status === 'ACTIVE' && (!returnRecord || returnRecord.status === 'DRAFT') && (
+               <button
+                 onClick={handleRequestReturn}
+                 disabled={actionLoading}
+                 className="bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-sm transition-colors"
+               >
+                 Request Return
+               </button>
+             )}
 
             {transaction.status !== 'CANCELLED' && transaction.status !== 'COMPLETED' && (
               <button
@@ -669,6 +753,98 @@ export const RentalDetail = () => {
                   </div>
                   <div className="flex flex-col md:items-center text-left md:text-center">
                     <span className={`text-xs font-bold tracking-wide uppercase ${isActive ? 'text-brand-600 font-extrabold' : isCompleted ? 'text-gray-800' : 'text-gray-400'}`}>
+                      {step.label}
+                    </span>
+                    <span className="text-[10px] text-gray-400 font-medium">
+                      {step.desc}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Return Handoff & Inspection Tracker */}
+      {returnRecord && (
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-6">
+          <div className="flex justify-between items-center">
+            <div>
+              <h3 className="text-xs font-bold text-brand-600 uppercase tracking-widest">
+                Return Handoff & Inspection Tracker
+              </h3>
+              <p className="text-xs text-gray-505 mt-1">Return ID: <span className="font-mono font-bold text-gray-700">{returnRecord.id.substring(0,8)}...</span></p>
+            </div>
+            <span className="px-2.5 py-1 text-xs font-bold rounded bg-brand-50 text-brand-700 uppercase border border-brand-200">
+              Return Status: {returnRecord.status}
+            </span>
+          </div>
+
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative">
+            {/* Connecting lines */}
+            <div className="hidden md:block absolute top-[18px] left-[5%] right-[5%] h-0.5 bg-gray-100 z-0"></div>
+            
+            {[
+              { 
+                label: 'Requested', 
+                desc: 'Return initiated', 
+                active: returnRecord.status === 'PENDING', 
+                completed: returnRecord.status !== 'PENDING' 
+              },
+              { 
+                label: 'Accepted', 
+                desc: 'Awaiting intake', 
+                active: returnRecord.status === 'PROCESSING', 
+                completed: returnRecord.status !== 'PENDING' && returnRecord.status !== 'PROCESSING' 
+              },
+              { 
+                label: 'Returned', 
+                desc: 'Received by vendor', 
+                active: returnRecord.status === 'RECEIVED' && adjustments.length === 0, 
+                completed: returnRecord.status === 'RECEIVED' && (adjustments.length > 0 || transaction?.status === 'COMPLETED')
+              },
+              { 
+                label: 'Inspecting', 
+                desc: 'Condition review', 
+                active: returnRecord.status === 'RECEIVED' && adjustments.length > 0 && adjustments.some(a => a.status === 'PENDING' || a.status === 'DRAFT'), 
+                completed: returnRecord.status === 'RECEIVED' && adjustments.length > 0 && adjustments.every(a => a.status !== 'PENDING' && a.status !== 'DRAFT')
+              },
+              { 
+                label: 'Inspected', 
+                desc: 'Damage assessed', 
+                active: returnRecord.status === 'RECEIVED' && adjustments.length > 0 && adjustments.every(a => a.status !== 'PENDING' && a.status !== 'DRAFT') && transaction?.status !== 'COMPLETED', 
+                completed: transaction?.status === 'COMPLETED'
+              },
+              { 
+                label: 'Resolved', 
+                desc: 'Commercials settled', 
+                active: transaction?.status === 'COMPLETED' && invoice?.status !== 'PAID', 
+                completed: transaction?.status === 'COMPLETED' && invoice?.status === 'PAID' 
+              },
+              { 
+                label: 'Completed', 
+                desc: 'Closed contract', 
+                active: transaction?.status === 'COMPLETED' && invoice?.status === 'PAID', 
+                completed: false 
+              }
+            ].map((step, idx) => {
+              const isCompleted = step.completed;
+              const isActive = step.active;
+
+              return (
+                <div key={step.label} className="flex flex-row md:flex-col items-center gap-3 md:gap-2 z-10 w-full md:w-auto relative">
+                  <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm border transition-all duration-300 ${
+                    isCompleted 
+                      ? 'bg-brand-600 text-white border-brand-600 shadow'
+                      : isActive
+                        ? 'bg-white text-brand-600 border-brand-500 ring-4 ring-brand-100 font-extrabold scale-110 shadow-sm'
+                        : 'bg-gray-50 text-gray-400 border-gray-200'
+                  }`}>
+                    {isCompleted ? '✓' : idx + 1}
+                  </div>
+                  <div className="flex flex-col md:items-center text-left md:text-center">
+                    <span className={`text-xs font-bold tracking-wide uppercase ${isActive ? 'text-brand-650 font-extrabold' : isCompleted ? 'text-gray-850' : 'text-gray-450'}`}>
                       {step.label}
                     </span>
                     <span className="text-[10px] text-gray-400 font-medium">
@@ -840,7 +1016,77 @@ export const RentalDetail = () => {
               ) : (
                 transaction.lines.map((line) => {
                   const prod = products.find(p => p.id === line.product_id);
-                  // Find eligible available physical assets for this variant
+                  const lineAllocations = allocations.filter(a => a.transaction_line_id === line.id);
+                  
+                  if (isCustomer) {
+                    return (
+                      <div key={line.id} className="pt-4 first:pt-0 border-b border-gray-100 pb-4 last:border-0 last:pb-0 flex flex-col gap-3">
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                          <div>
+                            <p className="text-sm font-bold text-gray-950">{prod?.name || 'Equipment Package'}</p>
+                            <p className="text-xs text-gray-505">Variant: <span className="font-semibold">{(line.snapshot as any)?.variant_name || 'Standard'}</span></p>
+                          </div>
+                          <span className="text-xs font-mono bg-gray-100 text-gray-650 px-2 py-0.5 rounded">
+                            Line: {line.id.substring(0,8)}...
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-lg border border-gray-200/60 text-xs">
+                          <div>
+                            <span className="text-gray-400 block font-medium uppercase tracking-wider text-[10px]">Rental Dates</span>
+                            <span className="font-bold text-gray-800">
+                              {new Date(line.rental_start_date).toLocaleDateString()} - {new Date(line.rental_end_date).toLocaleDateString()}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-gray-400 block font-medium uppercase tracking-wider text-[10px]">Return Due Date</span>
+                            <span className="font-bold text-brand-600">
+                              {new Date(line.rental_end_date).toLocaleDateString()}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-gray-400 block font-medium uppercase tracking-wider text-[10px]">Quantity</span>
+                            <span className="font-bold text-gray-800">{line.quantity}</span>
+                          </div>
+                          {lineAllocations.length === 0 ? (
+                            <div>
+                              <span className="text-gray-400 block font-medium uppercase tracking-wider text-[10px]">Physical Asset</span>
+                              <span className="font-semibold text-amber-600">Awaiting Allocation</span>
+                            </div>
+                          ) : (
+                            lineAllocations.map(a => {
+                              const asset = allAssets.find(as => as.id === a.asset_id);
+                              return (
+                                <React.Fragment key={a.id}>
+                                  <div>
+                                    <span className="text-gray-400 block font-medium uppercase tracking-wider text-[10px]">Physical Asset Code</span>
+                                    <span className="font-mono font-bold text-gray-800">{asset?.asset_tag || 'Allocated'}</span>
+                                  </div>
+                                  <div>
+                                    <span className="text-gray-400 block font-medium uppercase tracking-wider text-[10px]">Current Condition</span>
+                                    <span className={`font-bold ${
+                                      asset?.condition === 'Excellent' 
+                                        ? 'text-green-600' 
+                                        : asset?.condition === 'Fair' 
+                                          ? 'text-yellow-600' 
+                                          : 'text-gray-650'
+                                    }`}>
+                                      {asset?.condition || 'Excellent'}
+                                    </span>
+                                  </div>
+                                  <div>
+                                    <span className="text-gray-400 block font-medium uppercase tracking-wider text-[10px]">Asset Status</span>
+                                    <span className="font-bold text-gray-800 uppercase text-[10px]">{a.status}</span>
+                                  </div>
+                                </React.Fragment>
+                              );
+                            })
+                          )}
+                        </div>
+                      </div>
+                    );
+                  }
+
                   const eligibleAssets = allAssets.filter(
                     a => a.product_variant_id === line.variant_id && a.lifecycle_status === 'AVAILABLE'
                   );
