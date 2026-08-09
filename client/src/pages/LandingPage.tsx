@@ -13,6 +13,9 @@ const CATEGORY_IMAGES: Record<string, string> = {
   VID: '/images/cat-video.jpg',
   DRN: '/images/cat-drone.jpg',
   PRJ: '/images/cat-projector.jpg',
+  'D-CAM': '/images/cat-camera.jpg',
+  'D-AUD': '/images/cat-audio.jpg',
+  'D-DRN': '/images/cat-drone.jpg',
   'D-LPT': '/images/prod-lpt.png',
   'D-GAM': '/images/prod-gam.png',
   'D-FURN': '/images/prod-furn.png',
@@ -31,6 +34,9 @@ const PRODUCT_IMAGES: Record<string, string> = {
   VID: '/images/cat-video.jpg',
   DRN: '/images/cat-drone.jpg',
   PRJ: '/images/cat-projector.jpg',
+  'D-CAM': '/images/cat-camera.jpg',
+  'D-AUD': '/images/cat-audio.jpg',
+  'D-DRN': '/images/cat-drone.jpg',
   'D-LPT': '/images/prod-lpt.png',
   'D-GAM': '/images/prod-gam.png',
   'D-FURN': '/images/prod-furn.png',
@@ -93,6 +99,16 @@ const CATEGORY_COLORS: Record<string, { bg: string; accent: string; iconBg: stri
   VID: { bg: 'bg-purple-50', accent: 'text-purple-600', iconBg: 'bg-purple-100' },
   DRN: { bg: 'bg-blue-50',   accent: 'text-blue-600',   iconBg: 'bg-blue-100' },
   PRJ: { bg: 'bg-indigo-50', accent: 'text-indigo-600', iconBg: 'bg-indigo-100' },
+  'D-CAM': { bg: 'bg-sky-50',    accent: 'text-sky-600',    iconBg: 'bg-sky-100' },
+  'D-AUD': { bg: 'bg-emerald-50', accent: 'text-emerald-600', iconBg: 'bg-emerald-100' },
+  'D-DRN': { bg: 'bg-blue-50',   accent: 'text-blue-600',   iconBg: 'bg-blue-100' },
+  'D-LPT': { bg: 'bg-gray-50',   accent: 'text-gray-600',   iconBg: 'bg-gray-100' },
+  'D-GAM': { bg: 'bg-red-50',    accent: 'text-red-600',    iconBg: 'bg-red-100' },
+  'D-FURN': { bg: 'bg-orange-50',accent: 'text-orange-600', iconBg: 'bg-orange-100' },
+  'D-TVP': { bg: 'bg-pink-50',   accent: 'text-pink-600',   iconBg: 'bg-pink-100' },
+  'D-WRB': { bg: 'bg-lime-50',   accent: 'text-lime-600',   iconBg: 'bg-lime-100' },
+  'D-HAPP': { bg: 'bg-cyan-50',  accent: 'text-cyan-600',   iconBg: 'bg-cyan-100' },
+  'D-EVT': { bg: 'bg-fuchsia-50',accent: 'text-fuchsia-600',iconBg: 'bg-fuchsia-100' },
 };
 
 const PROD_COLORS: Record<string, { bg: string; badge: string }> = {
@@ -104,6 +120,16 @@ const PROD_COLORS: Record<string, { bg: string; badge: string }> = {
   VID: { bg: 'bg-purple-50', badge: 'bg-purple-100 text-purple-700' },
   DRN: { bg: 'bg-blue-50',   badge: 'bg-blue-100 text-blue-700' },
   PRJ: { bg: 'bg-indigo-50', badge: 'bg-indigo-100 text-indigo-700' },
+  'D-CAM': { bg: 'bg-sky-50',    badge: 'bg-sky-100 text-sky-700' },
+  'D-AUD': { bg: 'bg-emerald-50', badge: 'bg-emerald-100 text-emerald-700' },
+  'D-DRN': { bg: 'bg-blue-50',   badge: 'bg-blue-100 text-blue-700' },
+  'D-LPT': { bg: 'bg-gray-50',   badge: 'bg-gray-100 text-gray-700' },
+  'D-GAM': { bg: 'bg-red-50',    badge: 'bg-red-100 text-red-700' },
+  'D-FURN': { bg: 'bg-orange-50',badge: 'bg-orange-100 text-orange-700' },
+  'D-TVP': { bg: 'bg-pink-50',   badge: 'bg-pink-100 text-pink-700' },
+  'D-WRB': { bg: 'bg-lime-50',   badge: 'bg-lime-100 text-lime-700' },
+  'D-HAPP': { bg: 'bg-cyan-50',  badge: 'bg-cyan-100 text-cyan-700' },
+  'D-EVT': { bg: 'bg-fuchsia-50',badge: 'bg-fuchsia-100 text-fuchsia-700' },
 };
 
 const getSkuCode = (sku: string) => {
