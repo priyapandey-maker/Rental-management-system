@@ -16,6 +16,7 @@ export const CustomerLayout = () => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [cartCount, setCartCount] = useState(0);
+  const [wishlistCount, setWishlistCount] = useState(0);
 
   const updateCartCount = () => {
     try {
@@ -26,14 +27,28 @@ export const CustomerLayout = () => {
     }
   };
 
+  const updateWishlistCount = () => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('wishlist') || '[]');
+      setWishlistCount(stored.length);
+    } catch {
+      setWishlistCount(0);
+    }
+  };
+
   useEffect(() => {
     updateCartCount();
+    updateWishlistCount();
     window.addEventListener('cart_updated', updateCartCount);
+    window.addEventListener('wishlist_updated', updateWishlistCount);
     // Storage event for cross-tab sync
-    window.addEventListener('storage', updateCartCount);
+    window.addEventListener('storage', () => {
+      updateCartCount();
+      updateWishlistCount();
+    });
     return () => {
       window.removeEventListener('cart_updated', updateCartCount);
-      window.removeEventListener('storage', updateCartCount);
+      window.removeEventListener('wishlist_updated', updateWishlistCount);
     };
   }, []);
 
@@ -92,8 +107,13 @@ export const CustomerLayout = () => {
 
             {/* Right: Icons, Profile */}
             <div className="flex items-center space-x-4 sm:space-x-6">
-              <Link to="/store/wishlist" className="text-gray-500 hover:text-pink-500 transition-colors">
+              <Link to="/store/wishlist" className="text-gray-500 hover:text-pink-500 transition-colors relative">
                 <HeartIcon className="h-6 w-6" />
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-1.5 -right-2 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-red-500 rounded-full shadow">
+                    {wishlistCount}
+                  </span>
+                )}
               </Link>
               
               <Link to="/store/cart" className="text-gray-500 hover:text-brand-400 transition-colors relative">

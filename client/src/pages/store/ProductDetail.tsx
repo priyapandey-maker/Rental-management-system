@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { apiClient } from '../../api/client';
 import { VariantConfigureModal } from '../../components/store/VariantConfigureModal';
 import { ProductImage, ProductCardImage } from '../../components/store/ProductImage';
 import { HeartIcon } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
+import { MOCK_PRODUCTS, MOCK_VARIANTS, Product as MockProduct } from '../../components/store/MockProductData';
 
 interface Product {
   id: string;
@@ -13,7 +14,9 @@ interface Product {
   sku?: string;
   description?: string | null;
   image_url?: string;
-  in_stock?: boolean; 
+  in_stock?: boolean;
+  price?: number;
+  rating?: number;
 }
 
 interface Variant {
@@ -22,95 +25,10 @@ interface Variant {
   sku: string;
 }
 
-const MOCK_PRODUCTS = [
-  {
-    id: 'prod-camera-111',
-    name: 'Professional Camera Kit',
-    type: 'Cameras',
-    sku: 'PROD-CAM-01',
-    description: 'High-end cinema camera package with prime lenses and stabiliser.'
-  },
-  {
-    id: 'prod-audio-222',
-    name: 'Wireless Lavalier Microphone',
-    type: 'Audio',
-    sku: 'PROD-AUD-01',
-    description: 'Dual-channel wireless mic kit with noise-canceling technology.'
-  },
-  {
-    id: 'prod-lighting-333',
-    name: 'LED Studio Panel Light',
-    type: 'Lighting',
-    sku: 'PROD-LGT-01',
-    description: 'Bi-color dimmable LED light panel for studio and field production.'
-  },
-  {
-    id: 'prod-lenses-444',
-    name: 'Cinema Prime Lens Kit',
-    type: 'Lenses',
-    sku: 'PROD-LNS-01',
-    description: 'F1.4 prime lens set (24mm, 35mm, 50mm, 85mm) with focus gears.'
-  },
-  {
-    id: 'prod-tripods-555',
-    name: 'Carbon Fiber Tripod System',
-    type: 'Tripods & Supports',
-    sku: 'PROD-TRP-01',
-    description: 'Ultra-lightweight carbon fiber legs with professional fluid head.'
-  },
-  {
-    id: 'prod-video-666',
-    name: 'HDMI Wireless Transmitter',
-    type: 'Video Equipment',
-    sku: 'PROD-VID-01',
-    description: 'HDMI/SDI wireless video transmitter with 500ft range and low latency.'
-  },
-  {
-    id: 'prod-drones-777',
-    name: 'GPS 4K Camera Drone',
-    type: 'Drones',
-    sku: 'PROD-DRN-01',
-    description: 'Foldable quadcopter drone with 3-axis gimbal camera and safety sensors.'
-  },
-  {
-    id: 'prod-projectors-888',
-    name: '4K Ultra Short Throw Projector',
-    type: 'Projectors',
-    sku: 'PROD-PRJ-01',
-    description: 'High-brightness laser projector for indoor cinema screens.'
-  }
-];
-
-const MOCK_VARIANTS: Record<string, any[]> = {
-  'prod-camera-111': [
-    { id: 'var-camera-std-111', name: 'Camera Kit — Standard', sku: 'VAR-CAM-STD' }
-  ],
-  'prod-audio-222': [
-    { id: 'var-audio-std-222', name: 'Lavalier Mic — Dual Channel', sku: 'VAR-AUD-STD' }
-  ],
-  'prod-lighting-333': [
-    { id: 'var-lighting-std-333', name: 'LED Studio Panel — 100W', sku: 'VAR-LGT-STD' }
-  ],
-  'prod-lenses-444': [
-    { id: 'var-lenses-std-444', name: 'Prime Lens Set — Full Frame', sku: 'VAR-LNS-STD' }
-  ],
-  'prod-tripods-555': [
-    { id: 'var-tripods-std-555', name: 'Carbon Tripod — 75mm Bowl', sku: 'VAR-TRP-STD' }
-  ],
-  'prod-video-666': [
-    { id: 'var-video-std-666', name: 'Wireless Video Link — SDI/HDMI', sku: 'VAR-VID-STD' }
-  ],
-  'prod-drones-777': [
-    { id: 'var-drones-std-777', name: '4K Video Drone — Pro Bundle', sku: 'VAR-DRN-STD' }
-  ],
-  'prod-projectors-888': [
-    { id: 'var-projectors-std-888', name: '4K Laser Projector — 3000 Lumens', sku: 'VAR-PRJ-STD' }
-  ]
-};
-
 export const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [product, setProduct] = useState<Product | null>(null);
   const [variants, setVariants] = useState<Variant[]>([]);
   
@@ -128,6 +46,8 @@ export const ProductDetail = () => {
   const [endDate, setEndDate] = useState('');
   const [validationError, setValidationError] = useState('');
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
+
+  const autoConfigure = searchParams.get('configure') === 'true';
 
   useEffect(() => {
     const fetchData = async () => {
@@ -148,9 +68,18 @@ export const ProductDetail = () => {
            if (!pData) throw new Error('Product not found in catalog');
         }
 
-        // Hardcode some demo availability to show out of stock states
-        const isOutOfStock = false;
-        setProduct({ ...pData, in_stock: !isOutOfStock });
+        const isAvailable = pData.available !== undefined ? pData.available : true;
+        setProduct({ 
+          id: pData.id,
+          name: pData.name,
+          type: pData.category_id ? pData.category_id : 'Equipment',
+          sku: pData.sku,
+          description: pData.description,
+          image_url: pData.image_url,
+          in_stock: isAvailable,
+          price: pData.price || 150,
+          rating: pData.rating || 4.7
+        });
 
         try {
           const vData = await apiClient.get(`/storefront/products/${id}/variants`);
@@ -160,18 +89,19 @@ export const ProductDetail = () => {
           setVariants(MOCK_VARIANTS[id || ''] || []);
         }
 
+        // Check wishlist from API or local storage
+        let wIds: string[] = [];
         try {
           const wData = await apiClient.get('/storefront/wishlist');
-          let wIds: string[] = [];
           if (Array.isArray(wData)) {
             wIds = wData;
           } else if (wData && Array.isArray((wData as any).data)) {
             wIds = (wData as any).data;
           }
-          setIsWishlisted(Boolean(id && wIds.includes(id)));
         } catch {
-          // ignore wishlist errors
+          wIds = JSON.parse(localStorage.getItem('wishlist') || '[]');
         }
+        setIsWishlisted(Boolean(id && wIds.includes(id)));
 
       } catch (err: any) {
         setError(err.message || 'Failed to load product details');
@@ -181,6 +111,13 @@ export const ProductDetail = () => {
     };
     if (id) fetchData();
   }, [id]);
+
+  // Handle auto-configuration trigger
+  useEffect(() => {
+    if (!loading && autoConfigure && variants.length > 0 && !selectedVariantId && !isModalOpen) {
+      setIsModalOpen(true);
+    }
+  }, [loading, autoConfigure, variants, selectedVariantId]);
 
   const validateDates = () => {
     if (!startDate || !endDate) {
@@ -207,19 +144,33 @@ export const ProductDetail = () => {
   const toggleWishlist = async () => {
     if (isWishlistLoading) return;
     setIsWishlistLoading(true);
+    const localWishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+    const nextWishlist = new Set(localWishlist);
+
     try {
       if (isWishlisted) {
         await apiClient.delete(`/storefront/wishlist/${id}`);
         setIsWishlisted(false);
+        if (id) nextWishlist.delete(id);
       } else {
         await apiClient.post('/storefront/wishlist', { product_id: id });
         setIsWishlisted(true);
+        if (id) nextWishlist.add(id);
       }
+      localStorage.setItem('wishlist', JSON.stringify(Array.from(nextWishlist)));
     } catch (err) {
-      console.error('Error toggling wishlist', err);
-      alert('Failed to update wishlist. Please try again.');
+      console.warn('Backend API offline, persisting wishlist in local storage simulation', err);
+      if (isWishlisted) {
+        setIsWishlisted(false);
+        if (id) nextWishlist.delete(id);
+      } else {
+        setIsWishlisted(true);
+        if (id) nextWishlist.add(id);
+      }
+      localStorage.setItem('wishlist', JSON.stringify(Array.from(nextWishlist)));
     } finally {
       setIsWishlistLoading(false);
+      window.dispatchEvent(new Event('wishlist_updated'));
     }
   };
 
@@ -249,7 +200,7 @@ export const ProductDetail = () => {
         quantity,
         startDate,
         endDate,
-        unitPrice: 150, // Standard rate
+        unitPrice: product?.price || 150,
         sku: product?.sku
       };
       
@@ -309,7 +260,7 @@ export const ProductDetail = () => {
         <div className="lg:w-[55%] p-10 bg-gray-50 flex flex-col items-center justify-center min-h-[500px] relative border-b lg:border-b-0 lg:border-r border-gray-200">
           {!product.in_stock && (
             <div className="absolute top-6 left-6 z-10 bg-red-900/80 text-red-100 text-sm font-bold px-4 py-1.5 rounded backdrop-blur-md border border-red-800/50">
-              OUT OF STOCK
+              RENTED / OUT OF STOCK
             </div>
           )}
           <div className="w-80 h-80 flex items-center justify-center">
@@ -319,7 +270,7 @@ export const ProductDetail = () => {
             <button
               onClick={toggleWishlist}
               disabled={isWishlistLoading}
-              className="p-3 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:scale-110 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-3 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:scale-110 transition-transform disabled:opacity-50"
               title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
             >
               {isWishlistLoading ? (
@@ -345,15 +296,13 @@ export const ProductDetail = () => {
         <div className="lg:w-[45%] p-10 flex flex-col">
           <h1 className="text-4xl font-extrabold text-gray-900 mb-3 tracking-tight">{product.name}</h1>
           <p className="text-base text-gray-500 mb-8 flex items-center">
-            {product.type} 
-            <span className="mx-3 text-gray-700">•</span> 
-            <span className="font-mono text-sm">{product.sku || 'SKU-BASE-001'}</span>
+            <span className="font-mono text-sm uppercase">{product.sku || 'SKU-BASE-001'}</span>
           </p>
           
           <div className="mb-10 bg-gray-100 p-6 rounded-xl border border-gray-300">
             <p className="text-sm text-gray-500 uppercase tracking-wider mb-1 font-semibold">Rental Rate</p>
-            <p className="text-5xl font-bold text-brand-400">
-              $150.00<span className="text-xl font-medium text-gray-500"> / day</span>
+            <p className="text-5xl font-bold text-brand-600">
+              ${product.price}<span className="text-xl font-medium text-gray-500"> / day</span>
             </p>
           </div>
 
@@ -435,6 +384,7 @@ export const ProductDetail = () => {
               <div className="p-4 bg-brand-50 border border-brand-200 rounded-xl text-brand-800 text-sm flex justify-between items-center">
                 <span>Selected Configuration: <strong className="text-gray-900">{variants.find(v => v.id === selectedVariantId)?.name}</strong></span>
                 <button 
+                  type="button"
                   onClick={() => setIsModalOpen(true)}
                   className="text-xs text-brand-600 hover:text-brand-700 font-bold underline"
                 >
@@ -448,61 +398,38 @@ export const ProductDetail = () => {
             <button 
               onClick={handleAddToCart}
               disabled={!product.in_stock || cartStatus !== 'idle'}
-              className={`w-full font-bold py-4 rounded-xl shadow-lg flex justify-center items-center text-lg transition-all ${
-                !product.in_stock
-                  ? 'bg-gray-100 text-gray-500 cursor-not-allowed border border-gray-300'
-                  : cartStatus === 'success'
-                    ? 'bg-emerald-600 text-white shadow-emerald-950/20'
-                    : 'bg-brand-600 hover:bg-brand-500 text-white shadow-brand-900/20'
-              }`}
+              className="w-full py-4 bg-brand-600 hover:bg-brand-500 disabled:opacity-50 text-white text-base font-bold rounded-xl transition-colors shadow-lg shadow-brand-100 flex items-center justify-center"
             >
               {cartStatus === 'adding' ? (
                 <>
-                  <svg className="animate-spin h-5 w-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                  Adding...
+                  <svg className="animate-spin h-5 w-5 mr-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                  Configuring and adding...
                 </>
               ) : cartStatus === 'success' ? (
-                <>
-                  <svg className="w-6 h-6 mr-2 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  Added to Cart!
-                </>
-              ) : product.in_stock ? (
-                <>
-                  <svg className="w-6 h-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                  Add to Cart
-                </>
+                'Added to Rental Cart! ✓'
               ) : (
-                'Currently Unavailable'
+                'Configure & Book Rental'
               )}
             </button>
-
-            {cartStatus === 'success' && (
-              <div className="mt-4 p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4">
-                <span className="text-sm text-emerald-800 font-medium">✓ Equipment successfully reserved in your cart.</span>
-                <div className="flex gap-3">
-                  <Link to="/store" className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-900 text-xs font-bold rounded-lg transition-colors border border-gray-300">
-                    Continue Shopping
-                  </Link>
-                  <Link to="/cart" className="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold rounded-lg transition-colors shadow">
-                    View Cart
-                  </Link>
-                </div>
-              </div>
-            )}
           </div>
         </div>
+
+      </div>
+
+      {/* Description & Technical Specs */}
+      <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8 space-y-6">
+        <h2 className="text-xl font-bold text-gray-900 border-b border-gray-100 pb-4">Product Overview</h2>
+        <p className="text-gray-700 text-sm leading-relaxed max-w-3xl">
+          {product.description || 'No detailed specifications are currently listed for this equipment kit. Please contact the platform vendor support desk for specialized configuration queries.'}
+        </p>
       </div>
 
       <VariantConfigureModal 
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onConfirm={handleConfigureConfirm}
-        variants={variants}
         productName={product.name}
+        variants={variants}
+        onConfirm={handleConfigureConfirm}
       />
     </div>
   );
