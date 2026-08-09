@@ -398,7 +398,7 @@ export const Rentals = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`inline-flex px-2 py-0.5 text-[10px] leading-5 font-bold rounded uppercase border ${
-                            tx.status === 'ACTIVE' 
+                            ['ALLOCATED', 'FULFILLED', 'RETURN_REQUESTED', 'RETURN_APPROVED', 'RETURN_RECEIVED', 'INSPECTED', 'RESOLVED'].includes(tx.status)
                               ? 'bg-purple-50 text-purple-700 border-purple-200' 
                               : tx.status === 'CONFIRMED' 
                                 ? 'bg-brand-50 text-brand-700 border-brand-200' 

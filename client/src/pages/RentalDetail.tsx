@@ -11,7 +11,7 @@ import {
   CheckCircleIcon
 } from '@heroicons/react/24/outline';
 import { MOCK_PRODUCTS, MOCK_VARIANTS } from '../components/store/MockProductData';
-
+import { getLifecycleProgress } from '../utils/lifecycle';
 interface Product {
   id: string;
   name: string;
@@ -811,25 +811,10 @@ export const RentalDetail = () => {
             <div className="hidden md:block absolute top-[18px] left-[5%] right-[5%] h-0.5 bg-gray-100 z-0"></div>
             
             {/* Steps loop */}
-            {(isCustomer ? [
-              { label: 'Booked', desc: 'Request initiated', active: ['DRAFT', 'CONFIRMED'].includes(transaction.status), completed: !['DRAFT', 'CONFIRMED'].includes(transaction.status) },
-              { label: 'Allocated', desc: 'Serials assigned', active: transaction.status === 'ALLOCATED', completed: !['DRAFT', 'CONFIRMED', 'ALLOCATED'].includes(transaction.status) },
-              { label: 'Fulfilled', desc: 'Out with customer', active: transaction.status === 'FULFILLED', completed: !['DRAFT', 'CONFIRMED', 'ALLOCATED', 'FULFILLED'].includes(transaction.status) },
-              { label: 'Returned', desc: 'Awaiting intake', active: ['RETURN_REQUESTED', 'RETURN_APPROVED', 'RETURN_RECEIVED'].includes(transaction.status), completed: ['INSPECTED', 'RESOLVED', 'COMPLETED'].includes(transaction.status) },
-              { label: 'Inspected', desc: 'Audit completed', active: ['INSPECTED', 'RESOLVED'].includes(transaction.status), completed: transaction.status === 'COMPLETED' },
-              { label: 'Completed', desc: 'Closed lease', active: transaction.status === 'COMPLETED', completed: false }
-            ] : [
-              { label: 'Draft', desc: 'Configure items', active: transaction.status === 'DRAFT', completed: transaction.status !== 'DRAFT' },
-              { label: 'Booked', desc: 'Confirmed contract', active: transaction.status === 'CONFIRMED', completed: !['DRAFT', 'CONFIRMED'].includes(transaction.status) },
-              { label: 'Allocated', desc: 'Assets assigned', active: transaction.status === 'ALLOCATED', completed: !['DRAFT', 'CONFIRMED', 'ALLOCATED'].includes(transaction.status) },
-              { label: 'Fulfilling', desc: 'Out with customer', active: transaction.status === 'FULFILLED', completed: !['DRAFT', 'CONFIRMED', 'ALLOCATED', 'FULFILLED'].includes(transaction.status) },
-              { label: 'Returned', desc: 'Intake & Inspect', active: ['RETURN_REQUESTED', 'RETURN_APPROVED', 'RETURN_RECEIVED'].includes(transaction.status), completed: ['INSPECTED', 'RESOLVED', 'COMPLETED'].includes(transaction.status) },
-              { label: 'Inspected', desc: 'Settle charges', active: ['INSPECTED', 'RESOLVED'].includes(transaction.status), completed: transaction.status === 'COMPLETED' },
-              { label: 'Completed', desc: 'Closed lease', active: transaction.status === 'COMPLETED', completed: false }
-            ]).map((step, idx) => {
-              const isCompleted = step.completed;
-              const isActive = step.active;
-              const isFuture = !isCompleted && !isActive;
+            {getLifecycleProgress(transaction.status).map((step, idx) => {
+              const isCompleted = step.status === 'completed';
+              const isActive = step.status === 'current';
+              const isFuture = step.status === 'pending';
 
               return (
                 <div key={step.label} className="flex flex-row md:flex-col items-center gap-3 md:gap-2 z-10 w-full md:w-auto relative animate-in fade-in duration-200">

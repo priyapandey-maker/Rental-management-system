@@ -225,9 +225,11 @@ export const VendorAnalytics = () => {
   });
 
   // Calculate status counts for SVG visual distribution chart
-  const statusCounts = { DRAFT: 0, CONFIRMED: 0, ACTIVE: 0, COMPLETED: 0, CANCELLED: 0 };
+  const statusCounts: Record<string, number> = { DRAFT: 0, CONFIRMED: 0, ACTIVE: 0, COMPLETED: 0, CANCELLED: 0 };
   filtered.forEach(tx => {
-    if (statusCounts[tx.status] !== undefined) {
+    if (['ALLOCATED', 'FULFILLED', 'RETURN_REQUESTED', 'RETURN_APPROVED', 'RETURN_RECEIVED', 'INSPECTED', 'RESOLVED'].includes(tx.status)) {
+      statusCounts['ACTIVE']++;
+    } else if (statusCounts[tx.status] !== undefined) {
       statusCounts[tx.status]++;
     }
   });
