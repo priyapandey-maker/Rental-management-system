@@ -53,6 +53,7 @@ export const Rentals = () => {
   const [variantsMap, setVariantsMap] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [historyTab, setHistoryTab] = useState<'active' | 'completed'>('active');
 
   // Filters State
   const [searchTerm, setSearchTerm] = useState('');
@@ -181,8 +182,13 @@ export const Rentals = () => {
   // Filter rentals
   const filteredRentals = transactions.filter((tx) => {
     // Customers only see their own rentals
-    if (isCustomer && tx.customer_id !== userId) {
-      return false;
+    if (isCustomer) {
+      if (tx.customer_id !== userId) {
+        return false;
+      }
+      const isTxCompleted = tx.status === 'COMPLETED' || tx.status === 'CANCELLED';
+      if (historyTab === 'active' && isTxCompleted) return false;
+      if (historyTab === 'completed' && !isTxCompleted) return false;
     }
 
     const cust = customers.find(c => c.id === tx.customer_id);
@@ -200,8 +206,14 @@ export const Rentals = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-extrabold text-gray-900">Rental Operations</h1>
-          <p className="text-gray-500 mt-1">Manage rental lifecycles, assign active serials, and coordinate fulfillments.</p>
+          <h1 className="text-3xl font-extrabold text-gray-900">
+            {isCustomer ? 'AssetFlow Rentals & History' : 'Rental Operations'}
+          </h1>
+          <p className="text-gray-500 mt-1">
+            {isCustomer 
+              ? 'Track your active rental lifecycle, request returns, and review completed order details.' 
+              : 'Manage rental lifecycles, assign active serials, and coordinate fulfillments.'}
+          </p>
         </div>
         <button
           onClick={fetchData}
@@ -211,6 +223,32 @@ export const Rentals = () => {
           <ArrowPathIcon className="h-5 w-5" />
         </button>
       </div>
+
+      {/* Customer Tab Toggles */}
+      {isCustomer && (
+        <div className="flex border-b border-gray-200">
+          <button
+            onClick={() => setHistoryTab('active')}
+            className={`px-4 py-2 text-sm font-bold border-b-2 transition-colors ${
+              historyTab === 'active' 
+                ? 'border-brand-600 text-brand-600' 
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            Active Rentals
+          </button>
+          <button
+            onClick={() => setHistoryTab('completed')}
+            className={`px-4 py-2 text-sm font-bold border-b-2 transition-colors ${
+              historyTab === 'completed' 
+                ? 'border-brand-600 text-brand-600' 
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            Rental History
+          </button>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Create Draft Rental Form */}

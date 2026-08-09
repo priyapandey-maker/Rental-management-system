@@ -101,6 +101,7 @@ export const RentalDetail = () => {
   const [error, setError] = useState<string | null>(null);
   const [returnRecord, setReturnRecord] = useState<any>(null);
   const [inspections, setInspections] = useState<any[]>([]);
+  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
 
   // Lists for forms
   const [products, setProducts] = useState<Product[]>([]);
@@ -748,25 +749,34 @@ export const RentalDetail = () => {
             <div className="hidden md:block absolute top-[18px] left-[5%] right-[5%] h-0.5 bg-gray-100 z-0"></div>
             
             {/* Steps loop */}
-            {[
+            {(isCustomer ? [
+              { label: 'Booked', desc: 'Request initiated', active: transaction.status === 'DRAFT', completed: transaction.status !== 'DRAFT' },
+              { label: 'Confirmed', desc: 'Lease agreed', active: transaction.status === 'CONFIRMED' && allocations.length === 0, completed: transaction.status !== 'DRAFT' && transaction.status !== 'CONFIRMED' },
+              { label: 'Allocated', desc: 'Serials assigned', active: transaction.status === 'CONFIRMED' && allocations.length > 0, completed: transaction.status === 'ACTIVE' || transaction.status === 'COMPLETED' },
+              { label: 'Fulfilled', desc: 'Out with customer', active: transaction.status === 'ACTIVE' && !returnRecord, completed: transaction.status === 'COMPLETED' || !!returnRecord },
+              { label: 'Returned', desc: 'Awaiting intake', active: !!returnRecord && returnRecord.status === 'PENDING', completed: !!returnRecord && returnRecord.status !== 'PENDING' },
+              { label: 'Inspected', desc: 'Audit completed', active: !!returnRecord && returnRecord.status === 'RECEIVED' && (inspections.length === 0 || adjustments.some(a => a.status === 'PENDING')), completed: !!returnRecord && returnRecord.status === 'RECEIVED' && inspections.length > 0 && adjustments.every(a => a.status !== 'PENDING') },
+              { label: 'Resolved', desc: 'Charges settled', active: transaction.status === 'COMPLETED' && invoice?.status !== 'PAID', completed: transaction.status === 'COMPLETED' && invoice?.status === 'PAID' },
+              { label: 'Completed', desc: 'Closed lease', active: transaction.status === 'COMPLETED' && invoice?.status === 'PAID', completed: false }
+            ] : [
               { label: 'Draft', desc: 'Configure items', active: transaction.status === 'DRAFT', completed: transaction.status !== 'DRAFT' },
               { label: 'Booked', desc: 'Confirmed contract', active: transaction.status === 'CONFIRMED' && allocations.length === 0, completed: transaction.status !== 'DRAFT' && transaction.status !== 'CONFIRMED' },
               { label: 'Allocated', desc: 'Assets assigned', active: transaction.status === 'CONFIRMED' && allocations.length > 0, completed: transaction.status === 'ACTIVE' || transaction.status === 'COMPLETED' },
               { label: 'Fulfilling', desc: 'Out with customer', active: transaction.status === 'ACTIVE', completed: transaction.status === 'COMPLETED' },
               { label: 'Returned', desc: 'Intake & Inspect', active: transaction.status === 'COMPLETED' && invoice?.status !== 'PAID', completed: transaction.status === 'COMPLETED' && invoice?.status === 'PAID' },
               { label: 'Completed', desc: 'Setted & resolved', active: transaction.status === 'COMPLETED' && invoice?.status === 'PAID', completed: false }
-            ].map((step, idx) => {
+            ]).map((step, idx) => {
               const isCompleted = step.completed;
               const isActive = step.active;
               const isFuture = !isCompleted && !isActive;
 
               return (
-                <div key={step.label} className="flex flex-row md:flex-col items-center gap-3 md:gap-2 z-10 w-full md:w-auto relative">
+                <div key={step.label} className="flex flex-row md:flex-col items-center gap-3 md:gap-2 z-10 w-full md:w-auto relative animate-in fade-in duration-200">
                   <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm border transition-all duration-300 ${
                     isCompleted 
-                      ? 'bg-brand-600 text-white border-brand-600 shadow'
+                      ? 'bg-green-600 text-white border-green-600 shadow'
                       : isActive
-                        ? 'bg-white text-brand-600 border-brand-500 ring-4 ring-brand-100 font-extrabold scale-110 shadow-sm'
+                        ? 'bg-white text-brand-600 border-brand-500 ring-4 ring-brand-100 font-extrabold scale-110 shadow-sm animate-pulse'
                         : 'bg-gray-50 text-gray-400 border-gray-200'
                   }`}>
                     {isCompleted ? '✓' : idx + 1}
@@ -787,7 +797,7 @@ export const RentalDetail = () => {
       )}
 
       {/* Return Handoff & Inspection Tracker */}
-      {returnRecord && (
+      {returnRecord && !isCustomer && (
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-6">
           <div className="flex justify-between items-center">
             <div>
@@ -1246,11 +1256,20 @@ export const RentalDetail = () => {
                       <p className="text-xs text-gray-400 italic">No invoice issued yet.</p>
                     )
                   ) : (
-                    <div className="space-y-4 border border-gray-100 p-4 rounded-lg bg-gray-50/50">
-                      <div className="text-xs space-y-1">
-                        <p className="font-bold text-gray-800">Invoice: <span className="font-mono">{invoice.invoice_number}</span></p>
-                        <p className="text-gray-600">Total Charged: <strong className="text-gray-900">${invoice.total_amount}</strong></p>
-                        <p className="text-gray-500">Status: <span className="font-bold text-brand-600">{invoice.status}</span></p>
+                    <div className="space-y-4 border border-gray-100 p-4 rounded-lg bg-gray-50">
+                      <div className="text-xs space-y-2">
+                        <div>
+                          <p className="font-bold text-gray-800">Invoice: <span className="font-mono">{invoice.invoice_number}</span></p>
+                          <p className="text-gray-600">Total Charged: <strong className="text-gray-900">${invoice.total_amount}</strong></p>
+                          <p className="text-gray-500">Status: <span className="font-bold text-brand-600">{invoice.status}</span></p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setShowInvoiceModal(true)}
+                          className="w-full bg-white hover:bg-gray-50 text-brand-600 font-bold py-2 border border-brand-200 rounded-lg text-xs transition-colors shadow-xs"
+                        >
+                          View Lease Invoice
+                        </button>
                       </div>
 
                       {invoice.status === 'DRAFT' && !isCustomer && (
@@ -1357,6 +1376,174 @@ export const RentalDetail = () => {
               )}
         </div>
       </div>
+      {showInvoiceModal && invoice && (() => {
+        const baseTotal = transaction.lines.reduce((sum: number, line: any) => {
+          const start = new Date(line.rental_start_date).getTime();
+          const end = new Date(line.rental_end_date).getTime();
+          const days = Math.max(1, Math.ceil((end - start) / (1000 * 60 * 60 * 24)));
+          const rate = Number(line.snapshot?.unit_price || line.unit_price || 0);
+          return sum + (rate * line.quantity * days);
+        }, 0);
+        const adjustmentsTotal = adjustments.reduce((sum: number, adj: any) => sum + Number(adj.amount), 0);
+        const grandTotal = baseTotal + adjustmentsTotal + 15.00;
+
+        return (
+          <div className="fixed inset-0 bg-gray-900/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 animate-in fade-in">
+            <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full border border-gray-150 overflow-hidden text-gray-900 max-h-[90vh] flex flex-col">
+              <div className="bg-brand-900 text-white px-6 py-4 flex justify-between items-center">
+                <div>
+                  <h3 className="text-base font-bold uppercase tracking-wider">Commercial Lease Invoice</h3>
+                  <p className="text-[10px] text-brand-200">AssetFlow Rental Lifecycle Platform</p>
+                </div>
+                <button 
+                  onClick={() => setShowInvoiceModal(false)}
+                  className="text-white hover:text-brand-200 font-extrabold text-sm"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="p-6 overflow-y-auto space-y-6 text-xs text-gray-650">
+                <div className="flex justify-between items-start border-b border-gray-100 pb-4">
+                  <div>
+                    <h4 className="text-sm font-bold text-gray-900 uppercase">Billing From:</h4>
+                    <p className="font-semibold text-gray-800">AssetFlow Operations</p>
+                    <p>100 LifeCycle Ave, Ste 400</p>
+                    <p>San Francisco, CA 94107</p>
+                    <p className="text-[10px] mt-1 text-gray-400">support@assetflow.platform</p>
+                  </div>
+                  <div className="text-right">
+                    <h4 className="text-sm font-bold text-gray-900 uppercase">Lease Invoice</h4>
+                    <p className="font-mono text-gray-900 font-semibold">{invoice.invoice_number}</p>
+                    <p className="mt-2"><span className="text-gray-400 font-bold uppercase text-[9px] block">Invoice Date</span> {new Date(transaction.transaction_date).toLocaleDateString()}</p>
+                    <p><span className="text-gray-400 font-bold uppercase text-[9px] block">Payment Status</span> <span className={`font-bold uppercase ${invoice.status === 'PAID' ? 'text-green-600' : 'text-amber-600'}`}>{invoice.status}</span></p>
+                  </div>
+                </div>
+
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h4 className="text-sm font-bold text-gray-900 uppercase">Customer Billing To:</h4>
+                    <p className="font-semibold text-gray-850">{customer ? `${customer.first_name} ${customer.last_name}` : 'Demo Customer'}</p>
+                    <p>{customer?.email || 'customer@assetflow.local'}</p>
+                    <p>San Francisco, CA</p>
+                  </div>
+                  <div className="text-right">
+                    <h4 className="text-sm font-bold text-gray-900 uppercase">Contract ID:</h4>
+                    <p className="font-mono text-gray-900">{transaction.id}</p>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="text-[10px] uppercase font-bold text-gray-450 tracking-wider mb-2">Leased Equipment Details</h4>
+                  <div className="border border-gray-200 rounded-lg overflow-hidden">
+                    <table className="min-w-full divide-y divide-gray-200 text-left">
+                      <thead className="bg-gray-50 text-[10px] uppercase font-bold text-gray-500">
+                        <tr>
+                          <th className="px-4 py-2">Item Description</th>
+                          <th className="px-4 py-2">Variant</th>
+                          <th className="px-4 py-2 text-center">Qty</th>
+                          <th className="px-4 py-2 text-right">Daily Rate</th>
+                          <th className="px-4 py-2 text-right">Base Total</th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-150">
+                        {transaction.lines.map((line: any) => {
+                          const prod = products.find(p => p.id === line.product_id);
+                          const start = new Date(line.rental_start_date).getTime();
+                          const end = new Date(line.rental_end_date).getTime();
+                          const days = Math.max(1, Math.ceil((end - start) / (1000 * 60 * 60 * 24)));
+                          const rate = Number(line.snapshot?.unit_price || line.unit_price || 0);
+                          const rowTotal = rate * line.quantity * days;
+                          return (
+                            <tr key={line.id} className="hover:bg-gray-50/50">
+                              <td className="px-4 py-3">
+                                <p className="font-bold text-gray-900">{prod?.name || 'Equipment Package'}</p>
+                                <p className="text-[10px] text-gray-400 font-mono mt-0.5">{new Date(line.rental_start_date).toLocaleDateString()} to {new Date(line.rental_end_date).toLocaleDateString()} ({days} days)</p>
+                              </td>
+                              <td className="px-4 py-3 font-semibold">{(line.snapshot as any)?.variant_name || 'Standard'}</td>
+                              <td className="px-4 py-3 text-center font-semibold">{line.quantity}</td>
+                              <td className="px-4 py-3 text-right font-semibold">${rate.toFixed(2)}</td>
+                              <td className="px-4 py-3 text-right font-bold text-gray-800">${rowTotal.toFixed(2)}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {adjustments.length > 0 && (
+                  <div>
+                    <h4 className="text-[10px] uppercase font-bold text-gray-450 tracking-wider mb-2">Adjustments & Penalty Charges</h4>
+                    <div className="border border-red-100 rounded-lg overflow-hidden">
+                      <table className="min-w-full divide-y divide-red-50 text-left">
+                        <thead className="bg-red-50/30 text-[10px] uppercase font-bold text-red-800">
+                          <tr>
+                            <th className="px-4 py-2">Fee Reason</th>
+                            <th className="px-4 py-2">Status</th>
+                            <th className="px-4 py-2 text-right">Amount</th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-150">
+                          {adjustments.map((adj: any) => (
+                            <tr key={adj.id} className="bg-red-50/10">
+                              <td className="px-4 py-2.5 font-bold text-gray-900">{adj.reason}</td>
+                              <td className="px-4 py-2.5">
+                                <span className="px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 font-bold uppercase text-[9px] border border-amber-150">
+                                  {adj.status}
+                                </span>
+                              </td>
+                              <td className="px-4 py-2.5 text-right font-extrabold text-red-650">${Number(adj.amount).toFixed(2)}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+
+                <div className="border-t border-gray-150 pt-4 flex flex-col items-end space-y-1.5 text-xs text-gray-650">
+                  <div className="flex justify-between w-64">
+                    <span>Base Lease Subtotal:</span>
+                    <span className="font-bold text-gray-800">${baseTotal.toFixed(2)}</span>
+                  </div>
+                  {adjustments.length > 0 && (
+                    <div className="flex justify-between w-64">
+                      <span>Adjustments Total:</span>
+                      <span className="font-bold text-red-600">${adjustmentsTotal.toFixed(2)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between w-64">
+                    <span>Processing & Delivery:</span>
+                    <span className="font-bold text-gray-800">$15.00</span>
+                  </div>
+                  <div className="flex justify-between w-64 border-t border-gray-200 pt-2 text-sm font-extrabold text-gray-900">
+                    <span>Grand Total:</span>
+                    <span className="text-brand-700">${grandTotal.toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-between">
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  className="bg-white hover:bg-gray-100 text-gray-700 font-bold py-2 px-4 border border-gray-200 rounded-lg text-xs transition-colors flex items-center"
+                >
+                  🖨 Print Invoice
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowInvoiceModal(false)}
+                  className="bg-brand-600 hover:bg-brand-700 text-white font-bold py-2 px-4 rounded-lg text-xs shadow transition-colors"
+                >
+                  Close View
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 };
