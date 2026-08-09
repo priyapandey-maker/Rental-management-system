@@ -79,6 +79,7 @@ interface Asset {
   asset_tag: string;
   product_variant_id: string;
   lifecycle_status: string;
+  condition?: string;
 }
 
 export const RentalDetail = () => {
@@ -157,12 +158,14 @@ export const RentalDetail = () => {
       const mockAssets: Asset[] = [];
       MOCK_PRODUCTS.forEach(p => {
         const variantsList = MOCK_VARIANTS[p.id] || [];
-        variantsList.forEach(v => {
+        variantsList.forEach((v, vIdx) => {
+          const conditions = ['Excellent', 'Good', 'Fair'];
           mockAssets.push({
             id: `asset-${v.id}-1`,
             asset_tag: `TAG-${p.name.toUpperCase().substring(0,3)}-${v.name.toUpperCase().substring(0,3)}-01`,
             product_variant_id: v.id,
-            lifecycle_status: 'AVAILABLE'
+            lifecycle_status: 'AVAILABLE',
+            condition: conditions[vIdx % conditions.length]
           });
         });
       });
@@ -210,7 +213,11 @@ export const RentalDetail = () => {
           const allocData = await apiClient.get(`/allocations/transaction-lines/${txData.lines[0]?.id}`);
           setAllocations(Array.isArray(allocData) ? allocData : []);
         } catch {
-          setAllocations([]);
+          // Fallback to local storage allocations
+          const allLocalAllocations = JSON.parse(localStorage.getItem('demo_allocations') || '[]');
+          const txLineIds = txData.lines.map(line => line.id);
+          const localAllocations = allLocalAllocations.filter((a: any) => txLineIds.includes(a.transaction_line_id));
+          setAllocations(localAllocations);
         }
       }
 
@@ -307,7 +314,37 @@ export const RentalDetail = () => {
       await apiClient.post(`/transactions/${id}/allocate`);
       loadRentalData();
     } catch (err: any) {
-      alert(err.message || 'Allocation failed');
+      console.warn('API auto-allocation failed, simulating offline auto-allocation:', err);
+      
+      const localTxs = JSON.parse(localStorage.getItem('demo_transactions') || '[]');
+      const tx = localTxs.find((t: any) => t.id === id);
+      if (tx) {
+        const allLocalAllocations = JSON.parse(localStorage.getItem('demo_allocations') || '[]');
+        
+        tx.lines.forEach((line: any, idx: number) => {
+          const exists = allLocalAllocations.some((a: any) => a.transaction_line_id === line.id);
+          if (!exists) {
+            const eligibleAsset = allAssets.find(
+              a => a.product_variant_id === line.variant_id && 
+              !allLocalAllocations.some((la: any) => la.asset_id === a.id)
+            );
+            
+            const assetId = eligibleAsset?.id || `asset-${line.variant_id || line.product_id}-${idx}`;
+            
+            allLocalAllocations.push({
+              id: `alloc-auto-${line.id}-${idx}`,
+              transaction_line_id: line.id,
+              asset_id: assetId,
+              status: 'ALLOCATED',
+              quantity: line.quantity
+            });
+          }
+        });
+        localStorage.setItem('demo_allocations', JSON.stringify(allLocalAllocations));
+      }
+      
+      loadRentalData();
+      fetchAllAssets();
     } finally {
       setActionLoading(false);
     }
@@ -320,7 +357,16 @@ export const RentalDetail = () => {
       await apiClient.post(`/transactions/${id}/fulfill`);
       loadRentalData();
     } catch (err: any) {
-      alert(err.message || 'Fulfillment failed');
+      console.warn('API fulfillment failed, simulating offline fulfillment:', err);
+      
+      const localTxs = JSON.parse(localStorage.getItem('demo_transactions') || '[]');
+      const tx = localTxs.find((t: any) => t.id === id);
+      if (tx) {
+        tx.status = 'ACTIVE';
+        localStorage.setItem('demo_transactions', JSON.stringify(localTxs));
+      }
+      
+      loadRentalData();
     } finally {
       setActionLoading(false);
     }
@@ -370,7 +416,21 @@ export const RentalDetail = () => {
       loadRentalData();
       fetchAllAssets(); // Refresh active asset status
     } catch (err: any) {
-      alert(err.message || 'Failed to allocate asset manually.');
+      console.warn('API manual allocations failed, simulating offline manual allocation:', err);
+      
+      const allLocalAllocations = JSON.parse(localStorage.getItem('demo_allocations') || '[]');
+      const filteredAllocations = allLocalAllocations.filter((a: any) => a.transaction_line_id !== lineId);
+      filteredAllocations.push({
+        id: `alloc-manual-${lineId}`,
+        transaction_line_id: lineId,
+        asset_id: assetId,
+        status: 'ALLOCATED',
+        quantity: 1
+      });
+      localStorage.setItem('demo_allocations', JSON.stringify(filteredAllocations));
+      
+      loadRentalData();
+      fetchAllAssets();
     } finally {
       setActionLoading(false);
     }
@@ -535,7 +595,7 @@ export const RentalDetail = () => {
                   disabled={actionLoading || allocations.length === 0}
                   className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors"
                 >
-                  Fulfill Items
+                  Mark as Fulfilled
                 </button>
               </>
             )}
@@ -802,12 +862,14 @@ export const RentalDetail = () => {
                           <select
                             value={manualAllocations[line.id] || ''}
                             onChange={(e) => setManualAllocations({ ...manualAllocations, [line.id]: e.target.value })}
-                            className="bg-white border border-gray-300 text-gray-900 rounded-lg py-1 px-2.5 text-xs focus:ring-brand-500 focus:border-brand-500"
+                            className="bg-white border border-gray-300 text-gray-900 rounded-lg py-1 px-2.5 text-xs focus:ring-brand-500 focus:border-brand-500 max-w-[200px]"
                             disabled={actionLoading}
                           >
                             <option value="">-- Select Physical Asset --</option>
                             {eligibleAssets.map(a => (
-                              <option key={a.id} value={a.id}>{a.asset_tag}</option>
+                              <option key={a.id} value={a.id}>
+                                {a.asset_tag} — Condition: {a.condition || 'Excellent'} ({a.lifecycle_status})
+                              </option>
                             ))}
                           </select>
                           <button
