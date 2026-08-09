@@ -4,10 +4,10 @@ import mysql from 'mysql2/promise';
 const PORT = 3000;
 const BASE_URL = `http://localhost:${PORT}/api/v1`;
 
-const CUST_EMAIL = 'cust-demo-01@rentalms.local';
+const CUST_EMAIL = 'cust-demo-01@assetflow.local';
 const CUST_PASS = 'Customer@2024!';
 
-const VEND_EMAIL = 'vendor@rentalms.local';
+const VEND_EMAIL = 'vendor@assetflow.local';
 const VEND_PASS = 'Vendor@2024!';
 
 const ADMIN_EMAIL = 'admin3@demorental.co';

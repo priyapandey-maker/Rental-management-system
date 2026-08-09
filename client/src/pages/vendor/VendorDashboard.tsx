@@ -91,7 +91,7 @@ export const VendorDashboard = () => {
 
       const prodList = Array.isArray(prodsData) ? prodsData : MOCK_PRODUCTS;
       const customerList = Array.isArray(custsData) ? custsData : [
-        { id: 'cust-demo-01', first_name: 'Demo', last_name: 'Customer', email: 'cust-demo-01@rentalms.local' }
+        { id: 'cust-demo-01', first_name: 'Demo', last_name: 'Customer', email: 'cust-demo-01@assetflow.local' }
       ];
       
       setProducts(prodList);
@@ -279,7 +279,7 @@ export const VendorDashboard = () => {
                   <td className="px-6 py-4 whitespace-nowrap font-bold text-gray-900">{tx.id.substring(0, 8)}...</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <p className="font-bold text-gray-950">{customerName}</p>
-                    <p className="text-xs text-gray-400 font-medium">{cust?.email || 'cust-demo-01@rentalms.local'}</p>
+                    <p className="text-xs text-gray-400 font-medium">{cust?.email || 'cust-demo-01@assetflow.local'}</p>
                   </td>
                   <td className="px-6 py-4">
                     <p className="font-semibold text-gray-800">{prodName}</p>

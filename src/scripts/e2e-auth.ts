@@ -20,7 +20,7 @@ const BASE = 'http://localhost:3000/api/v1';
 const ts = Date.now();
 const CUSTOMER_EMAIL = `customer_${ts}@test.local`;
 const VENDOR_EMAIL = `vendor_${ts}@test.local`;
-const ADMIN_EMAIL = 'admin@rentalms.local';
+const ADMIN_EMAIL = 'admin@assetflow.local';
 const ADMIN_PASSWORD = 'Admin@2024!';
 const TEST_PASSWORD = 'Test@1234!';
 

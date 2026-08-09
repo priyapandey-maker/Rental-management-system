@@ -5,7 +5,7 @@
  * Run this script to ensure a working admin login exists.
  * 
  * Admin credentials:
- *   Email:    admin@rentalms.local
+ *   Email:    admin@assetflow.local
  *   Password: Admin@2024!
  * 
  * Usage: npx ts-node src/scripts/seed-admin.ts
@@ -15,7 +15,7 @@ import { getPool } from '../db/pool';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 
-const ADMIN_EMAIL = 'admin@rentalms.local';
+const ADMIN_EMAIL = 'admin@assetflow.local';
 const ADMIN_PASSWORD = 'Admin@2024!';
 const ADMIN_ORG_NAME = 'Rental Management System';
 const ADMIN_ORG_CODE = 'RMS-ADMIN';

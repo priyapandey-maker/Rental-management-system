@@ -84,7 +84,7 @@ export const Inspections = () => {
 
       const prodList = Array.isArray(prodsData) ? prodsData : MOCK_PRODUCTS;
       const customerList = Array.isArray(custsData) ? custsData : [
-        { id: 'cust-demo-01', first_name: 'Demo', last_name: 'Customer', email: 'cust-demo-01@rentalms.local' }
+        { id: 'cust-demo-01', first_name: 'Demo', last_name: 'Customer', email: 'cust-demo-01@assetflow.local' }
       ];
       setProducts(prodList);
       setCustomers(customerList);
@@ -145,7 +145,7 @@ export const Inspections = () => {
       const cust = customers.find(c => c.id === tx.customer_id) || {
         first_name: 'Demo',
         last_name: 'Customer',
-        email: 'customer@rentalms.local'
+        email: 'customer@assetflow.local'
       };
 
       const prod = products.find(p => p.id === line.product_id) || { name: 'Unknown Asset' };

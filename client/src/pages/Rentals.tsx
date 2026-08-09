@@ -132,7 +132,7 @@ export const Rentals = () => {
       setTransactions(localTxs);
       
       setCustomers([
-        { id: 'cust-demo-01', first_name: 'Demo', last_name: 'Customer', status: 'active', email: 'cust-demo-01@rentalms.local' }
+        { id: 'cust-demo-01', first_name: 'Demo', last_name: 'Customer', status: 'active', email: 'cust-demo-01@assetflow.local' }
       ]);
       
       const prodsList = MOCK_PRODUCTS.map(p => ({ id: p.id, name: p.name }));

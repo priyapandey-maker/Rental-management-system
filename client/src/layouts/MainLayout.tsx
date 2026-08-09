@@ -57,13 +57,13 @@ export const MainLayout = () => {
         to={to}
         className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
           isActive
-            ? 'bg-brand-50 text-brand-700'
-            : 'text-gray-700 hover:bg-gray-50 hover:text-brand-600'
+            ? 'bg-brand-600 text-white'
+            : 'text-gray-300 hover:bg-gray-800 hover:text-white'
         }`}
       >
         <Icon
           className={`flex-shrink-0 -ml-1 mr-3 h-5 w-5 ${
-            isActive ? 'text-brand-700' : 'text-gray-400 group-hover:text-brand-600'
+            isActive ? 'text-white' : 'text-gray-400 group-hover:text-gray-200'
           }`}
         />
         <span className="truncate">{label}</span>
@@ -74,10 +74,10 @@ export const MainLayout = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
       {/* Sidebar */}
-      <div className="w-full md:w-64 bg-white border-r border-gray-200 flex-shrink-0 flex flex-col">
-        <div className="h-16 flex items-center justify-between px-4 border-b border-gray-200">
-          <Logo size="sm" isLink={true} linkTo="/admin/dashboard" />
-          <span className="text-[10px] font-bold bg-gray-100 text-gray-500 px-2 py-1 rounded uppercase tracking-wider">
+      <div className="w-full md:w-64 bg-gray-900 border-r border-gray-800 flex-shrink-0 flex flex-col">
+        <div className="h-16 flex items-center justify-between px-4 border-b border-gray-800">
+          <Logo size="sm" isLink={true} linkTo="/admin/dashboard" theme="dark" />
+          <span className="text-[10px] font-bold bg-brand-600 text-white px-2 py-1 rounded uppercase tracking-wider">
             Admin
           </span>
         </div>
@@ -133,12 +133,12 @@ export const MainLayout = () => {
           </div>
         </div>
 
-        <div className="p-4 border-t border-gray-200 bg-gray-50">
+        <div className="p-4 border-t border-gray-800 bg-gray-950">
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
-              <span className="text-sm font-medium text-gray-900 truncate">Admin User</span>
+              <span className="text-sm font-medium text-white truncate">Admin User</span>
               <span
-                className="text-xs font-mono text-gray-500 truncate"
+                className="text-xs font-mono text-gray-400 truncate"
                 title={orgId || ''}
               >
                 Org: {orgId?.substring(0, 8)}...
@@ -146,7 +146,7 @@ export const MainLayout = () => {
             </div>
             <button
               onClick={handleLogout}
-              className="p-2 text-gray-400 hover:text-red-600 rounded-md hover:bg-red-50 transition-colors"
+              className="p-2 text-gray-400 hover:text-red-400 rounded-md hover:bg-gray-800 transition-colors"
               title="Logout"
             >
               <ArrowLeftOnRectangleIcon className="h-5 w-5" />

@@ -10,21 +10,21 @@ const ROLE_LABELS: Record<RoleTab, { label: string; description: string; color: 
     label: 'Customer',
     description: 'Browse & rent products',
     color: 'blue',
-    defaultEmail: 'customer@rentalms.local',
+    defaultEmail: 'customer@assetflow.local',
     defaultPassword: 'Customer@2024!',
   },
   vendor: {
     label: 'Vendor',
     description: 'Manage your rental business',
     color: 'indigo',
-    defaultEmail: 'vendor@rentalms.local',
+    defaultEmail: 'vendor@assetflow.local',
     defaultPassword: 'Vendor@2024!',
   },
   admin: {
     label: 'Admin',
     description: 'Platform administration',
     color: 'gray',
-    defaultEmail: 'admin@rentalms.local',
+    defaultEmail: 'admin@assetflow.local',
     defaultPassword: 'Admin@2024!',
   },
 };
@@ -58,7 +58,7 @@ export const Login = () => {
         
         // Match seed credentials for Admin
         if (
-          (email === 'admin@rentalms.local' && password === 'Admin@2024!') ||
+          (email === 'admin@assetflow.local' && password === 'Admin@2024!') ||
           (email === 'admin3@demorental.co' && password === 'DemoPassword123!')
         ) {
           response = {
@@ -69,7 +69,7 @@ export const Login = () => {
         // Match seed credentials for Customer
         else if (
           (email === 'aarav@example.com' && password === 'DemoPassword123!') ||
-          (email === 'customer@rentalms.local')
+          (email === 'customer@assetflow.local')
         ) {
           response = {
             user: { id: 'd3a6d95c-12fe-4c98-a755-677737be0f26', role: 'customer', organizationId: '6f3875f5-49a2-4bee-9dc1-927b5907020a' },
@@ -78,7 +78,7 @@ export const Login = () => {
         } 
         // Match seed credentials for Vendor
         else if (
-          (email === 'vendor@rentalms.local') ||
+          (email === 'vendor@assetflow.local') ||
           (email.includes('vendor'))
         ) {
           response = {

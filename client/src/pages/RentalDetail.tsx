@@ -207,7 +207,7 @@ export const RentalDetail = () => {
           id: txData.customer_id,
           first_name: 'Demo',
           last_name: 'Customer',
-          email: 'cust-demo-01@rentalms.local',
+          email: 'cust-demo-01@assetflow.local',
           status: 'active'
         });
       }
