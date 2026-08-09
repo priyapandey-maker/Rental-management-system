@@ -66,7 +66,7 @@ export const CustomerLayout = () => {
   }
 
   // Role gate: non-customers go to their portal
-  if (role === 'admin') return <Navigate to="/dashboard" replace />;
+  if (role === 'admin') return <Navigate to="/admin/dashboard" replace />;
   if (role === 'vendor') return <Navigate to="/vendor/dashboard" replace />;
 
   const handleLogout = () => {

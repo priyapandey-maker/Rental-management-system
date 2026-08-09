@@ -52,7 +52,17 @@ export const Login = () => {
     try {
       let response: any;
       try {
-        response = await apiClient.post('/auth/login', { email, password });
+        const rawResponse = await apiClient.post('/auth/login', { email, password });
+        if (rawResponse && rawResponse.data) {
+          response = rawResponse.data;
+        } else {
+          response = rawResponse;
+        }
+        
+        // Also ensure roles are normalized if returned as an array
+        if (response.user && response.user.roles && !response.user.role) {
+          response.user.role = response.user.roles[0];
+        }
       } catch (err: any) {
         console.warn("Backend database offline. Attempting offline simulated login.");
         
@@ -105,7 +115,7 @@ export const Login = () => {
 
       // Route based on actual server-determined role
       if (serverRole === 'admin') {
-        navigate('/dashboard');
+        navigate('/admin/dashboard');
       } else if (serverRole === 'vendor') {
         navigate('/vendor/dashboard');
       } else {

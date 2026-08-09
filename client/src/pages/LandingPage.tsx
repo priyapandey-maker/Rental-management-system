@@ -2,7 +2,24 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { apiClient } from '../api/client';
 import { Logo } from '../components/Logo';
-
+import {
+  MagnifyingGlassIcon,
+  CheckCircleIcon,
+  ArrowRightIcon,
+  Bars3Icon,
+  XMarkIcon,
+  StarIcon,
+  ClockIcon,
+  ShieldCheckIcon,
+  TagIcon,
+  CubeIcon,
+  ChartBarIcon,
+  DocumentTextIcon,
+  UsersIcon,
+  BuildingStorefrontIcon,
+  ArrowTrendingUpIcon,
+  CurrencyDollarIcon,
+} from '@heroicons/react/24/outline';
 // Realistic product image map (served from /public/images/)
 const CATEGORY_IMAGES: Record<string, string> = {
   CAM: '/images/cat-camera.jpg',
@@ -59,24 +76,7 @@ const PRODUCT_IMAGES: Record<string, string> = {
   HAPP: '/images/prod-happ.png',
   EVT: '/images/prod-evt.png',
 };
-import {
-  MagnifyingGlassIcon,
-  CheckCircleIcon,
-  ArrowRightIcon,
-  Bars3Icon,
-  XMarkIcon,
-  StarIcon,
-  ClockIcon,
-  ShieldCheckIcon,
-  TagIcon,
-  CubeIcon,
-  ChartBarIcon,
-  DocumentTextIcon,
-  UsersIcon,
-  BuildingStorefrontIcon,
-  ArrowTrendingUpIcon,
-  CurrencyDollarIcon,
-} from '@heroicons/react/24/outline';
+
 
 interface Category { id: string; name: string; code: string; }
 interface Product {

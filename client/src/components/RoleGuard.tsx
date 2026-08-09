@@ -36,7 +36,7 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({ allowedRoles, children, re
 
   if (!allowedRoles.includes(role)) {
     // Route user to their correct portal
-    if (role === 'admin') return <Navigate to="/dashboard" replace />;
+    if (role === 'admin') return <Navigate to="/admin/dashboard" replace />;
     if (role === 'vendor') return <Navigate to="/vendor/dashboard" replace />;
     if (role === 'customer') return <Navigate to="/store" replace />;
     // Fallback — not authenticated properly
@@ -62,7 +62,7 @@ export const PublicOnlyRoute: React.FC<{ children: React.ReactNode }> = ({ child
   }
 
   if (isAuthenticated) {
-    if (role === 'admin') return <Navigate to="/dashboard" replace />;
+    if (role === 'admin') return <Navigate to="/admin/dashboard" replace />;
     if (role === 'vendor') return <Navigate to="/vendor/dashboard" replace />;
     return <Navigate to="/store" replace />;
   }
