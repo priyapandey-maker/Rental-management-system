@@ -82,10 +82,11 @@ export const CustomerLayout = () => {
               </Link>
 
               <nav className="hidden md:flex space-x-6">
+                <Link to="/" className="text-gray-700 hover:text-brand-400 font-medium text-sm transition-colors">Home / Discover</Link>
                 <Link to="/store" className="text-gray-700 hover:text-brand-400 font-medium text-sm transition-colors">Products</Link>
-                <Link to="/store" className="text-gray-700 hover:text-brand-400 font-medium text-sm transition-colors">Terms & Condition</Link>
-                <Link to="/store" className="text-gray-700 hover:text-brand-400 font-medium text-sm transition-colors">About Us</Link>
-                <Link to="/store" className="text-gray-700 hover:text-brand-400 font-medium text-sm transition-colors">Contact Us</Link>
+                <Link to="/store/wishlist" className="text-gray-700 hover:text-brand-400 font-medium text-sm transition-colors">Wishlist</Link>
+                <Link to="/store/cart" className="text-gray-700 hover:text-brand-400 font-medium text-sm transition-colors">Cart</Link>
+                <Link to="/store" className="text-gray-700 hover:text-brand-400 font-medium text-sm transition-colors">My Rentals / Orders</Link>
               </nav>
             </div>
 
@@ -149,10 +150,11 @@ export const CustomerLayout = () => {
         {showMobileMenu && (
           <div className="md:hidden bg-white border-b border-gray-200">
             <div className="px-2 pt-2 pb-3 space-y-1">
+              <Link to="/" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-200">Home / Discover</Link>
               <Link to="/store" className="block px-3 py-2 rounded-md text-base font-medium text-gray-900 bg-gray-100">Products</Link>
-              <Link to="/store" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-200">Terms & Condition</Link>
-              <Link to="/store" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-200">About Us</Link>
-              <Link to="/store" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-200">Contact Us</Link>
+              <Link to="/store/wishlist" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-200">Wishlist</Link>
+              <Link to="/store/cart" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-200">Cart</Link>
+              <Link to="/store" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-200">My Rentals / Orders</Link>
             </div>
           </div>
         )}
@@ -166,7 +168,7 @@ export const CustomerLayout = () => {
       {/* Minimal Footer */}
       <footer className="bg-white border-t border-gray-200 py-8 mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-500">
-          &copy; {new Date().getFullYear()} RentalStore. All rights reserved.
+          &copy; {new Date().getFullYear()} AssetFlow. All rights reserved.
         </div>
       </footer>
     </div>

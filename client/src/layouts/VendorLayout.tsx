@@ -10,6 +10,11 @@ import {
   ArrowLeftOnRectangleIcon,
   Bars3Icon,
   XMarkIcon,
+  ArrowPathIcon,
+  ClipboardDocumentCheckIcon,
+  CurrencyDollarIcon,
+  BuildingStorefrontIcon,
+  DocumentCheckIcon,
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../context/AuthContext';
 import { RoleGuard } from '../components/RoleGuard';
@@ -27,7 +32,7 @@ const NavItem = ({
   onClick?: () => void;
 }) => {
   const location = useLocation();
-  const isActive = location.pathname.startsWith(to);
+  const isActive = location.pathname === to || (to !== '/vendor/dashboard' && location.pathname.startsWith(to));
   return (
     <Link
       to={to}
@@ -75,17 +80,18 @@ const VendorSidebar = ({ onClose }: { onClose?: () => void }) => {
             Overview
           </h3>
           <div className="space-y-1">
-            <NavItem to="/vendor/dashboard" label="Dashboard" icon={HomeIcon} onClick={onClose} />
+            <NavItem to="/vendor/dashboard" label="Vendor Dashboard" icon={HomeIcon} onClick={onClose} />
           </div>
         </div>
 
         <div>
           <h3 className="px-3 text-xs font-semibold text-brand-400 uppercase tracking-wider mb-2">
-            Catalog
+            Catalog & Inventory
           </h3>
           <div className="space-y-1">
             <NavItem to="/vendor/products" label="Products" icon={ArchiveBoxIcon} onClick={onClose} />
-            <NavItem to="/vendor/assets" label="Assets / Inventory" icon={CubeIcon} onClick={onClose} />
+            <NavItem to="/vendor/products?view=variants" label="Variants" icon={DocumentCheckIcon} onClick={onClose} />
+            <NavItem to="/vendor/assets" label="Assets" icon={CubeIcon} onClick={onClose} />
           </div>
         </div>
 
@@ -95,15 +101,20 @@ const VendorSidebar = ({ onClose }: { onClose?: () => void }) => {
           </h3>
           <div className="space-y-1">
             <NavItem to="/vendor/rentals" label="Rentals" icon={DocumentDuplicateIcon} onClick={onClose} />
-            <NavItem to="/vendor/customers" label="Customers" icon={UsersIcon} onClick={onClose} />
+            <NavItem to="/vendor/fulfillment" label="Allocation" icon={BuildingStorefrontIcon} onClick={onClose} />
+            <NavItem to="/vendor/fulfillment?tab=fulfill" label="Fulfillment" icon={BuildingStorefrontIcon} onClick={onClose} />
+            <NavItem to="/vendor/returns" label="Returns" icon={ArrowPathIcon} onClick={onClose} />
+            <NavItem to="/vendor/inspections" label="Inspections" icon={ClipboardDocumentCheckIcon} onClick={onClose} />
+            <NavItem to="/vendor/adjustments" label="Adjustments" icon={CurrencyDollarIcon} onClick={onClose} />
           </div>
         </div>
 
         <div>
           <h3 className="px-3 text-xs font-semibold text-brand-400 uppercase tracking-wider mb-2">
-            Reports
+            Reports & Customers
           </h3>
           <div className="space-y-1">
+            <NavItem to="/vendor/customers" label="Customers" icon={UsersIcon} onClick={onClose} />
             <NavItem to="/vendor/reports" label="Analytics" icon={ChartBarIcon} onClick={onClose} />
           </div>
         </div>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { apiClient } from '../api/client';
 
 interface Transaction {
@@ -12,6 +12,7 @@ export const Returns = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const location = useLocation();
 
   const fetchTransactions = async () => {
     try {
@@ -69,7 +70,10 @@ export const Returns = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <Link to={`/rentals/${tx.id}`} className="text-brand-600 hover:text-brand-900 flex justify-end items-center">
+                    <Link 
+                      to={location.pathname.startsWith('/vendor') ? `/vendor/rentals/${tx.id}` : `/rentals/${tx.id}`} 
+                      className="text-brand-600 hover:text-brand-900 flex justify-end items-center"
+                    >
                       Process Return <span aria-hidden="true" className="ml-1">&rarr;</span>
                     </Link>
                   </td>

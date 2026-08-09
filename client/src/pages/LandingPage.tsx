@@ -590,7 +590,7 @@ export const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
             <div className="inline-flex items-center gap-2 text-blue-600 font-bold text-xs uppercase tracking-widest mb-3">
-              <span className="w-6 h-px bg-blue-300"></span>Why RMS<span className="w-6 h-px bg-blue-300"></span>
+              <span className="w-6 h-px bg-blue-300"></span>Why AssetFlow<span className="w-6 h-px bg-blue-300"></span>
             </div>
             <h2 className="text-4xl font-extrabold text-gray-900 tracking-tight">Renting Should Be Simple.</h2>
           </div>
@@ -599,7 +599,7 @@ export const LandingPage = () => {
             <div className="bg-red-50 border border-red-100 rounded-2xl p-8">
               <h3 className="text-sm font-extrabold text-red-600 uppercase tracking-wider mb-6 flex items-center gap-2">
                 <span className="w-5 h-5 rounded-full bg-red-200 flex items-center justify-center text-red-600 text-xs font-black">✕</span>
-                Without RMS
+                Without AssetFlow
               </h3>
               <ul className="space-y-3.5">
                 {['Scattered product listings across platforms', 'Unclear availability and inventory status', 'Manual coordination and booking', 'Hard-to-track rental lifecycles', 'Disconnected vendor communication'].map(item => (
@@ -614,7 +614,7 @@ export const LandingPage = () => {
             <div className="bg-blue-50 border border-blue-100 rounded-2xl p-8">
               <h3 className="text-sm font-extrabold text-blue-600 uppercase tracking-wider mb-6 flex items-center gap-2">
                 <span className="w-5 h-5 rounded-full bg-blue-200 flex items-center justify-center text-blue-600 text-xs font-black">✓</span>
-                With RMS
+                With AssetFlow
               </h3>
               <ul className="space-y-3.5">
                 {['Centralized product discovery in one place', 'Real-time inventory visibility', 'Seamless online booking & checkout', 'Full rental lifecycle management', 'Payments, invoices & tracking built-in'].map(item => (
@@ -678,7 +678,7 @@ export const LandingPage = () => {
                   <span className="text-xs font-bold text-blue-400 uppercase tracking-widest">For Vendors</span>
                 </div>
                 <h3 className="text-2xl font-extrabold text-white mb-3">Own Rental Inventory?<br/>Turn It Into a Business.</h3>
-                <p className="text-gray-400 text-sm mb-8 leading-relaxed">RMS gives you the tools to list, manage and grow your rental inventory while keeping operations organized.</p>
+                <p className="text-gray-400 text-sm mb-8 leading-relaxed">AssetFlow gives you the tools to list, manage and grow your rental inventory while keeping operations organized.</p>
 
                 <div className="grid grid-cols-2 gap-3 mb-8">
                   {[
@@ -716,7 +716,7 @@ export const LandingPage = () => {
       <section className="py-20 bg-blue-600">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-extrabold text-white mb-3">The RMS Advantage</h2>
+            <h2 className="text-3xl font-extrabold text-white mb-3">The AssetFlow Advantage</h2>
             <p className="text-blue-200 text-sm">Built to simplify rentals for everyone on the platform.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -746,7 +746,7 @@ export const LandingPage = () => {
           </div>
           <h2 className="text-5xl font-extrabold text-gray-900 tracking-tight mb-6">Ready to Rent Smarter?</h2>
           <p className="text-gray-500 text-lg mb-10 leading-relaxed">
-            Discover what you need or start growing your rental business with RMS.
+            Discover what you need or start growing your rental business with AssetFlow.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link to="/store" className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-xl transition-colors shadow-lg shadow-blue-200 text-base">
@@ -769,7 +769,7 @@ export const LandingPage = () => {
               <div className="mb-3">
                 <Logo size="sm" isLink={true} linkTo="/" />
               </div>
-              <p className="text-xs text-gray-500 leading-relaxed max-w-[180px]">Rental management, simplified for customers and vendors.</p>
+              <p className="text-xs text-gray-500 leading-relaxed max-w-[180px]">Asset and rental lifecycle management, simplified for customers and vendors.</p>
             </div>
 
             <div>
@@ -801,7 +801,7 @@ export const LandingPage = () => {
           </div>
 
           <div className="border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center gap-3">
-            <p className="text-xs text-gray-400">&copy; {new Date().getFullYear()} Rental Management System. All rights reserved.</p>
+            <p className="text-xs text-gray-400">&copy; {new Date().getFullYear()} AssetFlow. All rights reserved.</p>
             <div className="flex items-center gap-2 text-xs text-gray-400">
               <Link to="/login" className="hover:text-blue-500">Login</Link>
               <span>·</span>

@@ -97,13 +97,17 @@ function App() {
           <Route path="/vendor" element={<VendorLayout />}>
             <Route index element={<Navigate to="/vendor/dashboard" replace />} />
             <Route path="dashboard" element={<VendorDashboard />} />
-            {/* Vendor-specific pages (to be implemented) */}
+            {/* Vendor-specific pages */}
             <Route path="products" element={<Products />} />
             <Route path="assets" element={<Assets />} />
             <Route path="rentals" element={<Rentals />} />
             <Route path="rentals/:id" element={<RentalDetail />} />
             <Route path="customers" element={<Customers />} />
             <Route path="reports" element={<VendorAnalytics />} />
+            <Route path="fulfillment" element={<Fulfillment />} />
+            <Route path="returns" element={<Returns />} />
+            <Route path="inspections" element={<Inspections />} />
+            <Route path="adjustments" element={<Adjustments />} />
           </Route>
 
           {/* ──────────────────────────────────────────────────────

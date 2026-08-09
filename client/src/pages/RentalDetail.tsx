@@ -527,6 +527,65 @@ export const RentalDetail = () => {
         </div>
       </div>
 
+      {/* AssetFlow Lifecycle Progress Stepper */}
+      {transaction.status === 'CANCELLED' ? (
+        <div className="bg-red-50 border border-red-200 p-6 rounded-xl flex items-center space-x-4">
+          <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600">
+            <ExclamationTriangleIcon className="h-6 w-6" />
+          </div>
+          <div>
+            <h3 className="text-sm font-bold text-red-800">Contract Cancelled</h3>
+            <p className="text-xs text-red-600 mt-0.5">This rental contract has been terminated. Associated allocations and operations are retired.</p>
+          </div>
+        </div>
+      ) : (
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6">
+            AssetFlow Lifecycle Progress
+          </h3>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative">
+            {/* Connecting lines for desktop */}
+            <div className="hidden md:block absolute top-[18px] left-[5%] right-[5%] h-0.5 bg-gray-100 z-0"></div>
+            
+            {/* Steps loop */}
+            {[
+              { label: 'Draft', desc: 'Configure items', active: transaction.status === 'DRAFT', completed: transaction.status !== 'DRAFT' },
+              { label: 'Booked', desc: 'Confirmed contract', active: transaction.status === 'CONFIRMED' && allocations.length === 0, completed: transaction.status !== 'DRAFT' && transaction.status !== 'CONFIRMED' },
+              { label: 'Allocated', desc: 'Assets assigned', active: transaction.status === 'CONFIRMED' && allocations.length > 0, completed: transaction.status === 'ACTIVE' || transaction.status === 'COMPLETED' },
+              { label: 'Fulfilling', desc: 'Out with customer', active: transaction.status === 'ACTIVE', completed: transaction.status === 'COMPLETED' },
+              { label: 'Returned', desc: 'Intake & Inspect', active: transaction.status === 'COMPLETED' && invoice?.status !== 'PAID', completed: transaction.status === 'COMPLETED' && invoice?.status === 'PAID' },
+              { label: 'Completed', desc: 'Setted & resolved', active: transaction.status === 'COMPLETED' && invoice?.status === 'PAID', completed: false }
+            ].map((step, idx) => {
+              const isCompleted = step.completed;
+              const isActive = step.active;
+              const isFuture = !isCompleted && !isActive;
+
+              return (
+                <div key={step.label} className="flex flex-row md:flex-col items-center gap-3 md:gap-2 z-10 w-full md:w-auto relative">
+                  <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm border transition-all duration-300 ${
+                    isCompleted 
+                      ? 'bg-brand-600 text-white border-brand-600 shadow'
+                      : isActive
+                        ? 'bg-white text-brand-600 border-brand-500 ring-4 ring-brand-100 font-extrabold scale-110 shadow-sm'
+                        : 'bg-gray-50 text-gray-400 border-gray-200'
+                  }`}>
+                    {isCompleted ? '✓' : idx + 1}
+                  </div>
+                  <div className="flex flex-col md:items-center text-left md:text-center">
+                    <span className={`text-xs font-bold tracking-wide uppercase ${isActive ? 'text-brand-600 font-extrabold' : isCompleted ? 'text-gray-800' : 'text-gray-400'}`}>
+                      {step.label}
+                    </span>
+                    <span className="text-[10px] text-gray-400 font-medium">
+                      {step.desc}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Columns: Details, Add Item, Items */}
         <div className="lg:col-span-2 space-y-8 animate-in fade-in">

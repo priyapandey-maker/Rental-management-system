@@ -154,7 +154,7 @@ export const OrderSuccess = () => {
 
         {/* Print-only Footer Branding */}
         <div className="hidden print:block mt-16 pt-8 border-t border-gray-300 text-center text-sm text-gray-500">
-          <p className="font-bold text-black mb-1">Rental Management System</p>
+          <p className="font-bold text-black mb-1">AssetFlow</p>
           <p>Thank you for choosing our equipment rental services.</p>
         </div>
 

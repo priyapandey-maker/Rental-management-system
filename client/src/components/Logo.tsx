@@ -80,10 +80,10 @@ export const Logo: React.FC<LogoProps> = ({
       {withText && (
         <div className="leading-none flex flex-col justify-center">
           <span className={`block font-black tracking-tight uppercase ${s.textMain} ${t.textMain}`}>
-            RMS
+            AssetFlow
           </span>
           <span className={`block font-bold uppercase tracking-widest ${s.textSub} ${t.textSub} mt-0.5`}>
-            Rental Management
+            Rental Lifecycle
           </span>
         </div>
       )}

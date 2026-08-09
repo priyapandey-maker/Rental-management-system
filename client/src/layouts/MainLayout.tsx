@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import {
   HomeIcon,
   ArchiveBoxIcon,
@@ -11,6 +10,7 @@ import {
   CurrencyDollarIcon,
   ArrowLeftOnRectangleIcon,
   ChartBarIcon,
+  DocumentCheckIcon,
 } from '@heroicons/react/24/outline';
 import { Outlet, Navigate, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -51,7 +51,7 @@ export const MainLayout = () => {
   };
 
   const NavItem = ({ to, label, icon: Icon }: { to: string; label: string; icon: any }) => {
-    const isActive = location.pathname.startsWith(to);
+    const isActive = location.pathname === to || (to !== '/dashboard' && location.pathname.startsWith(to));
     return (
       <Link
         to={to}
@@ -88,16 +88,17 @@ export const MainLayout = () => {
               Overview
             </h3>
             <div className="space-y-1">
-              <NavItem to="/dashboard" label="Dashboard" icon={HomeIcon} />
+              <NavItem to="/dashboard" label="Admin Dashboard" icon={HomeIcon} />
             </div>
           </div>
 
           <div>
             <h3 className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
-              Customers
+              Users &amp; Partners
             </h3>
             <div className="space-y-1">
               <NavItem to="/customers" label="Customers" icon={UsersIcon} />
+              <NavItem to="/customers?view=vendors" label="Vendors" icon={BuildingStorefrontIcon} />
             </div>
           </div>
 
@@ -107,6 +108,7 @@ export const MainLayout = () => {
             </h3>
             <div className="space-y-1">
               <NavItem to="/products" label="Products" icon={ArchiveBoxIcon} />
+              <NavItem to="/products?view=variants" label="Variants" icon={DocumentCheckIcon} />
               <NavItem to="/assets" label="Assets" icon={CubeIcon} />
             </div>
           </div>
@@ -116,19 +118,20 @@ export const MainLayout = () => {
               Rentals
             </h3>
             <div className="space-y-1">
-              <NavItem to="/rentals" label="Rentals" icon={DocumentDuplicateIcon} />
-              <NavItem to="/fulfillment" label="Fulfillment" icon={BuildingStorefrontIcon} />
+              <NavItem to="/rentals" label="Rentals / Orders" icon={DocumentDuplicateIcon} />
               <NavItem to="/returns" label="Returns" icon={ArrowPathIcon} />
             </div>
           </div>
 
           <div>
             <h3 className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
-              Operations
+              Operations &amp; Finance
             </h3>
             <div className="space-y-1">
               <NavItem to="/inspections" label="Inspections" icon={ClipboardDocumentCheckIcon} />
               <NavItem to="/adjustments" label="Adjustments" icon={CurrencyDollarIcon} />
+              <NavItem to="/rentals?tab=payments" label="Invoices / Payments" icon={CurrencyDollarIcon} />
+              <NavItem to="/dashboard?view=analytics" label="Analytics" icon={ChartBarIcon} />
             </div>
           </div>
         </div>
