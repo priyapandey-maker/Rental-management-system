@@ -8,16 +8,18 @@ const productRepo = new ProductRepository();
 
 export const addWishlist = async (req: Request, res: Response) => {
   try {
-    const orgId = req.context?.organizationId || '';
-    // Assuming auth middleware puts user details in req.context.userId
-    const customerId = req.context?.userId || '';
+    const customerId = req.context?.userId;
+    if (!customerId) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+    const orgId = req.context?.organizationId || 'demo-org-uuid';
     const { product_id: productId } = req.body;
 
     if (!productId) {
       return res.status(400).json({ error: 'product_id is required' });
     }
 
-    // Verify product exists
+    // Verify product exists across catalog
     const product = await productRepo.findById(productId, orgId);
     if (!product) {
       return res.status(404).json({ error: 'Product not found' });
@@ -25,7 +27,7 @@ export const addWishlist = async (req: Request, res: Response) => {
 
     const newWishlist: WishlistInsert = {
       id: crypto.randomUUID(),
-      organization_id: orgId,
+      organization_id: product.organization_id || orgId,
       customer_id: customerId,
       product_id: productId
     };
@@ -40,8 +42,11 @@ export const addWishlist = async (req: Request, res: Response) => {
 
 export const removeWishlist = async (req: Request, res: Response) => {
   try {
+    const customerId = req.context?.userId;
+    if (!customerId) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
     const orgId = req.context?.organizationId || '';
-    const customerId = req.context?.userId || '';
     const { productId } = req.params;
 
     if (!productId) {
@@ -58,11 +63,13 @@ export const removeWishlist = async (req: Request, res: Response) => {
 
 export const getWishlist = async (req: Request, res: Response) => {
   try {
+    const customerId = req.context?.userId;
+    if (!customerId) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
     const orgId = req.context?.organizationId || '';
-    const customerId = req.context?.userId || '';
 
     const wishlistRows = await wishlistRepo.listByCustomer(customerId, orgId);
-    // Return an array of productIds to the frontend
     const productIds = wishlistRows.map(row => row.product_id);
     
     res.status(200).json({ data: productIds });

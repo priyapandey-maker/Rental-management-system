@@ -44,9 +44,14 @@ export class ProductRepository extends BaseRepository {
     );
   }
 
-  async findById(id: string, organizationId: string, connection?: QueryConnection): Promise<ProductRow | null> {
-    const sql = `SELECT * FROM products WHERE id = ? AND organization_id = ?`;
-    return this.queryOne<ProductRow>(sql, [id, organizationId], connection);
+  async findById(id: string, organizationId?: string, connection?: QueryConnection): Promise<ProductRow | null> {
+    if (organizationId) {
+      const sql = `SELECT * FROM products WHERE id = ? AND organization_id = ?`;
+      const res = await this.queryOne<ProductRow>(sql, [id, organizationId], connection);
+      if (res) return res;
+    }
+    const sql = `SELECT * FROM products WHERE id = ?`;
+    return this.queryOne<ProductRow>(sql, [id], connection);
   }
 
   async findBySku(sku: string, organizationId: string, connection?: QueryConnection): Promise<ProductRow | null> {

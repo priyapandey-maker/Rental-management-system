@@ -33,35 +33,55 @@ export class WishlistRepository extends BaseRepository {
   async remove(
     customerId: string,
     productId: string,
-    organizationId: string,
+    organizationId?: string,
     connection?: QueryConnection
   ): Promise<void> {
-    const sql = `DELETE FROM wishlists WHERE customer_id = ? AND product_id = ? AND organization_id = ?`;
-    await this.query<ResultSetHeader>(sql, [customerId, productId, organizationId], connection);
+    if (organizationId) {
+      const sql = `DELETE FROM wishlists WHERE customer_id = ? AND product_id = ? AND organization_id = ?`;
+      const result = await this.query<ResultSetHeader>(sql, [customerId, productId, organizationId], connection);
+      if (result.affectedRows > 0) return;
+    }
+    const sql = `DELETE FROM wishlists WHERE customer_id = ? AND product_id = ?`;
+    await this.query<ResultSetHeader>(sql, [customerId, productId], connection);
   }
 
   async listByCustomer(
     customerId: string,
-    organizationId: string,
+    organizationId?: string,
     connection?: QueryConnection
   ): Promise<WishlistRow[]> {
+    if (organizationId) {
+      const sql = `
+        SELECT w.* 
+        FROM wishlists w 
+        WHERE w.customer_id = ? AND w.organization_id = ?
+        ORDER BY w.created_at DESC
+      `;
+      const rows = await this.query<WishlistRow[]>(sql, [customerId, organizationId], connection);
+      if (rows.length > 0) return rows;
+    }
     const sql = `
       SELECT w.* 
       FROM wishlists w 
-      WHERE w.customer_id = ? AND w.organization_id = ?
+      WHERE w.customer_id = ?
       ORDER BY w.created_at DESC
     `;
-    return this.query<WishlistRow[]>(sql, [customerId, organizationId], connection);
+    return this.query<WishlistRow[]>(sql, [customerId], connection);
   }
 
   async isWishlisted(
     customerId: string,
     productId: string,
-    organizationId: string,
+    organizationId?: string,
     connection?: QueryConnection
   ): Promise<boolean> {
-    const sql = `SELECT id FROM wishlists WHERE customer_id = ? AND product_id = ? AND organization_id = ?`;
-    const rows = await this.query<RowDataPacket[]>(sql, [customerId, productId, organizationId], connection);
+    if (organizationId) {
+      const sql = `SELECT id FROM wishlists WHERE customer_id = ? AND product_id = ? AND organization_id = ?`;
+      const rows = await this.query<RowDataPacket[]>(sql, [customerId, productId, organizationId], connection);
+      if (rows.length > 0) return true;
+    }
+    const sql = `SELECT id FROM wishlists WHERE customer_id = ? AND product_id = ?`;
+    const rows = await this.query<RowDataPacket[]>(sql, [customerId, productId], connection);
     return rows.length > 0;
   }
 }
