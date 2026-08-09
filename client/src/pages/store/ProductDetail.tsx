@@ -162,8 +162,13 @@ export const ProductDetail = () => {
 
         try {
           const wData = await apiClient.get('/storefront/wishlist');
-          const wIds = (wData as any).data?.data || [];
-          setIsWishlisted(wIds.includes(id));
+          let wIds: string[] = [];
+          if (Array.isArray(wData)) {
+            wIds = wData;
+          } else if (wData && Array.isArray((wData as any).data)) {
+            wIds = (wData as any).data;
+          }
+          setIsWishlisted(Boolean(id && wIds.includes(id)));
         } catch {
           // ignore wishlist errors
         }

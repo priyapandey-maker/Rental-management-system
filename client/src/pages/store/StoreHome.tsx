@@ -130,11 +130,11 @@ export const StoreHome = () => {
       const [productsRes, categoriesRes, wishlistRes] = await Promise.all([
         apiClient.get('/storefront/products'),
         apiClient.get('/storefront/categories'),
-        apiClient.get('/storefront/wishlist').catch(() => ({ data: { data: [] } }))
+        apiClient.get('/storefront/wishlist').catch(() => [])
       ]);
 
-      const productsData = productsRes as unknown as Product[];
-      const categoriesData = categoriesRes as unknown as Category[];
+      const productsData = (Array.isArray(productsRes) ? productsRes : (productsRes as any)?.data || []) as Product[];
+      const categoriesData = (Array.isArray(categoriesRes) ? categoriesRes : (categoriesRes as any)?.data || []) as Category[];
 
       const activeProducts = productsData.filter(
         p => p.status === 'active' || (p as any).status === 'ACTIVE'
@@ -142,7 +142,12 @@ export const StoreHome = () => {
       setProducts(activeProducts.length > 0 ? activeProducts : MOCK_PRODUCTS);
       setCategories(categoriesData.length > 0 ? categoriesData : MOCK_CATEGORIES);
       
-      const wishlistData = (wishlistRes as any).data?.data || [];
+      let wishlistData: string[] = [];
+      if (Array.isArray(wishlistRes)) {
+        wishlistData = wishlistRes;
+      } else if (wishlistRes && Array.isArray((wishlistRes as any).data)) {
+        wishlistData = (wishlistRes as any).data;
+      }
       setWishlistIds(new Set(wishlistData));
     } catch (err: any) {
       console.warn("Backend API offline. Falling back to storefront simulation data.");

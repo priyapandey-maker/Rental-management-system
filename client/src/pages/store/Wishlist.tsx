@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { apiClient } from '../../api/client';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { HeartIcon as Heart } from '@heroicons/react/24/solid';
+import { ProductCardImage } from '../../components/store/ProductImage';
 
 interface Product {
   id: string;
@@ -15,8 +17,8 @@ interface Product {
 }
 
 export function Wishlist() {
+  const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
-  const [wishlistIds, setWishlistIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [removingId, setRemovingId] = useState<string | null>(null);
 
@@ -26,20 +28,30 @@ export function Wishlist() {
 
   const fetchWishlist = async () => {
     try {
+      setLoading(true);
       // 1. Fetch Wishlist IDs
       const wishRes = await apiClient.get('/storefront/wishlist');
-      const ids: string[] = wishRes.data.data;
-      setWishlistIds(ids);
+      let ids: string[] = [];
+      if (Array.isArray(wishRes)) {
+        ids = wishRes;
+      } else if (wishRes && Array.isArray((wishRes as any).data)) {
+        ids = (wishRes as any).data;
+      }
 
-      // 2. Fetch all products (In a real app, we'd fetch only wishlist products, but for demo we can fetch all and filter)
+      // 2. Fetch all products
       const prodRes = await apiClient.get('/storefront/products');
-      const allProducts: Product[] = prodRes.data;
+      let allProducts: Product[] = [];
+      if (Array.isArray(prodRes)) {
+        allProducts = prodRes;
+      } else if (prodRes && Array.isArray((prodRes as any).data)) {
+        allProducts = (prodRes as any).data;
+      }
 
       // Filter products that are in the wishlist
       const wishlistedProducts = allProducts.filter(p => ids.includes(p.id));
       setProducts(wishlistedProducts);
     } catch (err) {
-      console.error('Error fetching wishlist', err);
+      console.error('Error fetching wishlist:', err);
     } finally {
       setLoading(false);
     }
@@ -50,10 +62,9 @@ export function Wishlist() {
     setRemovingId(productId);
     try {
       await apiClient.delete(`/storefront/wishlist/${productId}`);
-      setProducts(products.filter(p => p.id !== productId));
-      setWishlistIds(wishlistIds.filter(id => id !== productId));
+      setProducts(prev => prev.filter(p => p.id !== productId));
     } catch (err) {
-      console.error('Error removing from wishlist', err);
+      console.error('Error removing from wishlist:', err);
       alert('Failed to remove from wishlist. Please try again.');
     } finally {
       setRemovingId(null);
@@ -61,7 +72,7 @@ export function Wishlist() {
   };
 
   if (loading) {
-    return <div className="p-8 text-center text-gray-500">Loading wishlist...</div>;
+    return <div className="p-8 text-center text-gray-500 font-medium">Loading wishlist...</div>;
   }
 
   return (
@@ -71,39 +82,31 @@ export function Wishlist() {
           <Heart className="w-8 h-8 text-red-500 fill-red-500" />
           My Wishlist
         </h1>
-        <span className="text-gray-500">{products.length} items</span>
+        <span className="text-gray-500 font-medium">{products.length} {products.length === 1 ? 'item' : 'items'}</span>
       </div>
 
       {products.length === 0 ? (
-        <div className="text-center py-16 bg-white rounded-xl shadow-sm border border-gray-100">
+        <div className="text-center py-16 bg-white rounded-2xl shadow-sm border border-gray-200">
           <Heart className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-          <h2 className="text-xl font-medium text-gray-900 mb-2">Your wishlist is empty</h2>
-          <p className="text-gray-500 mb-6">Explore our catalog and save items you like!</p>
-          <Button onClick={() => window.location.href = '/customer/store'} variant="primary">
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Your wishlist is empty</h2>
+          <p className="text-gray-500 mb-6 max-w-md mx-auto">Explore our catalog and save items you like!</p>
+          <Button onClick={() => navigate('/store')} variant="primary">
             Browse Products
           </Button>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {products.map((product) => (
-            <Card key={product.id} className="flex flex-col h-full hover:shadow-lg transition-shadow group overflow-hidden">
-              <div className="relative pt-[75%] bg-gray-100">
-                <img
-                  src={product.image_url || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80'}
-                  alt={product.name}
-                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80';
-                  }}
-                />
+            <Card key={product.id} className="flex flex-col h-full hover:shadow-lg transition-shadow group overflow-hidden border border-gray-200 rounded-2xl">
+              <div className="aspect-video bg-gray-50 flex items-center justify-center border-b border-gray-200/50 overflow-hidden relative">
+                <ProductCardImage imageUrl={product.image_url} sku={product.sku || ''} alt={product.name} />
                 <button
                   onClick={(e) => {
                     e.preventDefault();
                     removeFromWishlist(product.id);
                   }}
                   disabled={removingId === product.id}
-                  className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full text-red-500 hover:scale-110 transition-transform shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full text-red-500 hover:scale-110 transition-transform shadow-sm disabled:opacity-50 disabled:cursor-not-allowed z-10"
                   title="Remove from wishlist"
                 >
                   {removingId === product.id ? (
@@ -117,14 +120,16 @@ export function Wishlist() {
                 </button>
               </div>
               <div className="p-5 flex flex-col flex-grow">
-                <div className="text-sm text-brand-600 font-medium mb-1">{product.sku}</div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-1">{product.name}</h3>
-                <p className="text-sm text-gray-500 line-clamp-2 mb-4 flex-grow">{product.description}</p>
-                <div className="flex gap-2">
+                <div className="text-xs text-brand-600 font-bold tracking-wide uppercase mb-1">{product.sku}</div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-1">{product.name}</h3>
+                {product.description && (
+                  <p className="text-xs text-gray-500 line-clamp-2 mb-4 leading-relaxed flex-grow">{product.description}</p>
+                )}
+                <div className="flex gap-2 mt-auto pt-2">
                   <Button
-                    onClick={() => window.location.href = `/customer/store/${product.id}`}
+                    onClick={() => navigate(`/store/product/${product.id}`)}
                     variant="primary"
-                    className="flex-1"
+                    className="flex-1 text-xs font-bold"
                   >
                     View Details
                   </Button>
@@ -137,3 +142,4 @@ export function Wishlist() {
     </div>
   );
 }
+
