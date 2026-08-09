@@ -13,6 +13,13 @@ const CATEGORY_IMAGES: Record<string, string> = {
   VID: '/images/cat-video.jpg',
   DRN: '/images/cat-drone.jpg',
   PRJ: '/images/cat-projector.jpg',
+  'D-LPT': '/images/prod-lpt.png',
+  'D-GAM': '/images/prod-gam.png',
+  'D-FURN': '/images/prod-furn.png',
+  'D-TVP': '/images/prod-tvp.png',
+  'D-WRB': '/images/prod-wrb.png',
+  'D-HAPP': '/images/prod-happ.png',
+  'D-EVT': '/images/prod-evt.png',
 };
 
 const PRODUCT_IMAGES: Record<string, string> = {
@@ -24,6 +31,13 @@ const PRODUCT_IMAGES: Record<string, string> = {
   VID: '/images/cat-video.jpg',
   DRN: '/images/cat-drone.jpg',
   PRJ: '/images/cat-projector.jpg',
+  'D-LPT': '/images/prod-lpt.png',
+  'D-GAM': '/images/prod-gam.png',
+  'D-FURN': '/images/prod-furn.png',
+  'D-TVP': '/images/prod-tvp.png',
+  'D-WRB': '/images/prod-wrb.png',
+  'D-HAPP': '/images/prod-happ.png',
+  'D-EVT': '/images/prod-evt.png',
 };
 import {
   MagnifyingGlassIcon,
@@ -93,7 +107,7 @@ const PROD_COLORS: Record<string, { bg: string; badge: string }> = {
 };
 
 const getSkuCode = (sku: string) => {
-  const match = sku.match(/PROD-([A-Z]+)-/);
+  const match = (sku || '').toUpperCase().match(/(?:PROD|SKU)-(?:D-)?([A-Z]+)-/);
   return match ? match[1] : 'GEN';
 };
 

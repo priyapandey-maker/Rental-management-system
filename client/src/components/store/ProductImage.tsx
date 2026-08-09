@@ -12,10 +12,17 @@ const PRODUCT_PHOTO_MAP: Record<string, string> = {
   VID: '/images/prod-vid.jpg',
   DRN: '/images/prod-drn.jpg',
   PRJ: '/images/prod-prj.jpg',
+  LPT: '/images/prod-lpt.png',
+  GAM: '/images/prod-gam.png',
+  FURN: '/images/prod-furn.png',
+  TVP: '/images/prod-tvp.png',
+  WRB: '/images/prod-wrb.png',
+  HAPP: '/images/prod-happ.png',
+  EVT: '/images/prod-evt.png',
 };
 
 function getSkuCode(sku: string): string {
-  const match = (sku || '').toUpperCase().match(/PROD-([A-Z]+)-/);
+  const match = (sku || '').toUpperCase().match(/(?:PROD|SKU)-(?:D-)?([A-Z]+)-/);
   return match ? match[1] : '';
 }
 
