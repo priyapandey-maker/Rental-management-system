@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useNavigate, Navigate } from 'react-router-dom';
 import { 
-  MagnifyingGlassIcon, 
   HeartIcon, 
   ShoppingCartIcon, 
   UserCircleIcon,
@@ -16,7 +15,6 @@ export const CustomerLayout = () => {
   const navigate = useNavigate();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   const [cartCount, setCartCount] = useState(0);
 
   const updateCartCount = () => {
@@ -91,26 +89,8 @@ export const CustomerLayout = () => {
               </nav>
             </div>
 
-            {/* Center: Search (Hidden on small screens) */}
-            <div className="hidden lg:flex flex-1 max-w-md mx-8 relative">
-              <input 
-                type="text" 
-                placeholder="Search products..." 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-gray-100 text-gray-900 border border-gray-300 rounded-full py-1.5 pl-4 pr-10 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm placeholder-gray-400"
-              />
-              <button className="absolute right-3 top-1.5 text-gray-500 hover:text-gray-900 transition-colors">
-                <MagnifyingGlassIcon className="h-5 w-5" />
-              </button>
-            </div>
-
             {/* Right: Icons, Profile */}
             <div className="flex items-center space-x-4 sm:space-x-6">
-              <button className="lg:hidden text-gray-500 hover:text-gray-900 transition-colors">
-                <MagnifyingGlassIcon className="h-6 w-6" />
-              </button>
-              
               <Link to="/store/wishlist" className="text-gray-500 hover:text-pink-500 transition-colors">
                 <HeartIcon className="h-6 w-6" />
               </Link>
@@ -173,15 +153,6 @@ export const CustomerLayout = () => {
               <Link to="/store" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-200">Terms & Condition</Link>
               <Link to="/store" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-200">About Us</Link>
               <Link to="/store" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-200">Contact Us</Link>
-            </div>
-            <div className="px-4 py-3 border-t border-gray-200">
-              <input 
-                type="text" 
-                placeholder="Search products..." 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-gray-100 text-gray-900 border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm placeholder-gray-400"
-              />
             </div>
           </div>
         )}
