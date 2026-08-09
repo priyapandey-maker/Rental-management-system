@@ -10,6 +10,7 @@ import {
   ExclamationTriangleIcon,
   CheckCircleIcon
 } from '@heroicons/react/24/outline';
+import { MOCK_PRODUCTS, MOCK_VARIANTS } from '../components/store/MockProductData';
 
 interface Product {
   id: string;
@@ -83,8 +84,9 @@ interface Asset {
 export const RentalDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { orgId } = useAuth();
+  const { orgId, role } = useAuth();
   const isVendor = window.location.pathname.startsWith('/vendor');
+  const isCustomer = role === 'customer';
 
   // Core States
   const [transaction, setTransaction] = useState<Transaction | null>(null);
@@ -129,7 +131,9 @@ export const RentalDetail = () => {
       const data = await apiClient.get('/products');
       setProducts(Array.isArray(data) ? data : []);
     } catch (err) {
-      console.error(err);
+      console.warn('API /products failed, using offline mock catalog products list:', err);
+      const prodsList = MOCK_PRODUCTS.map(p => ({ id: p.id, name: p.name }));
+      setProducts(prodsList);
     }
   };
 
@@ -138,8 +142,9 @@ export const RentalDetail = () => {
       const data = await apiClient.get(`/products/${prodId}/variants`);
       setVariants(Array.isArray(data) ? data : []);
     } catch (err) {
-      console.error(err);
-      setVariants([]);
+      console.warn('API /variants failed, using offline mock variants details:', err);
+      const vars = MOCK_VARIANTS[prodId] || [];
+      setVariants(vars);
     }
   };
 
@@ -148,7 +153,20 @@ export const RentalDetail = () => {
       const data = await apiClient.get('/assets');
       setAllAssets(Array.isArray(data) ? data : []);
     } catch (err) {
-      console.error(err);
+      console.warn('API /assets failed, using offline mock physical assets list:', err);
+      const mockAssets: Asset[] = [];
+      MOCK_PRODUCTS.forEach(p => {
+        const variantsList = MOCK_VARIANTS[p.id] || [];
+        variantsList.forEach(v => {
+          mockAssets.push({
+            id: `asset-${v.id}-1`,
+            asset_tag: `TAG-${p.name.toUpperCase().substring(0,3)}-${v.name.toUpperCase().substring(0,3)}-01`,
+            product_variant_id: v.id,
+            lifecycle_status: 'AVAILABLE'
+          });
+        });
+      });
+      setAllAssets(mockAssets);
     }
   };
 
@@ -159,7 +177,16 @@ export const RentalDetail = () => {
       setError(null);
 
       // Fetch transaction
-      const txData = (await apiClient.get(`/transactions/${id}`)) as Transaction;
+      let txData: Transaction;
+      try {
+        txData = (await apiClient.get(`/transactions/${id}`)) as Transaction;
+      } catch (txErr) {
+        console.warn('API transaction details failed, loading offline simulated transaction:', txErr);
+        const localTxs = JSON.parse(localStorage.getItem('demo_transactions') || '[]');
+        const localTx = localTxs.find((t: any) => t.id === id);
+        if (!localTx) throw new Error('Transaction details not found');
+        txData = localTx as Transaction;
+      }
       setTransaction(txData);
 
       // Fetch customer
@@ -167,7 +194,14 @@ export const RentalDetail = () => {
         const custData = (await apiClient.get(`/customers/${txData.customer_id}`)) as Customer;
         setCustomer(custData);
       } catch (custErr) {
-        console.error('Failed to load customer details', custErr);
+        console.warn('Failed to load customer details, simulating offline client details:', custErr);
+        setCustomer({
+          id: txData.customer_id,
+          first_name: 'Demo',
+          last_name: 'Customer',
+          email: 'cust-demo-01@rentalms.local',
+          status: 'active'
+        });
       }
 
       // Load allocations if not draft
@@ -435,7 +469,7 @@ export const RentalDetail = () => {
     );
   }
 
-  const listLink = isVendor ? '/vendor/rentals' : '/rentals';
+  const listLink = isCustomer ? '/store/rentals' : (isVendor ? '/vendor/rentals' : '/rentals');
 
   return (
     <div className="space-y-8">
@@ -468,63 +502,65 @@ export const RentalDetail = () => {
         </div>
 
         {/* Action triggers */}
-        <div className="flex flex-wrap gap-2.5">
-          {actionLoading && (
-            <div className="flex items-center text-xs text-gray-400 font-semibold mr-2">
-              <svg className="animate-spin h-4 w-4 mr-1 text-brand-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-              Updating...
-            </div>
-          )}
+        {!isCustomer && (
+          <div className="flex flex-wrap gap-2.5">
+            {actionLoading && (
+              <div className="flex items-center text-xs text-gray-400 font-semibold mr-2">
+                <svg className="animate-spin h-4 w-4 mr-1 text-brand-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                Updating...
+              </div>
+            )}
 
-          {transaction.status === 'DRAFT' && (
-            <button 
-              onClick={handleConfirm}
-              disabled={actionLoading || transaction.lines.length === 0}
-              className="bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors"
-            >
-              Confirm Rental
-            </button>
-          )}
-
-          {transaction.status === 'CONFIRMED' && (
-            <>
+            {transaction.status === 'DRAFT' && (
               <button 
-                onClick={handleAllocate}
-                disabled={actionLoading}
+                onClick={handleConfirm}
+                disabled={actionLoading || transaction.lines.length === 0}
                 className="bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors"
               >
-                Auto-Allocate Assets
+                Confirm Rental
               </button>
+            )}
+
+            {transaction.status === 'CONFIRMED' && (
+              <>
+                <button 
+                  onClick={handleAllocate}
+                  disabled={actionLoading}
+                  className="bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors"
+                >
+                  Auto-Allocate Assets
+                </button>
+                <button 
+                  onClick={handleFulfill}
+                  disabled={actionLoading || allocations.length === 0}
+                  className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors"
+                >
+                  Fulfill Items
+                </button>
+              </>
+            )}
+
+            {transaction.status === 'ACTIVE' && (
               <button 
-                onClick={handleFulfill}
-                disabled={actionLoading || allocations.length === 0}
-                className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors"
+                onClick={handleReturn}
+                disabled={actionLoading}
+                className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors"
               >
-                Fulfill Items
+                Receive Return
               </button>
-            </>
-          )}
+            )}
 
-          {transaction.status === 'ACTIVE' && (
-            <button 
-              onClick={handleReturn}
-              disabled={actionLoading}
-              className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors"
-            >
-              Receive Return
-            </button>
-          )}
-
-          {transaction.status !== 'CANCELLED' && transaction.status !== 'COMPLETED' && (
-            <button
-              onClick={handleCancel}
-              disabled={actionLoading}
-              className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-5 py-2 rounded-lg text-sm font-bold transition-colors"
-            >
-              Cancel Contract
-            </button>
-          )}
-        </div>
+            {transaction.status !== 'CANCELLED' && transaction.status !== 'COMPLETED' && (
+              <button
+                onClick={handleCancel}
+                disabled={actionLoading}
+                className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-5 py-2 rounded-lg text-sm font-bold transition-colors"
+              >
+                Cancel Contract
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       {/* AssetFlow Lifecycle Progress Stepper */}
@@ -610,7 +646,7 @@ export const RentalDetail = () => {
           )}
 
           {/* Add Rental Item (Only in Draft mode) */}
-          {transaction.status === 'DRAFT' && (
+          {transaction.status === 'DRAFT' && !isCustomer && (
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
               <h3 className="text-lg font-bold text-gray-900">Add Rental Item</h3>
               <form className="grid grid-cols-1 md:grid-cols-2 gap-4" onSubmit={handleAddLine}>
@@ -761,7 +797,7 @@ export const RentalDetail = () => {
                       </div>
                       
                       {/* Manual Asset Allocation block when CONFIRMED */}
-                      {transaction.status === 'CONFIRMED' && (
+                      {transaction.status === 'CONFIRMED' && !isCustomer && (
                         <div className="flex items-center space-x-2 border border-gray-150 p-2.5 rounded-lg bg-gray-50">
                           <select
                             value={manualAllocations[line.id] || ''}
@@ -832,41 +868,45 @@ export const RentalDetail = () => {
             </div>
           )}
 
-          {/* Billing & Invoice panel */}
-          {transaction.status !== 'DRAFT' && (
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
-              <h3 className="text-lg font-bold text-gray-900 flex items-center">
-                <CreditCardIcon className="h-5 w-5 text-brand-500 mr-2" />
-                Billing & Invoice
-              </h3>
-              {!invoice ? (
-                <button
-                  onClick={handleCreateInvoice}
-                  disabled={actionLoading}
-                  className="w-full bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white py-2.5 rounded-lg text-sm font-bold shadow transition-colors"
-                >
-                  Generate Invoice
-                </button>
-              ) : (
-                <div className="space-y-4 border border-gray-100 p-4 rounded-lg bg-gray-50/50">
-                  <div className="text-xs space-y-1">
-                    <p className="font-bold text-gray-800">Invoice: <span className="font-mono">{invoice.invoice_number}</span></p>
-                    <p className="text-gray-600">Total Charged: <strong className="text-gray-900">${invoice.total_amount}</strong></p>
-                    <p className="text-gray-500">Status: <span className="font-bold text-brand-600">{invoice.status}</span></p>
-                  </div>
+              {/* Billing & Invoice panel */}
+              {transaction.status !== 'DRAFT' && (
+                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
+                  <h3 className="text-lg font-bold text-gray-900 flex items-center">
+                    <CreditCardIcon className="h-5 w-5 text-brand-500 mr-2" />
+                    Billing & Invoice
+                  </h3>
+                  {!invoice ? (
+                    !isCustomer ? (
+                      <button
+                        onClick={handleCreateInvoice}
+                        disabled={actionLoading}
+                        className="w-full bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white py-2.5 rounded-lg text-sm font-bold shadow transition-colors"
+                      >
+                        Generate Invoice
+                      </button>
+                    ) : (
+                      <p className="text-xs text-gray-400 italic">No invoice issued yet.</p>
+                    )
+                  ) : (
+                    <div className="space-y-4 border border-gray-100 p-4 rounded-lg bg-gray-50/50">
+                      <div className="text-xs space-y-1">
+                        <p className="font-bold text-gray-800">Invoice: <span className="font-mono">{invoice.invoice_number}</span></p>
+                        <p className="text-gray-600">Total Charged: <strong className="text-gray-900">${invoice.total_amount}</strong></p>
+                        <p className="text-gray-500">Status: <span className="font-bold text-brand-600">{invoice.status}</span></p>
+                      </div>
 
-                  {invoice.status === 'DRAFT' && (
-                    <button
-                      onClick={handleIssueInvoice}
-                      disabled={actionLoading}
-                      className="w-full bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white py-2.5 rounded-lg text-xs font-bold transition-colors shadow-xs"
-                    >
-                      Issue Invoice
-                    </button>
-                  )}
+                      {invoice.status === 'DRAFT' && !isCustomer && (
+                        <button
+                          onClick={handleIssueInvoice}
+                          disabled={actionLoading}
+                          className="w-full bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white py-2.5 rounded-lg text-xs font-bold transition-colors shadow-xs"
+                        >
+                          Issue Invoice
+                        </button>
+                      )}
 
-                  {invoice.status === 'ISSUED' && (
-                    <form className="space-y-3 border-t border-gray-200 pt-3" onSubmit={handleRecordPayment}>
+                      {invoice.status === 'ISSUED' && !isCustomer && (
+                        <form className="space-y-3 border-t border-gray-200 pt-3" onSubmit={handleRecordPayment}>
                       <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">Record Payment</p>
                       <input
                         type="number"
@@ -903,58 +943,60 @@ export const RentalDetail = () => {
             </div>
           )}
 
-          {/* Adjustments & Penalty charges */}
-          {transaction.status !== 'DRAFT' && (
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
-              <h3 className="text-lg font-bold text-gray-900">Rental Adjustments</h3>
-              <div className="space-y-2 mb-2">
-                {adjustments.length === 0 ? (
-                  <p className="text-xs text-gray-400 italic">No adjustments applied.</p>
-                ) : (
-                  adjustments.map(adj => (
-                    <div key={adj.id} className="p-3 border border-gray-100 rounded-lg bg-gray-50 flex justify-between text-xs items-center">
-                      <div>
-                        <p className="font-bold text-gray-800">{adj.reason}</p>
-                        <p className="text-[10px] text-gray-400">Status: {adj.status}</p>
-                      </div>
-                      <span className="font-bold text-red-650">${adj.amount}</span>
-                    </div>
-                  ))
-                )}
-              </div>
+              {/* Adjustments & Penalty charges */}
+              {transaction.status !== 'DRAFT' && (
+                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
+                  <h3 className="text-lg font-bold text-gray-900">Rental Adjustments</h3>
+                  <div className="space-y-2 mb-2">
+                    {adjustments.length === 0 ? (
+                      <p className="text-xs text-gray-400 italic">No adjustments applied.</p>
+                    ) : (
+                      adjustments.map(adj => (
+                        <div key={adj.id} className="p-3 border border-gray-100 rounded-lg bg-gray-50 flex justify-between text-xs items-center">
+                          <div>
+                            <p className="font-bold text-gray-800">{adj.reason}</p>
+                            <p className="text-[10px] text-gray-400">Status: {adj.status}</p>
+                          </div>
+                          <span className="font-bold text-red-650">${adj.amount}</span>
+                        </div>
+                      ))
+                    )}
+                  </div>
 
-              <form className="space-y-3 border-t border-gray-150 pt-3" onSubmit={handleAddAdjustment}>
-                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">Add Penalty Charge</p>
-                <input
-                  type="text"
-                  required
-                  value={adjReason}
-                  onChange={(e) => setAdjReason(e.target.value)}
-                  className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg p-2 text-xs shadow-inner"
-                  placeholder="Reason (e.g. Damage, Late Return)"
-                  disabled={actionLoading}
-                />
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  required
-                  value={adjAmount || ''}
-                  onChange={(e) => setAdjAmount(Number(e.target.value))}
-                  className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg p-2 text-xs shadow-inner"
-                  placeholder="Amount ($)"
-                  disabled={actionLoading}
-                />
-                <button
-                  type="submit"
-                  disabled={actionLoading}
-                  className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg text-xs font-bold transition-colors shadow-xs"
-                >
-                  Apply Penalty
-                </button>
-              </form>
-            </div>
-          )}
+                  {!isCustomer && (
+                    <form className="space-y-3 border-t border-gray-150 pt-3" onSubmit={handleAddAdjustment}>
+                      <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">Add Penalty Charge</p>
+                      <input
+                        type="text"
+                        required
+                        value={adjReason}
+                        onChange={(e) => setAdjReason(e.target.value)}
+                        className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg p-2 text-xs shadow-inner"
+                        placeholder="Reason (e.g. Damage, Late Return)"
+                        disabled={actionLoading}
+                      />
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        required
+                        value={adjAmount || ''}
+                        onChange={(e) => setAdjAmount(Number(e.target.value))}
+                        className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg p-2 text-xs shadow-inner"
+                        placeholder="Amount ($)"
+                        disabled={actionLoading}
+                      />
+                      <button
+                        type="submit"
+                        disabled={actionLoading}
+                        className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg text-xs font-bold transition-colors shadow-xs"
+                      >
+                        Apply Penalty
+                      </button>
+                    </form>
+                  )}
+                </div>
+              )}
         </div>
       </div>
     </div>

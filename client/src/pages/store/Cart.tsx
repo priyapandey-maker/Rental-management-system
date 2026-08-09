@@ -65,7 +65,17 @@ export const Cart = () => {
     setTimeout(() => setCouponStatus('idle'), 3000);
   };
 
-  const subTotal = items.reduce((sum, item) => sum + (item.unitPrice * item.quantity), 0);
+  const getItemDays = (item: CartItem) => {
+    const start = new Date(item.startDate);
+    const end = new Date(item.endDate);
+    const diffTime = Math.max(1, end.getTime() - start.getTime());
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  };
+
+  const subTotal = items.reduce((sum, item) => {
+    const days = getItemDays(item);
+    return sum + (item.unitPrice * item.quantity * days);
+  }, 0);
   // Delivery charges mocked to $15 if items exist
   const deliveryCharges = items.length > 0 ? 15 : 0;
   const total = subTotal + deliveryCharges;
@@ -95,8 +105,8 @@ export const Cart = () => {
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-2">Your cart is empty</h3>
               <p className="text-gray-500 mb-8 max-w-sm mx-auto">Looks like you haven't added any rental equipment to your cart yet.</p>
-              <Link to="/store" className="inline-flex items-center px-6 py-3 rounded-xl shadow text-sm font-bold text-gray-900 bg-brand-600 hover:bg-brand-500 transition-colors">
-                Continue Shopping
+              <Link to="/store" className="inline-flex items-center px-6 py-3 rounded-xl shadow text-sm font-bold text-white bg-brand-600 hover:bg-brand-550 transition-colors">
+                Explore Assets
               </Link>
             </div>
           ) : (
@@ -115,15 +125,21 @@ export const Cart = () => {
                         <h3 className="text-lg font-bold text-gray-900 leading-tight mb-1">{item.productName}</h3>
                         {item.variantName && <p className="text-sm font-medium text-brand-400">Configuration: {item.variantName}</p>}
                       </div>
-                      <p className="text-xl font-bold text-gray-900">${item.unitPrice}</p>
+                      <div className="text-right">
+                        <p className="text-xl font-bold text-gray-900">${(item.unitPrice * item.quantity * getItemDays(item)).toFixed(2)}</p>
+                        <p className="text-xs text-gray-400 font-medium">${item.unitPrice}/day</p>
+                      </div>
                     </div>
 
                     <div className="mt-2 bg-gray-50 p-3 rounded-lg border border-gray-200 inline-block w-fit">
                       <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Rental Period</p>
                       <p className="text-sm text-gray-700">
-                        <span className="font-medium text-gray-900">{new Date(item.startDate).toLocaleString()}</span>
+                        <span className="font-medium text-gray-900">{new Date(item.startDate).toLocaleDateString()}</span>
                         <span className="mx-2 text-gray-600">to</span>
-                        <span className="font-medium text-gray-900">{new Date(item.endDate).toLocaleString()}</span>
+                        <span className="font-medium text-gray-900">{new Date(item.endDate).toLocaleDateString()}</span>
+                        <span className="ml-3 px-2 py-0.5 text-xs font-bold bg-brand-50 text-brand-700 rounded border border-brand-200">
+                          {getItemDays(item)} {getItemDays(item) === 1 ? 'Day' : 'Days'}
+                        </span>
                       </p>
                     </div>
 

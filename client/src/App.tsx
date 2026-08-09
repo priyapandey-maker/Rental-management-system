@@ -88,6 +88,8 @@ function App() {
             <Route path="payment" element={<Payment />} />
             <Route path="success" element={<OrderSuccess />} />
             <Route path="wishlist" element={<Wishlist />} />
+            <Route path="rentals" element={<Rentals />} />
+            <Route path="rentals/:id" element={<RentalDetail />} />
           </Route>
 
           {/* ──────────────────────────────────────────────────────

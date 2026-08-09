@@ -8,6 +8,7 @@ import {
   PlusIcon,
   ArrowPathIcon
 } from '@heroicons/react/24/outline';
+import { MOCK_PRODUCTS, MOCK_VARIANTS } from '../components/store/MockProductData';
 
 interface TransactionLine {
   id: string;
@@ -41,8 +42,9 @@ interface Product {
 }
 
 export const Rentals = () => {
-  const { orgId } = useAuth();
+  const { orgId, role, userId } = useAuth();
   const isVendor = window.location.pathname.startsWith('/vendor');
+  const isCustomer = role === 'customer';
 
   // Data States
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -93,7 +95,16 @@ export const Rentals = () => {
         })
       );
 
-      setTransactions(txsWithLines);
+      // Merge backend transactions with offline local storage transactions
+      const localTxs = JSON.parse(localStorage.getItem('demo_transactions') || '[]');
+      const combinedTxs = [...localTxs, ...txsWithLines];
+
+      // Remove duplicates based on ID
+      const uniqueTxs = combinedTxs.filter((tx, idx, self) => 
+        self.findIndex(t => t.id === tx.id) === idx
+      );
+
+      setTransactions(uniqueTxs);
 
       // Build product variant names cache
       const vMap: Record<string, string> = {};
@@ -113,7 +124,26 @@ export const Rentals = () => {
       );
       setVariantsMap(vMap);
     } catch (err: any) {
-      setError(err.message || 'Failed to fetch rentals');
+      console.warn("Backend API offline. Loading simulated rentals from local storage.");
+      setError(null);
+      
+      const localTxs = JSON.parse(localStorage.getItem('demo_transactions') || '[]');
+      setTransactions(localTxs);
+      
+      setCustomers([
+        { id: 'cust-demo-01', first_name: 'Demo', last_name: 'Customer', status: 'active', email: 'cust-demo-01@rentalms.local' }
+      ]);
+      
+      const prodsList = MOCK_PRODUCTS.map(p => ({ id: p.id, name: p.name }));
+      setProducts(prodsList);
+
+      const vMap: Record<string, string> = {};
+      Object.keys(MOCK_VARIANTS).forEach(pid => {
+        MOCK_VARIANTS[pid].forEach(v => {
+          vMap[v.id] = v.name;
+        });
+      });
+      setVariantsMap(vMap);
     } finally {
       setLoading(false);
     }
@@ -150,6 +180,11 @@ export const Rentals = () => {
 
   // Filter rentals
   const filteredRentals = transactions.filter((tx) => {
+    // Customers only see their own rentals
+    if (isCustomer && tx.customer_id !== userId) {
+      return false;
+    }
+
     const cust = customers.find(c => c.id === tx.customer_id);
     const customerName = cust ? `${cust.first_name} ${cust.last_name}`.toLowerCase() : '';
     const matchSearch = 
@@ -179,53 +214,55 @@ export const Rentals = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Create Draft Rental Form */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 h-fit space-y-4">
-          <div>
-            <h3 className="text-lg font-bold text-gray-900">Start New Rental</h3>
-            <p className="text-xs text-gray-400 mt-0.5">Initialize a blank draft contract for an active customer.</p>
-          </div>
-          
-          <form className="space-y-4" onSubmit={handleCreateRental}>
-            {formError && (
-              <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs font-semibold rounded-lg">
-                {formError}
-              </div>
-            )}
-            {formSuccess && (
-              <div className="p-3 bg-green-50 border border-green-200 text-green-700 text-xs font-semibold rounded-lg">
-                Rental transaction created successfully!
-              </div>
-            )}
-
+        {!isCustomer && (
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 h-fit space-y-4">
             <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Select Active Customer</label>
-              <select
-                value={selectedCustomerId}
-                onChange={(e) => setSelectedCustomerId(e.target.value)}
-                className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2.5 px-3 focus:ring-brand-500 focus:border-brand-500 text-sm shadow-inner"
+              <h3 className="text-lg font-bold text-gray-900">Start New Rental</h3>
+              <p className="text-xs text-gray-400 mt-0.5">Initialize a blank draft contract for an active customer.</p>
+            </div>
+            
+            <form className="space-y-4" onSubmit={handleCreateRental}>
+              {formError && (
+                <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs font-semibold rounded-lg">
+                  {formError}
+                </div>
+              )}
+              {formSuccess && (
+                <div className="p-3 bg-green-50 border border-green-200 text-green-700 text-xs font-semibold rounded-lg">
+                  Rental transaction created successfully!
+                </div>
+              )}
+
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Select Active Customer</label>
+                <select
+                  value={selectedCustomerId}
+                  onChange={(e) => setSelectedCustomerId(e.target.value)}
+                  className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2.5 px-3 focus:ring-brand-500 focus:border-brand-500 text-sm shadow-inner"
+                  disabled={creating}
+                >
+                  <option value="">-- Choose Customer --</option>
+                  {customers.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.first_name} {c.last_name} ({c.email || 'No email'})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-2.5 bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white text-sm font-bold rounded-lg transition-colors flex justify-center items-center shadow"
                 disabled={creating}
               >
-                <option value="">-- Choose Customer --</option>
-                {customers.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.first_name} {c.last_name} ({c.email || 'No email'})
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full py-2.5 bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white text-sm font-bold rounded-lg transition-colors flex justify-center items-center shadow"
-              disabled={creating}
-            >
-              {creating ? 'Starting...' : 'Create Draft Contract'}
-            </button>
-          </form>
-        </div>
+                {creating ? 'Starting...' : 'Create Draft Contract'}
+              </button>
+            </form>
+          </div>
+        )}
 
         {/* Rentals List */}
-        <div className="lg:col-span-2 bg-white shadow-sm border border-gray-200 rounded-xl overflow-hidden flex flex-col">
+        <div className={`${isCustomer ? 'lg:col-span-3' : 'lg:col-span-2'} bg-white shadow-sm border border-gray-200 rounded-xl overflow-hidden flex flex-col`}>
           {/* Filters Bar */}
           <div className="p-5 border-b border-gray-200 bg-gray-50 flex flex-col sm:flex-row gap-4 items-center justify-between">
             <div className="flex items-center space-x-2 w-full sm:w-auto">
@@ -292,7 +329,9 @@ export const Rentals = () => {
                     const prodName = firstLine ? products.find(p => p.id === firstLine.product_id)?.name || 'Unknown Item' : null;
                     const varName = firstLine?.variant_id ? variantsMap[firstLine.variant_id] || '' : '';
                     
-                    const detailsLink = isVendor ? `/vendor/rentals/${tx.id}` : `/rentals/${tx.id}`;
+                    const detailsLink = isCustomer 
+                      ? `/store/rentals/${tx.id}` 
+                      : (isVendor ? `/vendor/rentals/${tx.id}` : `/rentals/${tx.id}`);
 
                     return (
                       <tr key={tx.id} className="hover:bg-gray-50 transition-colors">
@@ -336,7 +375,7 @@ export const Rentals = () => {
                             to={detailsLink} 
                             className="inline-flex items-center text-brand-600 hover:text-brand-900 transition-colors"
                           >
-                            Manage &rarr;
+                            {isCustomer ? 'View Details' : 'Manage'} &rarr;
                           </Link>
                         </td>
                       </tr>

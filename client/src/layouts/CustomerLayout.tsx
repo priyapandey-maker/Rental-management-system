@@ -101,7 +101,7 @@ export const CustomerLayout = () => {
                 <Link to="/store" className="text-gray-700 hover:text-brand-400 font-medium text-sm transition-colors">Products</Link>
                 <Link to="/store/wishlist" className="text-gray-700 hover:text-brand-400 font-medium text-sm transition-colors">Wishlist</Link>
                 <Link to="/store/cart" className="text-gray-700 hover:text-brand-400 font-medium text-sm transition-colors">Cart</Link>
-                <Link to="/store" className="text-gray-700 hover:text-brand-400 font-medium text-sm transition-colors">My Rentals / Orders</Link>
+                <Link to="/store/rentals" className="text-gray-700 hover:text-brand-400 font-medium text-sm transition-colors">My Rentals / Orders</Link>
               </nav>
             </div>
 
@@ -148,7 +148,7 @@ export const CustomerLayout = () => {
                             </p>
                           </div>
                           <Link to="/store" onClick={() => setShowProfileMenu(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 hover:text-gray-900">My Account</Link>
-                          <Link to="/store" onClick={() => setShowProfileMenu(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 hover:text-gray-900">My Orders</Link>
+                          <Link to="/store/rentals" onClick={() => setShowProfileMenu(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 hover:text-gray-900">My Orders</Link>
                           <Link to="/store" onClick={() => setShowProfileMenu(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 hover:text-gray-900">Settings</Link>
                           <button onClick={() => { setShowProfileMenu(false); handleLogout(); }} className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-200 border-t border-gray-300">Logout</button>
                         </>
@@ -174,7 +174,7 @@ export const CustomerLayout = () => {
               <Link to="/store" className="block px-3 py-2 rounded-md text-base font-medium text-gray-900 bg-gray-100">Products</Link>
               <Link to="/store/wishlist" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-200">Wishlist</Link>
               <Link to="/store/cart" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-200">Cart</Link>
-              <Link to="/store" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-200">My Rentals / Orders</Link>
+              <Link to="/store/rentals" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-200">My Rentals / Orders</Link>
             </div>
           </div>
         )}
