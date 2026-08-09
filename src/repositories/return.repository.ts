@@ -5,7 +5,7 @@ export interface ReturnInsert {
   id: string;
   organization_id: string;
   transaction_id: string;
-  status: 'PENDING' | 'RECEIVED';
+  status: 'REQUESTED' | 'APPROVED' | 'RECEIVED';
   returned_at: string | null;
   received_by: string | null;
 }

@@ -27,7 +27,8 @@ export class AdminRepository extends BaseRepository {
     const sql = `
       SELECT a.*, p.name as product_name, o.name as organization_name
       FROM assets a
-      JOIN products p ON a.product_id = p.id
+      JOIN variants v ON a.product_variant_id = v.id
+      JOIN products p ON v.product_id = p.id
       LEFT JOIN organizations o ON a.organization_id = o.id
       ORDER BY a.created_at DESC
     `;

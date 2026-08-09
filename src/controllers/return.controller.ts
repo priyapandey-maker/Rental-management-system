@@ -8,7 +8,7 @@ export const createReturn = async (req: Request, res: Response, next: NextFuncti
   try {
     const orgId = req.context.organizationId!;
     const userId = req.context.userId || 'system';
-    const transactionId = validateString(req.body.transaction_id, 'transaction_id', 36, 36);
+    const transactionId = validateString(req.body.transaction_id, 'transaction_id', 3, 36);
 
     const returnRecord = await returnService.createReturn(orgId, transactionId, userId);
     res.status(201).json(returnRecord);

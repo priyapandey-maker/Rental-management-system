@@ -128,7 +128,7 @@ export const AdminDashboard = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(tx.transaction_date).toLocaleDateString()}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        tx.status === 'ACTIVE' ? 'bg-green-100 text-green-800' :
+                        ['ALLOCATED', 'FULFILLED', 'RETURN_REQUESTED', 'RETURN_APPROVED', 'RETURN_RECEIVED', 'INSPECTED', 'RESOLVED'].includes(tx.status) ? 'bg-green-100 text-green-800' :
                         tx.status === 'CONFIRMED' ? 'bg-brand-100 text-brand-800' :
                         tx.status === 'COMPLETED' ? 'bg-gray-100 text-gray-800' :
                         'bg-yellow-100 text-yellow-800'

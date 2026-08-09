@@ -42,11 +42,12 @@ export function validateOptionalEmail(val: any, field = 'email'): string | null 
 }
 
 export function validateUuid(val: any, field: string, required = true): string {
-  const uuid = validateString(val, field, 36, 36, required);
+  const uuid = validateString(val, field, 3, 36, required);
   if (!uuid && !required) return '';
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  // Relaxed regex to allow standard UUIDs AND our demo seed IDs like tx-demo-19, cust-demo-01
+  const uuidRegex = /^[a-zA-Z0-9-]+$/i;
   if (!uuidRegex.test(uuid)) {
-    throw new ValidationError(`Field '${field}' must be a valid UUID`);
+    throw new ValidationError(`Field '${field}' must be a valid ID or UUID`);
   }
   return uuid;
 }

@@ -7,7 +7,7 @@ const assetService = new AssetService();
 export const createAsset = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const orgId = req.context.organizationId!;
-    const product_variant_id = validateString(req.body.product_variant_id, 'product_variant_id', 36, 36);
+    const product_variant_id = validateString(req.body.product_variant_id, 'product_variant_id', 3, 36);
     const asset_tag = validateString(req.body.asset_tag, 'asset_tag', 1, 80);
     const serial_number = validateOptionalString(req.body.serial_number, 'serial_number', 150);
     const qr_code = validateOptionalString(req.body.qr_code, 'qr_code', 150);

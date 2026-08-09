@@ -132,9 +132,10 @@ export const VendorDashboard = () => {
       setReturns(localReturns);
 
       // Update counts
-      const activeRentalsCount = uniqueTxs.filter(tx => tx.status === 'ACTIVE').length;
-      const totalRev = uniqueTxs.reduce((sum, tx) => {
-        if (tx.status === 'ACTIVE' || tx.status === 'COMPLETED') {
+      const activeRentalsCount = uniqueTxs.filter(tx => ['ALLOCATED', 'FULFILLED', 'RETURN_REQUESTED', 'RETURN_APPROVED', 'RETURN_RECEIVED', 'INSPECTED', 'RESOLVED'].includes(tx.status)).length;
+      let totalRev = 0;
+      uniqueTxs.forEach(tx => {
+        if (['ALLOCATED', 'FULFILLED', 'RETURN_REQUESTED', 'RETURN_APPROVED', 'RETURN_RECEIVED', 'INSPECTED', 'RESOLVED', 'COMPLETED'].includes(tx.status)) {
           const txTotal = tx.lines?.reduce((lineSum: number, line: any) => {
             const start = new Date(line.rental_start_date).getTime();
             const end = new Date(line.rental_end_date).getTime();
@@ -142,10 +143,9 @@ export const VendorDashboard = () => {
             const rate = Number(line.snapshot?.unit_price || line.unit_price || 0);
             return lineSum + (rate * line.quantity * days);
           }, 0) || 0;
-          return sum + txTotal;
+          totalRev += txTotal;
         }
-        return sum;
-      }, 0);
+      });
 
       setMetrics({
         productsCount: String(prodList.length),
@@ -182,7 +182,7 @@ export const VendorDashboard = () => {
     return hasAllocations;
   });
 
-  const activeReturnsQueue = transactions.filter(tx => tx.status === 'ACTIVE');
+  const activeReturnsQueue = transactions.filter(tx => ['ALLOCATED', 'FULFILLED', 'RETURN_REQUESTED', 'RETURN_APPROVED', 'RETURN_RECEIVED', 'INSPECTED', 'RESOLVED'].includes(tx.status));
   const completedRentals = transactions.filter(tx => tx.status === 'COMPLETED');
   const pendingAdjustments = adjustments.filter(adj => adj.status === 'PENDING' || adj.status === 'DRAFT');
 
@@ -306,8 +306,8 @@ export const VendorDashboard = () => {
                       }
                       return (
                         <span className={`inline-flex px-2 py-0.5 text-[10px] font-bold rounded uppercase border ${
-                          tx.status === 'ACTIVE' 
-                            ? 'bg-purple-50 text-purple-700 border-purple-200' 
+                          ['ALLOCATED', 'FULFILLED', 'RETURN_REQUESTED', 'RETURN_APPROVED', 'RETURN_RECEIVED', 'INSPECTED', 'RESOLVED'].includes(tx.status)
+                            ? 'bg-purple-50 text-purple-700 border-purple-200'
                             : tx.status === 'CONFIRMED' 
                               ? 'bg-brand-50 text-brand-700 border-brand-200' 
                               : tx.status === 'COMPLETED' 

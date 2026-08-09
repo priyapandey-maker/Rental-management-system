@@ -8,7 +8,7 @@ export const createInspection = async (req: Request, res: Response, next: NextFu
   try {
     const orgId = req.context.organizationId!;
     const inspectorId = req.context.userId || 'system';
-    const return_line_id = validateString(req.body.return_line_id, 'return_line_id', 36, 36);
+    const return_line_id = validateString(req.body.return_line_id, 'return_line_id', 3, 36);
     const condition_status = validateEnum(req.body.condition_status, 'condition_status', ['NEW', 'GOOD', 'FAIR', 'DAMAGED', 'CRITICAL']);
     const damage_classification = validateOptionalString(req.body.damage_classification, 'damage_classification', 255);
     const damage_severity = validateOptionalString(req.body.damage_severity, 'damage_severity', 30);

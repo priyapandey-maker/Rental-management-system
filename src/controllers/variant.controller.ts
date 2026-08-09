@@ -8,7 +8,7 @@ const variantService = new VariantService();
 export const createVariant = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const orgId = req.context.organizationId!;
-    const product_id = validateString(req.body.product_id, 'product_id', 36, 36);
+    const product_id = validateString(req.body.product_id, 'product_id', 3, 36);
     const sku = validateString(req.body.sku, 'sku', 1, 100);
     const name = validateString(req.body.name, 'name', 1, 255);
     const barcode = validateOptionalString(req.body.barcode, 'barcode', 100);

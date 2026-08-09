@@ -8,7 +8,7 @@ export const createFulfillment = async (req: Request, res: Response, next: NextF
   try {
     const orgId = req.context.organizationId!;
     const userId = req.context.userId || 'system';
-    const transactionId = validateString(req.body.transaction_id, 'transaction_id', 36, 36);
+    const transactionId = validateString(req.body.transaction_id, 'transaction_id', 3, 36);
 
     const fulfillment = await fulfillmentService.createFulfillment(orgId, transactionId, userId);
     res.status(201).json(fulfillment);

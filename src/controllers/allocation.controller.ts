@@ -7,8 +7,8 @@ const allocationService = new AllocationService();
 export const createAllocation = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const orgId = req.context.organizationId!;
-    const transaction_line_id = validateString(req.body.transaction_line_id, 'transaction_line_id', 36, 36);
-    const asset_id = validateString(req.body.asset_id, 'asset_id', 36, 36);
+    const transaction_line_id = validateString(req.body.transaction_line_id, 'transaction_line_id', 3, 36);
+    const asset_id = validateString(req.body.asset_id, 'asset_id', 3, 36);
     const quantity = validateOptionalNumber(req.body.quantity, 'quantity', 1);
 
     const allocation = await allocationService.createAllocation(orgId, {

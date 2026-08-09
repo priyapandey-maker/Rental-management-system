@@ -7,7 +7,7 @@ const adjustmentService = new AdjustmentService();
 export const createAdjustment = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const orgId = req.context.organizationId!;
-    const transaction_id = validateString(req.body.transaction_id, 'transaction_id', 36, 36);
+    const transaction_id = validateString(req.body.transaction_id, 'transaction_id', 3, 36);
     const asset_id = validateOptionalString(req.body.asset_id, 'asset_id', 36);
     const reason = validateString(req.body.reason, 'reason', 1, 255);
     const amount = validateNumber(req.body.amount, 'amount', 0);

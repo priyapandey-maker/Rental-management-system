@@ -38,7 +38,7 @@ interface TransactionLine {
 
 interface Transaction {
   id: string;
-  status: 'DRAFT' | 'CONFIRMED' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED';
+  status: 'DRAFT' | 'CONFIRMED' | 'ALLOCATED' | 'FULFILLED' | 'RETURN_REQUESTED' | 'RETURN_APPROVED' | 'RETURN_RECEIVED' | 'INSPECTED' | 'RESOLVED' | 'COMPLETED' | 'CANCELLED';
   transaction_date: string;
   customer_id: string;
   lines: TransactionLine[];
@@ -102,6 +102,15 @@ export const RentalDetail = () => {
   const [returnRecord, setReturnRecord] = useState<any>(null);
   const [inspections, setInspections] = useState<any[]>([]);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+  const [showInspectionModal, setShowInspectionModal] = useState(false);
+  const [selectedLineForInspection, setSelectedLineForInspection] = useState<any>(null);
+  const [inspectionData, setInspectionData] = useState({
+    condition_status: 'GOOD',
+    damage_classification: '',
+    damage_severity: 'NONE',
+    chargeable_damage: false,
+    notes: ''
+  });
 
   // Lists for forms
   const [products, setProducts] = useState<Product[]>([]);
@@ -405,76 +414,92 @@ export const RentalDetail = () => {
     }
   };
 
-  const handleReturn = async () => {
+  const handleRequestReturn = async () => {
     if (!id) return;
     try {
       setActionLoading(true);
-      await apiClient.post(`/transactions/${id}/return`);
+      await apiClient.post(`/transactions/${id}/return-request`);
       loadRentalData();
     } catch (err: any) {
-      console.warn('API Receive Return failed, simulating offline return acceptance:', err);
-      
-      const localReturns = JSON.parse(localStorage.getItem('demo_returns') || '[]');
-      const ret = localReturns.find((r: any) => r.transaction_id === id);
-      if (ret) {
-        ret.status = 'RECEIVED';
-      } else {
-        localReturns.push({
-          id: `ret-demo-${Date.now()}`,
-          transaction_id: id,
-          status: 'RECEIVED',
-          returned_at: new Date().toISOString()
-        });
-      }
-      localStorage.setItem('demo_returns', JSON.stringify(localReturns));
-
-      const allLocalAllocations = JSON.parse(localStorage.getItem('demo_allocations') || '[]');
-      allLocalAllocations.forEach((a: any) => {
-        if (a.transaction_line_id && transaction?.lines.some(l => l.id === a.transaction_line_id)) {
-          a.status = 'RETURNED';
-        }
-      });
-      localStorage.setItem('demo_allocations', JSON.stringify(allLocalAllocations));
-
-      const localTxs = JSON.parse(localStorage.getItem('demo_transactions') || '[]');
-      const tx = localTxs.find((t: any) => t.id === id);
-      if (tx) {
-        tx.status = 'COMPLETED';
-        localStorage.setItem('demo_transactions', JSON.stringify(localTxs));
-      }
-
-      loadRentalData();
-      fetchAllAssets();
+      alert(err.message || 'Failed to request return');
     } finally {
       setActionLoading(false);
     }
   };
 
-  const handleRequestReturn = async () => {
+  const handleApproveReturn = async () => {
     if (!id) return;
     try {
       setActionLoading(true);
-      await apiClient.post('/returns', { transaction_id: id });
+      await apiClient.post(`/transactions/${id}/return-approve`);
       loadRentalData();
     } catch (err: any) {
-      console.warn('API return creation failed, simulating offline return request:', err);
-      
-      const localReturns = JSON.parse(localStorage.getItem('demo_returns') || '[]');
-      const existingIdx = localReturns.findIndex((r: any) => r.transaction_id === id);
-      const newRet = {
-        id: `ret-demo-${Date.now()}`,
-        transaction_id: id,
-        status: 'PENDING',
-        returned_at: new Date().toISOString()
-      };
-      if (existingIdx >= 0) {
-        localReturns[existingIdx] = newRet;
-      } else {
-        localReturns.push(newRet);
-      }
-      localStorage.setItem('demo_returns', JSON.stringify(localReturns));
-      
+      alert(err.message || 'Failed to approve return');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleReceiveReturn = async () => {
+    if (!id) return;
+    try {
+      setActionLoading(true);
+      await apiClient.post(`/transactions/${id}/return-receive`);
       loadRentalData();
+    } catch (err: any) {
+      alert(err.message || 'Failed to receive return');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleResolve = async () => {
+    if (!id) return;
+    try {
+      setActionLoading(true);
+      await apiClient.post(`/transactions/${id}/resolve`);
+      loadRentalData();
+    } catch (err: any) {
+      alert(err.message || 'Failed to resolve transaction');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleSubmitInspection = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!id || !selectedLineForInspection) return;
+    try {
+      setActionLoading(true);
+      // We pass the transaction line ID in frontend, and let backend resolve it to return_line_id
+      await apiClient.post(`/transactions/${id}/inspect`, {
+        transaction_line_id: selectedLineForInspection.id,
+        ...inspectionData
+      });
+      setShowInspectionModal(false);
+      setInspectionData({
+        condition_status: 'GOOD',
+        damage_classification: '',
+        damage_severity: 'NONE',
+        chargeable_damage: false,
+        notes: ''
+      });
+      loadRentalData();
+    } catch (err: any) {
+      alert(err.message || 'Failed to submit inspection');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleComplete = async () => {
+    if (!id) return;
+    try {
+      setActionLoading(true);
+      await apiClient.post(`/transactions/${id}/complete`);
+      loadRentalData();
+    } catch (err: any) {
+      alert(err.message || 'Failed to complete transaction');
     } finally {
       setActionLoading(false);
     }
@@ -640,7 +665,7 @@ export const RentalDetail = () => {
           <div className="flex items-center space-x-3">
             <h1 className="text-2xl font-extrabold text-gray-900">Contract: {transaction.id.substring(0,8)}...</h1>
             <span className={`inline-flex px-2.5 py-0.5 text-xs font-bold rounded-full border uppercase ${
-              transaction.status === 'ACTIVE' 
+              ['ALLOCATED', 'FULFILLED', 'RETURN_REQUESTED', 'RETURN_APPROVED', 'RETURN_RECEIVED', 'INSPECTED', 'RESOLVED'].includes(transaction.status) 
                 ? 'bg-purple-50 text-purple-700 border-purple-200' 
                 : transaction.status === 'CONFIRMED' 
                   ? 'bg-brand-50 text-brand-700 border-brand-200' 
@@ -677,35 +702,70 @@ export const RentalDetail = () => {
             )}
 
             {transaction.status === 'CONFIRMED' && (
-              <>
-                <button 
-                  onClick={handleAllocate}
-                  disabled={actionLoading}
-                  className="bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors"
-                >
-                  Auto-Allocate Assets
-                </button>
-                <button 
-                  onClick={handleFulfill}
-                  disabled={actionLoading || allocations.length === 0}
-                  className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors"
-                >
-                  Mark as Fulfilled
-                </button>
-              </>
+              <button 
+                onClick={handleAllocate}
+                disabled={actionLoading}
+                className="bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors"
+              >
+                Auto-Allocate Assets
+              </button>
             )}
 
-            {transaction.status === 'ACTIVE' && !isCustomer && (
+            {transaction.status === 'ALLOCATED' && (
+              <button 
+                onClick={handleFulfill}
+                disabled={actionLoading || allocations.length === 0}
+                className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors"
+              >
+                Mark as Fulfilled
+              </button>
+            )}
+
+            {transaction.status === 'RETURN_REQUESTED' && (
                <button 
-                 onClick={handleReturn}
+                 onClick={handleApproveReturn}
                  disabled={actionLoading}
                  className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors"
                >
-                 {returnRecord?.status === 'PENDING' ? 'Receive Return (Awaiting Intake)' : 'Receive Return'}
+                 Approve Return
                </button>
              )}
 
-             {isCustomer && transaction.status === 'ACTIVE' && (!returnRecord || returnRecord.status === 'DRAFT') && (
+            {transaction.status === 'RETURN_APPROVED' && (
+               <button 
+                 onClick={handleReceiveReturn}
+                 disabled={actionLoading}
+                 className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors"
+               >
+                 Receive Return
+               </button>
+             )}
+
+            {transaction.status === 'INSPECTED' && (
+               <button 
+                 onClick={handleResolve}
+                 disabled={actionLoading}
+                 className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors"
+               >
+                 Resolve Contract
+               </button>
+             )}
+
+            {transaction.status === 'RESOLVED' && (
+               <button 
+                 onClick={handleComplete}
+                 disabled={actionLoading}
+                 className="bg-gray-800 hover:bg-gray-900 disabled:opacity-50 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors"
+               >
+                 Complete Contract
+               </button>
+             )}
+          </div>
+        )}
+
+        {isCustomer && (
+          <div className="flex flex-wrap gap-2.5">
+            {transaction.status === 'FULFILLED' && (
                <button
                  onClick={handleRequestReturn}
                  disabled={actionLoading}
@@ -714,8 +774,11 @@ export const RentalDetail = () => {
                  Request Return
                </button>
              )}
+          </div>
+        )}
 
-            {transaction.status !== 'CANCELLED' && transaction.status !== 'COMPLETED' && (
+        {(isCustomer || !isCustomer) && transaction.status !== 'CANCELLED' && transaction.status !== 'COMPLETED' && (
+          <div className="flex flex-wrap gap-2.5 mt-3 border-t border-gray-100 pt-3">
               <button
                 onClick={handleCancel}
                 disabled={actionLoading}
@@ -723,7 +786,8 @@ export const RentalDetail = () => {
               >
                 Cancel Contract
               </button>
-            )}
+          </div>
+        )}
           </div>
         )}
       </div>
@@ -750,21 +814,20 @@ export const RentalDetail = () => {
             
             {/* Steps loop */}
             {(isCustomer ? [
-              { label: 'Booked', desc: 'Request initiated', active: transaction.status === 'DRAFT', completed: transaction.status !== 'DRAFT' },
-              { label: 'Confirmed', desc: 'Lease agreed', active: transaction.status === 'CONFIRMED' && allocations.length === 0, completed: transaction.status !== 'DRAFT' && transaction.status !== 'CONFIRMED' },
-              { label: 'Allocated', desc: 'Serials assigned', active: transaction.status === 'CONFIRMED' && allocations.length > 0, completed: transaction.status === 'ACTIVE' || transaction.status === 'COMPLETED' },
-              { label: 'Fulfilled', desc: 'Out with customer', active: transaction.status === 'ACTIVE' && !returnRecord, completed: transaction.status === 'COMPLETED' || !!returnRecord },
-              { label: 'Returned', desc: 'Awaiting intake', active: !!returnRecord && returnRecord.status === 'PENDING', completed: !!returnRecord && returnRecord.status !== 'PENDING' },
-              { label: 'Inspected', desc: 'Audit completed', active: !!returnRecord && returnRecord.status === 'RECEIVED' && (inspections.length === 0 || adjustments.some(a => a.status === 'PENDING')), completed: !!returnRecord && returnRecord.status === 'RECEIVED' && inspections.length > 0 && adjustments.every(a => a.status !== 'PENDING') },
-              { label: 'Resolved', desc: 'Charges settled', active: transaction.status === 'COMPLETED' && invoice?.status !== 'PAID', completed: transaction.status === 'COMPLETED' && invoice?.status === 'PAID' },
-              { label: 'Completed', desc: 'Closed lease', active: transaction.status === 'COMPLETED' && invoice?.status === 'PAID', completed: false }
+              { label: 'Booked', desc: 'Request initiated', active: ['DRAFT', 'CONFIRMED'].includes(transaction.status), completed: !['DRAFT', 'CONFIRMED'].includes(transaction.status) },
+              { label: 'Allocated', desc: 'Serials assigned', active: transaction.status === 'ALLOCATED', completed: !['DRAFT', 'CONFIRMED', 'ALLOCATED'].includes(transaction.status) },
+              { label: 'Fulfilled', desc: 'Out with customer', active: transaction.status === 'FULFILLED', completed: !['DRAFT', 'CONFIRMED', 'ALLOCATED', 'FULFILLED'].includes(transaction.status) },
+              { label: 'Returned', desc: 'Awaiting intake', active: ['RETURN_REQUESTED', 'RETURN_APPROVED', 'RETURN_RECEIVED'].includes(transaction.status), completed: ['INSPECTED', 'RESOLVED', 'COMPLETED'].includes(transaction.status) },
+              { label: 'Inspected', desc: 'Audit completed', active: ['INSPECTED', 'RESOLVED'].includes(transaction.status), completed: transaction.status === 'COMPLETED' },
+              { label: 'Completed', desc: 'Closed lease', active: transaction.status === 'COMPLETED', completed: false }
             ] : [
               { label: 'Draft', desc: 'Configure items', active: transaction.status === 'DRAFT', completed: transaction.status !== 'DRAFT' },
-              { label: 'Booked', desc: 'Confirmed contract', active: transaction.status === 'CONFIRMED' && allocations.length === 0, completed: transaction.status !== 'DRAFT' && transaction.status !== 'CONFIRMED' },
-              { label: 'Allocated', desc: 'Assets assigned', active: transaction.status === 'CONFIRMED' && allocations.length > 0, completed: transaction.status === 'ACTIVE' || transaction.status === 'COMPLETED' },
-              { label: 'Fulfilling', desc: 'Out with customer', active: transaction.status === 'ACTIVE', completed: transaction.status === 'COMPLETED' },
-              { label: 'Returned', desc: 'Intake & Inspect', active: transaction.status === 'COMPLETED' && invoice?.status !== 'PAID', completed: transaction.status === 'COMPLETED' && invoice?.status === 'PAID' },
-              { label: 'Completed', desc: 'Setted & resolved', active: transaction.status === 'COMPLETED' && invoice?.status === 'PAID', completed: false }
+              { label: 'Booked', desc: 'Confirmed contract', active: transaction.status === 'CONFIRMED', completed: !['DRAFT', 'CONFIRMED'].includes(transaction.status) },
+              { label: 'Allocated', desc: 'Assets assigned', active: transaction.status === 'ALLOCATED', completed: !['DRAFT', 'CONFIRMED', 'ALLOCATED'].includes(transaction.status) },
+              { label: 'Fulfilling', desc: 'Out with customer', active: transaction.status === 'FULFILLED', completed: !['DRAFT', 'CONFIRMED', 'ALLOCATED', 'FULFILLED'].includes(transaction.status) },
+              { label: 'Returned', desc: 'Intake & Inspect', active: ['RETURN_REQUESTED', 'RETURN_APPROVED', 'RETURN_RECEIVED'].includes(transaction.status), completed: ['INSPECTED', 'RESOLVED', 'COMPLETED'].includes(transaction.status) },
+              { label: 'Inspected', desc: 'Settle charges', active: ['INSPECTED', 'RESOLVED'].includes(transaction.status), completed: transaction.status === 'COMPLETED' },
+              { label: 'Completed', desc: 'Closed lease', active: transaction.status === 'COMPLETED', completed: false }
             ]).map((step, idx) => {
               const isCompleted = step.completed;
               const isActive = step.active;
@@ -1189,6 +1252,21 @@ export const RentalDetail = () => {
                         </div>
                       )}
 
+                      {transaction.status === 'RETURN_RECEIVED' && !isCustomer && (
+                        <div className="flex justify-end mt-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedLineForInspection(line);
+                              setShowInspectionModal(true);
+                            }}
+                            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-3 py-1.5 rounded-lg transition-colors shadow-xs"
+                          >
+                            Start Inspection
+                          </button>
+                        </div>
+                      )}
+
                       {line.snapshot && (
                         <div className="text-right text-xs text-gray-500 border-l border-gray-100 pl-4">
                           <p>Rate: <strong className="text-gray-800">${line.snapshot.unit_price}</strong></p>
@@ -1544,6 +1622,115 @@ export const RentalDetail = () => {
           </div>
         );
       })()}
+
+      {/* Inspection Modal */}
+      {showInspectionModal && selectedLineForInspection && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+              <h2 className="text-lg font-bold text-gray-900">Start Inspection</h2>
+              <button 
+                onClick={() => setShowInspectionModal(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="p-5 overflow-y-auto">
+              <div className="mb-4 text-sm text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-100">
+                Inspecting asset for line: <span className="font-mono text-xs font-bold bg-white px-2 py-0.5 rounded border border-gray-200">{selectedLineForInspection.id}</span>
+              </div>
+              
+              <form id="inspectionForm" onSubmit={handleSubmitInspection} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Overall Condition</label>
+                  <select
+                    required
+                    value={inspectionData.condition_status}
+                    onChange={e => setInspectionData({...inspectionData, condition_status: e.target.value})}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500"
+                  >
+                    <option value="GOOD">Good / Passed</option>
+                    <option value="FAIR">Fair / Minor Wear</option>
+                    <option value="DAMAGED">Damaged / Issue</option>
+                    <option value="CRITICAL">Critical / Total Loss</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Damage Classification</label>
+                  <input
+                    type="text"
+                    value={inspectionData.damage_classification}
+                    onChange={e => setInspectionData({...inspectionData, damage_classification: e.target.value})}
+                    placeholder="e.g. Scratched Screen, Water Damage"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Damage Severity</label>
+                  <select
+                    value={inspectionData.damage_severity}
+                    onChange={e => setInspectionData({...inspectionData, damage_severity: e.target.value})}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500"
+                  >
+                    <option value="NONE">None</option>
+                    <option value="COSMETIC">Cosmetic</option>
+                    <option value="FUNCTIONAL">Functional</option>
+                    <option value="SEVERE">Severe</option>
+                  </select>
+                </div>
+                
+                <div className="flex items-center space-x-2 bg-gray-50 p-3 rounded-lg border border-gray-200">
+                  <input
+                    type="checkbox"
+                    id="chargeable_damage"
+                    checked={inspectionData.chargeable_damage}
+                    onChange={e => setInspectionData({...inspectionData, chargeable_damage: e.target.checked})}
+                    className="rounded border-gray-300 text-brand-600 focus:ring-brand-500 h-4 w-4"
+                  />
+                  <label htmlFor="chargeable_damage" className="text-sm font-medium text-gray-800">
+                    Chargeable Damage (Requires Customer Payment)
+                  </label>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                  <textarea
+                    value={inspectionData.notes}
+                    onChange={e => setInspectionData({...inspectionData, notes: e.target.value})}
+                    rows={3}
+                    placeholder="Detailed inspection notes..."
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500"
+                  />
+                </div>
+              </form>
+            </div>
+            
+            <div className="p-5 border-t border-gray-100 bg-gray-50/80 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setShowInspectionModal(false)}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                form="inspectionForm"
+                disabled={actionLoading}
+                className="px-4 py-2 text-sm font-bold text-white bg-brand-600 rounded-lg shadow-sm hover:bg-brand-700 transition-colors disabled:opacity-50"
+              >
+                {actionLoading ? 'Saving...' : 'Submit Inspection'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

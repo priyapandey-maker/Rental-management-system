@@ -11,21 +11,21 @@ const ROLE_LABELS: Record<RoleTab, { label: string; description: string; color: 
     description: 'Browse & rent products',
     color: 'blue',
     defaultEmail: 'cust-demo-01@assetflow.local',
-    defaultPassword: 'DemoPassword123!',
+    defaultPassword: 'Customer@2024!',
   },
   vendor: {
     label: 'Vendor',
     description: 'Manage your rental business',
     color: 'indigo',
     defaultEmail: 'vendor@assetflow.local',
-    defaultPassword: 'DemoPassword123!',
+    defaultPassword: 'Vendor@2024!',
   },
   admin: {
     label: 'Admin',
     description: 'Platform administration',
     color: 'gray',
     defaultEmail: 'admin@assetflow.local',
-    defaultPassword: 'DemoPassword123!',
+    defaultPassword: 'Admin@2024!',
   },
 };
 

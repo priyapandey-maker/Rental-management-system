@@ -250,7 +250,12 @@ async function seedDemoData() {
   // CANCELLED: 2 (~5%)
   const txStatuses = [
     ...Array(24).fill('COMPLETED'),
-    ...Array(8).fill('ACTIVE'),
+    ...Array(3).fill('FULFILLED'),
+    ...Array(1).fill('RETURN_REQUESTED'),
+    ...Array(1).fill('RETURN_APPROVED'),
+    ...Array(1).fill('RETURN_RECEIVED'),
+    ...Array(1).fill('INSPECTED'),
+    ...Array(1).fill('RESOLVED'),
     ...Array(4).fill('CONFIRMED'),
     ...Array(2).fill('DRAFT'),
     ...Array(2).fill('CANCELLED'),
@@ -283,12 +288,12 @@ async function seedDemoData() {
       );
 
       // Downstream generation
-      if (['CONFIRMED', 'ACTIVE', 'COMPLETED'].includes(status)) {
+      if (['CONFIRMED', 'ALLOCATED', 'FULFILLED', 'RETURN_REQUESTED', 'RETURN_APPROVED', 'RETURN_RECEIVED', 'INSPECTED', 'RESOLVED', 'COMPLETED'].includes(status)) {
         const allocId = `alloc-${lineId}`;
         const randomAsset = ALL_ASSETS.find(a => a.variantId === randomVariant.variantId) || ALL_ASSETS[0];
         
         let allocStatus = 'ALLOCATED';
-        if (['ACTIVE'].includes(status)) allocStatus = 'FULFILLED';
+        if (['FULFILLED', 'RETURN_REQUESTED', 'RETURN_APPROVED', 'RETURN_RECEIVED', 'INSPECTED', 'RESOLVED'].includes(status)) allocStatus = 'FULFILLED';
         if (['COMPLETED'].includes(status)) allocStatus = 'RETURNED';
 
         await pool.query(
@@ -298,7 +303,7 @@ async function seedDemoData() {
           [allocId, DEMO_ORG_ID, lineId, randomAsset.assetId, allocStatus]
         );
 
-        if (['FULFILLED', 'RETURNED', 'COMPLETED'].includes(status)) {
+        if (['FULFILLED', 'RETURN_REQUESTED', 'RETURN_APPROVED', 'RETURN_RECEIVED', 'INSPECTED', 'RESOLVED', 'COMPLETED'].includes(status)) {
           const fulfillId = `fulfill-${txId}`;
           await pool.query(
             `INSERT INTO rental_fulfillments (id, organization_id, transaction_id, status, fulfilled_at, created_at, updated_at)
@@ -314,7 +319,7 @@ async function seedDemoData() {
           );
         }
 
-        if (['RETURNED', 'COMPLETED'].includes(status)) {
+        if (['RETURN_RECEIVED', 'INSPECTED', 'RESOLVED', 'COMPLETED'].includes(status)) {
           const returnId = `return-${txId}`;
           await pool.query(
             `INSERT INTO rental_returns (id, organization_id, transaction_id, status, returned_at, created_at, updated_at)
@@ -342,7 +347,7 @@ async function seedDemoData() {
     }
 
     // Invoices and Payments for COMPLETED or RETURNED
-    if (['RETURNED', 'COMPLETED'].includes(status)) {
+    if (['RESOLVED', 'COMPLETED'].includes(status)) {
       const invId = `inv-${txId}`;
       const totalAmount = Math.floor(Math.random() * 5000) + 1000;
       const invStatus = status === 'COMPLETED' ? 'PAID' : 'ISSUED';

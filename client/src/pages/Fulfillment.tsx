@@ -19,7 +19,7 @@ export const Fulfillment = () => {
       setLoading(true);
       const data = await apiClient.get('/transactions');
       // Filter for CONFIRMED or ACTIVE transactions needing fulfillment operations
-      const filtered = (data as any).filter((tx: any) => tx.status === 'CONFIRMED' || tx.status === 'ACTIVE');
+      const filtered = (data as any).filter((tx: any) => ['CONFIRMED', 'ALLOCATED', 'FULFILLED'].includes(tx.status));
       setTransactions(filtered);
     } catch (err: any) {
       setError(err.message || 'Failed to fetch transactions');

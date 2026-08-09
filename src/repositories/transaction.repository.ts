@@ -5,7 +5,7 @@ export interface TransactionRow extends RowDataPacket {
   id: string;
   organization_id: string;
   customer_id: string;
-  status: 'DRAFT' | 'CONFIRMED' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED';
+  status: 'DRAFT' | 'CONFIRMED' | 'ALLOCATED' | 'FULFILLED' | 'RETURN_REQUESTED' | 'RETURN_APPROVED' | 'RETURN_RECEIVED' | 'INSPECTED' | 'RESOLVED' | 'COMPLETED' | 'CANCELLED';
   transaction_date: Date;
   created_by: string | null;
   created_at: Date;

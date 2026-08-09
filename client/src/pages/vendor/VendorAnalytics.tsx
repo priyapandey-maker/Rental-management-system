@@ -30,7 +30,7 @@ interface TransactionLine {
 interface Transaction {
   id: string;
   customer_id: string;
-  status: 'DRAFT' | 'CONFIRMED' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED';
+  status: 'DRAFT' | 'CONFIRMED' | 'ALLOCATED' | 'FULFILLED' | 'RETURN_REQUESTED' | 'RETURN_APPROVED' | 'RETURN_RECEIVED' | 'INSPECTED' | 'RESOLVED' | 'COMPLETED' | 'CANCELLED';
   transaction_date: string;
   lines: TransactionLine[];
   allocations?: any[];
@@ -202,7 +202,7 @@ export const VendorAnalytics = () => {
 
   // Metrics Calculations (calculated strictly from filtered dataset)
   const totalContracts = filtered.length;
-  const activeContracts = filtered.filter(t => t.status === 'ACTIVE').length;
+  const activeContracts = filtered.filter(t => ['ALLOCATED', 'FULFILLED', 'RETURN_REQUESTED', 'RETURN_APPROVED', 'RETURN_RECEIVED', 'INSPECTED', 'RESOLVED'].includes(t.status)).length;
   const completedContracts = filtered.filter(t => t.status === 'COMPLETED').length;
   const cancelledContracts = filtered.filter(t => t.status === 'CANCELLED').length;
   
@@ -582,7 +582,7 @@ export const VendorAnalytics = () => {
                           <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden border border-gray-200">
                             <div 
                               className={`h-full transition-all duration-500 ${
-                                st === 'ACTIVE' ? 'bg-purple-500' :
+                                ['ALLOCATED', 'FULFILLED', 'RETURN_REQUESTED', 'RETURN_APPROVED', 'RETURN_RECEIVED', 'INSPECTED', 'RESOLVED'].includes(st) ? 'bg-purple-500' :
                                 st === 'CONFIRMED' ? 'bg-brand-500' :
                                 st === 'COMPLETED' ? 'bg-green-500' :
                                 st === 'CANCELLED' ? 'bg-red-500' :
@@ -658,7 +658,7 @@ export const VendorAnalytics = () => {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <span className={`inline-flex px-2 py-0.5 text-[9px] font-bold rounded uppercase border ${
-                              tx.status === 'ACTIVE' 
+                              ['ALLOCATED', 'FULFILLED', 'RETURN_REQUESTED', 'RETURN_APPROVED', 'RETURN_RECEIVED', 'INSPECTED', 'RESOLVED'].includes(tx.status)
                                 ? 'bg-purple-50 text-purple-700 border-purple-200' 
                                 : tx.status === 'CONFIRMED' 
                                   ? 'bg-brand-50 text-brand-700 border-brand-200' 

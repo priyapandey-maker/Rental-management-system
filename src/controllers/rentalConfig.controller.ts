@@ -19,7 +19,7 @@ export const updateSettings = async (req: Request, res: Response, next: NextFunc
   try {
     const orgId = req.context.organizationId!;
     const userId = req.context.userId || 'system';
-    const default_pricelist_id = validateString(req.body.default_pricelist_id, 'default_pricelist_id', 36, 36);
+    const default_pricelist_id = validateString(req.body.default_pricelist_id, 'default_pricelist_id', 3, 36);
     const deposit_type = validateEnum(req.body.deposit_type, 'deposit_type', ['FIXED', 'PERCENTAGE']);
     const default_deposit_value = validateNumber(req.body.default_deposit_value, 'default_deposit_value', 0);
     const grace_period_minutes = validateNumber(req.body.grace_period_minutes, 'grace_period_minutes', 0);

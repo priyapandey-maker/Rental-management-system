@@ -132,7 +132,7 @@ export const Inspections = () => {
   const returnedQueue: any[] = [];
   returns.forEach(ret => {
     const tx = transactions.find(t => t.id === ret.transaction_id);
-    if (!tx) return;
+    if (!tx || !tx.lines) return;
 
     tx.lines.forEach((line: any) => {
       const alloc = allocations.find(a => a.transaction_line_id === line.id);

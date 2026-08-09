@@ -53,7 +53,7 @@ const customerService = new CustomerService();
 
 export const createCustomer = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const orgId = validateString(req.body.organization_id, 'organization_id', 36, 36);
+    const orgId = validateString(req.body.organization_id, 'organization_id', 3, 36);
     // Call the existing customer service with the provided orgId
     const customer = await customerService.createCustomer(orgId, {
       customer_number: req.body.customer_number,

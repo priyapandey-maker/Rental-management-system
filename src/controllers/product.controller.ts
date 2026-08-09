@@ -7,7 +7,7 @@ const productService = new ProductService();
 export const createProduct = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const orgId = req.context.organizationId!;
-    const category_id = validateString(req.body.category_id, 'category_id', 36, 36);
+    const category_id = validateString(req.body.category_id, 'category_id', 3, 36);
     const name = validateString(req.body.name, 'name', 1, 255);
     const sku = validateString(req.body.sku, 'sku', 1, 100);
     const description = validateOptionalString(req.body.description, 'description', 65535);

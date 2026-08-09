@@ -88,8 +88,8 @@ export const createPricelistItem = async (req: Request, res: Response, next: Nex
   try {
     const orgId = req.context.organizationId!;
     const pricelistId = validateString(req.params.id, 'id', 1, 36);
-    const product_variant_id = validateString(req.body.product_variant_id, 'product_variant_id', 36, 36);
-    const rental_period_id = validateString(req.body.rental_period_id, 'rental_period_id', 36, 36);
+    const product_variant_id = validateString(req.body.product_variant_id, 'product_variant_id', 3, 36);
+    const rental_period_id = validateString(req.body.rental_period_id, 'rental_period_id', 3, 36);
     const unit_price = validateNumber(req.body.unit_price, 'unit_price', 0);
     const min_quantity = validateOptionalNumber(req.body.min_quantity, 'min_quantity', 0.001);
     const max_quantity = validateOptionalNumber(req.body.max_quantity, 'max_quantity', 0.001);

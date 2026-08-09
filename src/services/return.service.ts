@@ -23,8 +23,8 @@ export class ReturnService {
     if (!tx) {
       throw new NotFoundError(`Transaction with ID '${transactionId}' not found`);
     }
-    if (tx.status !== 'ACTIVE') {
-      throw new ConflictError(`Cannot process return for transaction in status '${tx.status}'. Status must be 'ACTIVE'`);
+    if (tx.status !== 'FULFILLED') {
+      throw new ConflictError(`Cannot process return for transaction in status '${tx.status}'. Status must be 'FULFILLED'`);
     }
 
     const allocations = await this.allocationRepo.listByTransactionId(transactionId, orgId);

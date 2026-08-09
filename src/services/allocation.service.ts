@@ -39,8 +39,9 @@ export class AllocationService {
     if (!tx) {
       throw new NotFoundError(`Parent transaction for line not found`);
     }
-    if (tx.status !== 'CONFIRMED' && tx.status !== 'ACTIVE') {
-      throw new ConflictError(`Cannot allocate assets to a transaction in status '${tx.status}'`);
+    // Allow allocation in CONFIRMED or ALLOCATED state
+    if (tx.status !== 'CONFIRMED' && tx.status !== 'ALLOCATED') {
+      throw new ConflictError(`Cannot allocate assets for transaction in status '${tx.status}'`);
     }
 
     if (asset.product_variant_id !== line.variant_id) {
