@@ -788,8 +788,6 @@ export const RentalDetail = () => {
               </button>
           </div>
         )}
-          </div>
-        )}
       </div>
 
       {/* AssetFlow Lifecycle Progress Stepper */}
