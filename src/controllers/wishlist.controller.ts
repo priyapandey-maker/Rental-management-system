@@ -11,10 +11,10 @@ export const addWishlist = async (req: Request, res: Response) => {
     const orgId = req.context?.organizationId || '';
     // Assuming auth middleware puts user details in req.context.userId
     const customerId = req.context?.userId || '';
-    const { productId } = req.body;
+    const { product_id: productId } = req.body;
 
     if (!productId) {
-      return res.status(400).json({ error: 'productId is required' });
+      return res.status(400).json({ error: 'product_id is required' });
     }
 
     // Verify product exists

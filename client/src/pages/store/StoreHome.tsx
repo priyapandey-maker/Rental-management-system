@@ -113,6 +113,7 @@ export const StoreHome = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [wishlistIds, setWishlistIds] = useState<Set<string>>(new Set());
+  const [wishlistLoadingIds, setWishlistLoadingIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -164,6 +165,9 @@ export const StoreHome = () => {
 
   const toggleWishlist = async (e: React.MouseEvent, productId: string) => {
     e.preventDefault();
+    if (wishlistLoadingIds.has(productId)) return;
+
+    setWishlistLoadingIds(prev => new Set(prev).add(productId));
     try {
       if (wishlistIds.has(productId)) {
         await apiClient.delete(`/storefront/wishlist/${productId}`);
@@ -182,6 +186,13 @@ export const StoreHome = () => {
       }
     } catch (err) {
       console.error('Error toggling wishlist', err);
+      alert('Failed to update wishlist. Please try again.');
+    } finally {
+      setWishlistLoadingIds(prev => {
+        const next = new Set(prev);
+        next.delete(productId);
+        return next;
+      });
     }
   };
 
@@ -355,10 +366,16 @@ export const StoreHome = () => {
                     <ProductCardImage imageUrl={product.image_url} sku={product.sku} alt={product.name} />
                     <button
                       onClick={(e) => toggleWishlist(e, product.id)}
-                      className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-sm hover:scale-110 transition-transform z-10"
+                      disabled={wishlistLoadingIds.has(product.id)}
+                      className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-sm hover:scale-110 transition-transform z-10 disabled:opacity-50 disabled:cursor-not-allowed"
                       title={wishlistIds.has(product.id) ? "Remove from wishlist" : "Add to wishlist"}
                     >
-                      {wishlistIds.has(product.id) ? (
+                      {wishlistLoadingIds.has(product.id) ? (
+                        <svg className="animate-spin w-5 h-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                      ) : wishlistIds.has(product.id) ? (
                         <HeartIconSolid className="w-5 h-5 text-red-500" />
                       ) : (
                         <HeartIcon className="w-5 h-5 text-gray-500 hover:text-red-500" />
