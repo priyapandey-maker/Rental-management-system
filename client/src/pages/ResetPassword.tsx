@@ -46,41 +46,41 @@ export const ResetPassword = () => {
   return (
     <form className="space-y-6" onSubmit={handleReset}>
       <div>
-        <h3 className="text-xl font-bold text-white text-center mb-6">Create New Password</h3>
+        <h3 className="text-xl font-bold text-gray-900 text-center mb-6">Create New Password</h3>
       </div>
       
       {error && (
-        <div className="p-3 bg-red-900/50 text-red-200 text-sm rounded-md border border-red-800">
+        <div className="p-3 bg-red-50 text-red-700 text-sm rounded-md border border-red-200">
           {error}
         </div>
       )}
 
       {success ? (
-        <div className="p-4 bg-green-900/50 text-green-200 text-sm rounded-md border border-green-800">
+        <div className="p-4 bg-green-50 text-green-700 text-sm rounded-md border border-green-200">
           <p>{success}. Redirecting to login...</p>
         </div>
       ) : (
         <>
           <div>
-            <label className="block text-sm font-medium text-gray-300">New Password</label>
+            <label className="block text-sm font-medium text-gray-700">New Password</label>
             <input
               type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-brand-500 focus:border-brand-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-brand-500 focus:border-brand-500 sm:text-sm shadow-sm"
               disabled={!token}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300">Confirm New Password</label>
+            <label className="block text-sm font-medium text-gray-700">Confirm New Password</label>
             <input
               type="password"
               required
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-brand-500 focus:border-brand-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-brand-500 focus:border-brand-500 sm:text-sm shadow-sm"
               disabled={!token}
             />
           </div>
@@ -89,7 +89,7 @@ export const ResetPassword = () => {
             <button
               type="submit"
               disabled={!token}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-brand-600 hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-brand-600 hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               Reset Password
             </button>
@@ -98,10 +98,10 @@ export const ResetPassword = () => {
       )}
 
       <div className="mt-6 text-center text-sm">
-        <Link to="/login" className="font-medium text-brand-400 hover:text-brand-300">
-          Back to Log In
+        <span className="text-gray-600">Back to </span>
+        <Link to="/login" className="font-medium text-brand-600 hover:text-brand-700">
+          Log In
         </Link>
       </div>
     </form>
-  );
 };
