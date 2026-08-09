@@ -65,6 +65,7 @@ interface Adjustment {
   reason: string;
   amount: string;
   status: string;
+  asset_id?: string;
 }
 
 interface Customer {
@@ -99,6 +100,7 @@ export const RentalDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [returnRecord, setReturnRecord] = useState<any>(null);
+  const [inspections, setInspections] = useState<any[]>([]);
 
   // Lists for forms
   const [products, setProducts] = useState<Product[]>([]);
@@ -245,13 +247,31 @@ export const RentalDetail = () => {
       }
 
       // Load return details
+      let currentReturn = null;
       try {
         const retData = await apiClient.get(`/returns/transactions/${id}`);
         setReturnRecord(retData);
+        currentReturn = retData;
       } catch {
         const localReturns = JSON.parse(localStorage.getItem('demo_returns') || '[]');
         const ret = localReturns.find((r: any) => r.transaction_id === id);
         setReturnRecord(ret || null);
+        currentReturn = ret;
+      }
+
+      // Load inspections
+      try {
+        if (currentReturn) {
+          const inspData = await apiClient.get(`/returns/${currentReturn.id}/inspections`);
+          setInspections(Array.isArray(inspData) ? inspData : []);
+        } else {
+          setInspections([]);
+        }
+      } catch {
+        const localInspections = JSON.parse(localStorage.getItem('demo_inspections') || '[]');
+        const txLineIds = txData.lines.map(line => `line-${line.id}`);
+        const filteredInsps = localInspections.filter((i: any) => txLineIds.includes(i.return_line_id));
+        setInspections(filteredInsps);
       }
     } catch (err: any) {
       setError(err.message || 'Failed to load transaction details');
@@ -1056,6 +1076,9 @@ export const RentalDetail = () => {
                           ) : (
                             lineAllocations.map(a => {
                               const asset = allAssets.find(as => as.id === a.asset_id);
+                              const insp = inspections.find(i => i.return_line_id === line.id || i.return_line_id === `line-${line.id}`);
+                              const assetAdjustments = adjustments.filter(adj => adj.asset_id === a.asset_id);
+
                               return (
                                 <React.Fragment key={a.id}>
                                   <div>
@@ -1078,6 +1101,33 @@ export const RentalDetail = () => {
                                     <span className="text-gray-400 block font-medium uppercase tracking-wider text-[10px]">Asset Status</span>
                                     <span className="font-bold text-gray-800 uppercase text-[10px]">{a.status}</span>
                                   </div>
+
+                                  {insp && (
+                                    <div className="col-span-2 sm:col-span-3 bg-brand-50/25 border border-brand-100 p-3 rounded-lg mt-2">
+                                      <p className="font-bold text-brand-800 text-[11px] mb-1 uppercase">Inspection Audit Log</p>
+                                      <div className="grid grid-cols-2 gap-2 text-xs">
+                                        <p><span className="text-gray-450 block text-[9px] uppercase">Inspection Result</span> <strong className="text-gray-700">{insp.condition_status === 'DAMAGED' || insp.condition_status === 'CRITICAL' ? 'DAMAGE / ISSUE DETECTED' : 'PASSED / GOOD CONDITION'}</strong></p>
+                                        <p><span className="text-gray-455 block text-[9px] uppercase">Condition Result</span> <strong className="text-gray-700">{insp.condition_status}</strong></p>
+                                        {insp.damage_classification && (
+                                          <p className="col-span-2"><span className="text-gray-455 block text-[9px] uppercase">Classification</span> <strong className="text-gray-700">{insp.damage_classification}</strong></p>
+                                        )}
+                                        {insp.notes && (
+                                          <p className="col-span-2 text-gray-500 italic mt-0.5 font-normal">&ldquo;{insp.notes}&rdquo;</p>
+                                        )}
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  {assetAdjustments.map((adj) => (
+                                    <div key={adj.id} className="col-span-2 sm:col-span-3 bg-red-50/20 border border-red-100 p-3 rounded-lg mt-2 flex justify-between items-center">
+                                      <div>
+                                        <span className="text-red-800 text-[11px] font-bold uppercase block">Damage Adjustment Fee</span>
+                                        <p className="text-gray-750 font-semibold">{adj.reason}</p>
+                                        <p className="text-[10px] text-gray-450 mt-0.5">Status: <span className="font-bold text-amber-600">{adj.status}</span></p>
+                                      </div>
+                                      <span className="text-base font-extrabold text-red-650">${adj.amount}</span>
+                                    </div>
+                                  ))}
                                 </React.Fragment>
                               );
                             })
