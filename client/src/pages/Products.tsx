@@ -9,6 +9,7 @@ import {
   ExclamationTriangleIcon,
 } from '@heroicons/react/24/outline';
 import { ProductImage } from '../components/store/ProductImage';
+import { Pagination } from '../components/ui/Pagination';
 
 interface Product {
   id: string;
@@ -41,6 +42,12 @@ export const Products = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Pagination States
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const pageSize = 10;
 
   // Variant States
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
@@ -80,16 +87,23 @@ export const Products = () => {
     try {
       setLoading(true);
       setError(null);
-      // Use limit=100 to load all for the management view; wraps { data, pagination }
-      const data = await apiClient.get('/products?page=1&limit=100');
+      const data = await apiClient.get(`/products?page=${page}&limit=${pageSize}`);
       const result = data as any;
       setProducts(Array.isArray(result) ? result : (result.data || []));
+      if (result.pagination) {
+        setTotalPages(result.pagination.totalPages || 1);
+        setTotalItems(result.pagination.totalItems || result.pagination.total || 0);
+      }
     } catch (err: any) {
       setError(err.message || 'Failed to fetch products catalog');
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   const fetchVariants = async (productId: string) => {
     try {
@@ -105,9 +119,8 @@ export const Products = () => {
   };
 
   useEffect(() => {
-    fetchCategories();
     fetchProducts();
-  }, []);
+  }, [page]);
 
   const handleSelectProduct = (productId: string) => {
     setSelectedProductId(productId);
@@ -328,6 +341,14 @@ export const Products = () => {
                   })}
                 </tbody>
               </table>
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                totalItems={totalItems}
+                pageSize={pageSize}
+                onPageChange={setPage}
+                className="rounded-b-xl border-t-0"
+              />
             </div>
           )}
         </div>

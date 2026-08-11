@@ -9,6 +9,7 @@ import {
   ArrowPathIcon
 } from '@heroicons/react/24/outline';
 import { MOCK_PRODUCTS, MOCK_VARIANTS } from '../components/store/MockProductData';
+import { Pagination } from '../components/ui/Pagination';
 
 interface TransactionLine {
   id: string;
@@ -58,6 +59,10 @@ export const Rentals = () => {
   // Filters State
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+
+  // Pagination State
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
 
   // Form State (Create Draft Rental)
   const [selectedCustomerId, setSelectedCustomerId] = useState('');
@@ -203,6 +208,16 @@ export const Rentals = () => {
     const matchStatus = statusFilter ? tx.status === statusFilter : true;
     return matchSearch && matchStatus;
   });
+
+  // Client-side Pagination
+  const totalItems = filteredRentals.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+  const paginatedRentals = filteredRentals.slice((page - 1) * pageSize, page * pageSize);
+
+  // Reset page when filters change
+  useEffect(() => {
+    setPage(1);
+  }, [searchTerm, statusFilter, historyTab]);
 
   return (
     <div className="space-y-8">
@@ -363,7 +378,7 @@ export const Rentals = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredRentals.map((tx) => {
+                  {paginatedRentals.map((tx) => {
                     const cust = customers.find(c => c.id === tx.customer_id);
                     const customerName = cust ? `${cust.first_name} ${cust.last_name}` : 'Unknown Customer';
                     const firstLine = tx.lines?.[0];
@@ -424,6 +439,14 @@ export const Rentals = () => {
                   })}
                 </tbody>
               </table>
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                totalItems={totalItems}
+                pageSize={pageSize}
+                onPageChange={setPage}
+                className="rounded-b-xl border-t-0"
+              />
             </div>
           )}
         </div>

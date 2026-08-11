@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { apiClient } from '../api/client';
+import { Pagination } from '../components/ui/Pagination';
 
 interface Transaction {
   id: string;
@@ -28,6 +29,14 @@ export const Adjustments = () => {
   const [formSuccess, setFormSuccess] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
+  // Pagination State
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+
+  const totalItems = adjustments.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+  const paginatedAdjustments = adjustments.slice((page - 1) * pageSize, page * pageSize);
+
   const fetchTransactions = async () => {
     try {
       const isAdmin = location.pathname.startsWith('/admin');
@@ -49,6 +58,7 @@ export const Adjustments = () => {
     setSelectedTxId(txId);
     if (!txId) {
       setAdjustments([]);
+      setPage(1);
       return;
     }
 
@@ -58,6 +68,7 @@ export const Adjustments = () => {
       setFormError(null);
       const data = await apiClient.get(`/adjustments/transactions/${txId}`);
       setAdjustments(data as any);
+      setPage(1);
     } catch (err: any) {
       setAdjustments([]);
       setFormError(err.message || 'Failed to fetch adjustments');
@@ -176,7 +187,7 @@ export const Adjustments = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {adjustments.map((adj) => (
+                {paginatedAdjustments.map((adj) => (
                   <tr key={adj.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{adj.id.substring(0,8)}...</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{adj.reason}</td>
@@ -190,6 +201,16 @@ export const Adjustments = () => {
                 ))}
               </tbody>
             </table>
+          )}
+          {adjustments.length > 0 && (
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              totalItems={totalItems}
+              pageSize={pageSize}
+              onPageChange={setPage}
+              className="rounded-b-lg border-t-0"
+            />
           )}
         </div>
       </div>

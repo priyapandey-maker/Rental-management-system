@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { apiClient } from '../api/client';
 import { MOCK_PRODUCTS } from '../components/store/MockProductData';
+import { Pagination } from '../components/ui/Pagination';
 import { 
   ClipboardDocumentCheckIcon,
   UserIcon,
@@ -169,6 +170,14 @@ export const Inspections = () => {
     });
   });
 
+  // Pagination State
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+  
+  const totalItems = returnedQueue.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+  const paginatedQueue = returnedQueue.slice((page - 1) * pageSize, page * pageSize);
+
   const handleSelectLine = (line: any) => {
     setSelectedLine(line);
     setFormSuccess(false);
@@ -327,7 +336,7 @@ export const Inspections = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-150">
-                    {returnedQueue.map((line) => {
+                    {paginatedQueue.map((line) => {
                       const isSelected = selectedLine?.id === line.id;
                       return (
                         <tr 
@@ -374,6 +383,16 @@ export const Inspections = () => {
                   </tbody>
                 </table>
               </div>
+            )}
+            {returnedQueue.length > 0 && (
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                totalItems={totalItems}
+                pageSize={pageSize}
+                onPageChange={setPage}
+                className="rounded-b-xl border-t-0"
+              />
             )}
           </div>
         </div>

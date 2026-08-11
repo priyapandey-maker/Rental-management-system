@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { apiClient } from '../api/client';
+import { Pagination } from '../components/ui/Pagination';
 
 interface Transaction {
   id: string;
@@ -13,6 +14,14 @@ export const Returns = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const location = useLocation();
+
+  // Pagination State
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+
+  const totalItems = transactions.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+  const paginatedTransactions = transactions.slice((page - 1) * pageSize, page * pageSize);
 
   const fetchTransactions = async () => {
     try {
@@ -65,7 +74,7 @@ export const Returns = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {transactions.map((tx) => (
+              {paginatedTransactions.map((tx) => (
                 <tr key={tx.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{tx.id.substring(0,8)}...</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(tx.transaction_date).toLocaleDateString()}</td>
@@ -86,6 +95,16 @@ export const Returns = () => {
               ))}
             </tbody>
           </table>
+        )}
+        {transactions.length > 0 && !loading && (
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            totalItems={totalItems}
+            pageSize={pageSize}
+            onPageChange={setPage}
+            className="rounded-b-lg border-t-0"
+          />
         )}
       </div>
     </div>

@@ -8,6 +8,7 @@ import {
   TrashIcon,
   ExclamationTriangleIcon,
 } from '@heroicons/react/24/outline';
+import { Pagination } from '../components/ui/Pagination';
 
 interface Asset {
   id: string;
@@ -45,6 +46,12 @@ export const Assets = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Pagination States
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const pageSize = 10;
+
   // Form Modal States
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [formType, setFormType] = useState<'create' | 'edit'>('create');
@@ -73,16 +80,21 @@ export const Assets = () => {
       setLoading(true);
       setError(null);
 
-      // Fetch assets and products with limit=100 to avoid unbounded queries
+      // Fetch assets and products
       const [assetsData, productsData] = await Promise.all([
-        apiClient.get('/assets?page=1&limit=100'),
-        apiClient.get('/products?page=1&limit=100')
+        apiClient.get(`/assets?page=${page}&limit=${pageSize}`),
+        apiClient.get('/products?page=1&limit=1000')
       ]);
 
       const assetsResult = assetsData as any;
       const productsResult = productsData as any;
       const activeAssets = Array.isArray(assetsResult) ? assetsResult : (assetsResult.data || []);
       const activeProducts = Array.isArray(productsResult) ? productsResult : (productsResult.data || []);
+
+      if (assetsResult.pagination) {
+        setTotalPages(assetsResult.pagination.totalPages || 1);
+        setTotalItems(assetsResult.pagination.totalItems || assetsResult.pagination.total || 0);
+      }
 
       setAssets(activeAssets);
       setProducts(activeProducts);
@@ -121,7 +133,7 @@ export const Assets = () => {
 
   useEffect(() => {
     fetchAssetsAndRelations();
-  }, []);
+  }, [page]);
 
   // Form Operations
   const openCreateModal = () => {
@@ -338,6 +350,14 @@ export const Assets = () => {
                 })}
               </tbody>
             </table>
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              totalItems={totalItems}
+              pageSize={pageSize}
+              onPageChange={setPage}
+              className="rounded-b-xl border-t-0"
+            />
           </div>
         )}
       </div>
