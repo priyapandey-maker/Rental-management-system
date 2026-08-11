@@ -806,38 +806,68 @@ export const RentalDetail = () => {
           <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6">
             AssetFlow Lifecycle Progress
           </h3>
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative">
-            {/* Connecting lines for desktop */}
-            <div className="hidden md:block absolute top-[18px] left-[5%] right-[5%] h-0.5 bg-gray-100 z-0"></div>
-            
-            {/* Steps loop */}
-            {getLifecycleProgress(transaction.status).map((step, idx) => {
-              const isCompleted = step.status === 'completed';
-              const isActive = step.status === 'current';
-              const isFuture = step.status === 'pending';
+          <div className="overflow-x-auto pb-4 w-full hide-scrollbar">
+            <div className="flex flex-row justify-between items-center gap-6 relative min-w-[800px] px-2">
+              {/* Connecting lines for desktop */}
+              <div className="absolute top-[18px] left-[5%] right-[5%] h-0.5 bg-gray-100 z-0"></div>
+              
+              {/* Steps loop */}
+              {getLifecycleProgress(transaction.status).map((step, idx) => {
+                const isCompleted = step.status === 'completed';
+                const isActive = step.status === 'current';
+                const isFuture = step.status === 'pending';
+                const isNext = isFuture && idx === getLifecycleProgress(transaction.status).findIndex(s => s.status === 'current') + 1;
 
-              return (
-                <div key={step.label} className="flex flex-row md:flex-col items-center gap-3 md:gap-2 z-10 w-full md:w-auto relative animate-in fade-in duration-200">
-                  <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm border transition-all duration-300 ${
-                    isCompleted 
-                      ? 'bg-green-600 text-white border-green-600 shadow'
-                      : isActive
-                        ? 'bg-white text-brand-600 border-brand-500 ring-4 ring-brand-100 font-extrabold scale-110 shadow-sm animate-pulse'
-                        : 'bg-gray-50 text-gray-400 border-gray-200'
-                  }`}>
-                    {isCompleted ? '✓' : idx + 1}
+                const handleStepClick = () => {
+                  if (!isNext || actionLoading) return;
+                  switch(step.id) {
+                    case 'CONFIRMED': return handleConfirm();
+                    case 'ALLOCATED': return handleAllocate();
+                    case 'FULFILLED': return handleFulfill();
+                    case 'RETURNED': 
+                      if (transaction.status === 'FULFILLED') return handleRequestReturn();
+                      if (transaction.status === 'RETURN_REQUESTED') return handleApproveReturn();
+                      if (transaction.status === 'RETURN_APPROVED') return handleReceiveReturn();
+                      return;
+                    case 'INSPECTED': 
+                      alert("Please use the Inspect button in the Return Tracker to inspect items.");
+                      return;
+                    case 'RESOLVED': return handleResolve();
+                    case 'COMPLETED': return handleComplete();
+                  }
+                };
+
+                return (
+                  <div 
+                    key={step.label} 
+                    onClick={handleStepClick}
+                    className={`flex flex-col items-center gap-2 z-10 w-auto relative animate-in fade-in duration-200 ${
+                      isNext && !actionLoading ? 'cursor-pointer hover:opacity-80 transition-opacity' : 'cursor-default'
+                    }`}
+                  >
+                    <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm border transition-all duration-300 ${
+                      isCompleted 
+                        ? 'bg-green-600 text-white border-green-600 shadow'
+                        : isActive
+                          ? 'bg-white text-brand-600 border-brand-500 ring-4 ring-brand-100 font-extrabold scale-110 shadow-sm animate-pulse'
+                          : isNext
+                            ? 'bg-brand-50 text-brand-600 border-brand-300 ring-2 ring-brand-100 shadow-sm hover:bg-brand-100'
+                            : 'bg-gray-50 text-gray-400 border-gray-200'
+                    }`}>
+                      {isCompleted ? '✓' : idx + 1}
+                    </div>
+                    <div className="flex flex-col items-center text-center">
+                      <span className={`text-xs font-bold tracking-wide uppercase ${isActive ? 'text-brand-600 font-extrabold' : isCompleted ? 'text-gray-800' : isNext ? 'text-brand-500' : 'text-gray-400'}`}>
+                        {step.label}
+                      </span>
+                      <span className="text-[10px] text-gray-400 font-medium whitespace-nowrap">
+                        {step.desc}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex flex-col md:items-center text-left md:text-center">
-                    <span className={`text-xs font-bold tracking-wide uppercase ${isActive ? 'text-brand-600 font-extrabold' : isCompleted ? 'text-gray-800' : 'text-gray-400'}`}>
-                      {step.label}
-                    </span>
-                    <span className="text-[10px] text-gray-400 font-medium">
-                      {step.desc}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
       )}
@@ -857,79 +887,81 @@ export const RentalDetail = () => {
             </span>
           </div>
 
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative">
-            {/* Connecting lines */}
-            <div className="hidden md:block absolute top-[18px] left-[5%] right-[5%] h-0.5 bg-gray-100 z-0"></div>
-            
-            {[
-              { 
-                label: 'Requested', 
-                desc: 'Return initiated', 
-                active: returnRecord.status === 'PENDING', 
-                completed: returnRecord.status !== 'PENDING' 
-              },
-              { 
-                label: 'Accepted', 
-                desc: 'Awaiting intake', 
-                active: returnRecord.status === 'PROCESSING', 
-                completed: returnRecord.status !== 'PENDING' && returnRecord.status !== 'PROCESSING' 
-              },
-              { 
-                label: 'Returned', 
-                desc: 'Received by vendor', 
-                active: returnRecord.status === 'RECEIVED' && adjustments.length === 0, 
-                completed: returnRecord.status === 'RECEIVED' && (adjustments.length > 0 || transaction?.status === 'COMPLETED')
-              },
-              { 
-                label: 'Inspecting', 
-                desc: 'Condition review', 
-                active: returnRecord.status === 'RECEIVED' && adjustments.length > 0 && adjustments.some(a => a.status === 'PENDING' || a.status === 'DRAFT'), 
-                completed: returnRecord.status === 'RECEIVED' && adjustments.length > 0 && adjustments.every(a => a.status !== 'PENDING' && a.status !== 'DRAFT')
-              },
-              { 
-                label: 'Inspected', 
-                desc: 'Damage assessed', 
-                active: returnRecord.status === 'RECEIVED' && adjustments.length > 0 && adjustments.every(a => a.status !== 'PENDING' && a.status !== 'DRAFT') && transaction?.status !== 'COMPLETED', 
-                completed: transaction?.status === 'COMPLETED'
-              },
-              { 
-                label: 'Resolved', 
-                desc: 'Commercials settled', 
-                active: transaction?.status === 'COMPLETED' && invoice?.status !== 'PAID', 
-                completed: transaction?.status === 'COMPLETED' && invoice?.status === 'PAID' 
-              },
-              { 
-                label: 'Completed', 
-                desc: 'Closed contract', 
-                active: transaction?.status === 'COMPLETED' && invoice?.status === 'PAID', 
-                completed: false 
-              }
-            ].map((step, idx) => {
-              const isCompleted = step.completed;
-              const isActive = step.active;
+          <div className="overflow-x-auto pb-4 w-full hide-scrollbar">
+            <div className="flex flex-row justify-between items-center gap-6 relative min-w-[700px] px-2">
+              {/* Connecting lines */}
+              <div className="absolute top-[18px] left-[5%] right-[5%] h-0.5 bg-gray-100 z-0"></div>
+              
+              {[
+                { 
+                  label: 'Requested', 
+                  desc: 'Return initiated', 
+                  active: returnRecord.status === 'PENDING', 
+                  completed: returnRecord.status !== 'PENDING' 
+                },
+                { 
+                  label: 'Accepted', 
+                  desc: 'Awaiting intake', 
+                  active: returnRecord.status === 'PROCESSING', 
+                  completed: returnRecord.status !== 'PENDING' && returnRecord.status !== 'PROCESSING' 
+                },
+                { 
+                  label: 'Returned', 
+                  desc: 'Received by vendor', 
+                  active: returnRecord.status === 'RECEIVED' && adjustments.length === 0, 
+                  completed: returnRecord.status === 'RECEIVED' && (adjustments.length > 0 || transaction?.status === 'COMPLETED')
+                },
+                { 
+                  label: 'Inspecting', 
+                  desc: 'Condition review', 
+                  active: returnRecord.status === 'RECEIVED' && adjustments.length > 0 && adjustments.some(a => a.status === 'PENDING' || a.status === 'DRAFT'), 
+                  completed: returnRecord.status === 'RECEIVED' && adjustments.length > 0 && adjustments.every(a => a.status !== 'PENDING' && a.status !== 'DRAFT')
+                },
+                { 
+                  label: 'Inspected', 
+                  desc: 'Damage assessed', 
+                  active: returnRecord.status === 'RECEIVED' && adjustments.length > 0 && adjustments.every(a => a.status !== 'PENDING' && a.status !== 'DRAFT') && transaction?.status !== 'COMPLETED', 
+                  completed: transaction?.status === 'COMPLETED'
+                },
+                { 
+                  label: 'Resolved', 
+                  desc: 'Commercials settled', 
+                  active: transaction?.status === 'COMPLETED' && invoice?.status !== 'PAID', 
+                  completed: transaction?.status === 'COMPLETED' && invoice?.status === 'PAID' 
+                },
+                { 
+                  label: 'Completed', 
+                  desc: 'Closed contract', 
+                  active: transaction?.status === 'COMPLETED' && invoice?.status === 'PAID', 
+                  completed: false 
+                }
+              ].map((step, idx) => {
+                const isCompleted = step.completed;
+                const isActive = step.active;
 
-              return (
-                <div key={step.label} className="flex flex-row md:flex-col items-center gap-3 md:gap-2 z-10 w-full md:w-auto relative">
-                  <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm border transition-all duration-300 ${
-                    isCompleted 
-                      ? 'bg-brand-600 text-white border-brand-600 shadow'
-                      : isActive
-                        ? 'bg-white text-brand-600 border-brand-500 ring-4 ring-brand-100 font-extrabold scale-110 shadow-sm'
-                        : 'bg-gray-50 text-gray-400 border-gray-200'
-                  }`}>
-                    {isCompleted ? '✓' : idx + 1}
+                return (
+                  <div key={step.label} className="flex flex-col items-center gap-2 z-10 w-auto relative">
+                    <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm border transition-all duration-300 ${
+                      isCompleted 
+                        ? 'bg-brand-600 text-white border-brand-600 shadow'
+                        : isActive
+                          ? 'bg-white text-brand-600 border-brand-500 ring-4 ring-brand-100 font-extrabold scale-110 shadow-sm'
+                          : 'bg-gray-50 text-gray-400 border-gray-200'
+                    }`}>
+                      {isCompleted ? '✓' : idx + 1}
+                    </div>
+                    <div className="flex flex-col items-center text-center">
+                      <span className={`text-xs font-bold tracking-wide uppercase ${isActive ? 'text-brand-650 font-extrabold' : isCompleted ? 'text-gray-850' : 'text-gray-450'}`}>
+                        {step.label}
+                      </span>
+                      <span className="text-[10px] text-gray-400 font-medium whitespace-nowrap">
+                        {step.desc}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex flex-col md:items-center text-left md:text-center">
-                    <span className={`text-xs font-bold tracking-wide uppercase ${isActive ? 'text-brand-650 font-extrabold' : isCompleted ? 'text-gray-850' : 'text-gray-450'}`}>
-                      {step.label}
-                    </span>
-                    <span className="text-[10px] text-gray-400 font-medium">
-                      {step.desc}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
       )}
